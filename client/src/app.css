@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Gentium+Book+Plus:wght@700&family=Kanit:wght@300&family=Open+Sans:wght@300&family=Oswald:wght@300;400&family=Rubik:ital,wght@0,500;1,900&display=swap');
+
+
+:root {
+  --light-grey:  rgb(240, 240, 240);
+  --darker-grey: rgb(150, 150, 150);
+  /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%; */
+  
+}
+
+body{
+  margin: 0;
+
+  font-family: 'Gentium Book Plus', serif;
+  font-family: 'Kanit', sans-serif;
+  font-family: 'Open Sans', sans-serif;
+  font-family: 'Oswald', sans-serif;
+  font-family: 'Rubik', sans-serif;
+}
+
+/* button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+} */
+
+::-webkit-scrollbar {
+  width: 4px;    
+  height: 0px;  
+  transition: 0.3s;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0); 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--messenger-blue); 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: red; 
+}
