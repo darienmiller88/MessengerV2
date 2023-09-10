@@ -1,6 +1,5 @@
 <script lang="ts">
     import logo from "../../assets/bluelogo.png"
-    import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 
 
     let username: string = ""
