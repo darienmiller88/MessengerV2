@@ -7,9 +7,9 @@
 
 <div class="register">
     {#if isSignin}
-        <Signin />
+        <Signin changeToSignup={() => isSignin = !isSignin } />
     {:else}
-        <Signup />
+        <Signup changeToSignup={() => isSignin = !isSignin }/>
     {/if}
 </div>
 
