@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { IconBrandGithubFilled, IconBrandGoogle } from '@tabler/icons-svelte';
+    // import { IconBrandGithubFilled, IconBrandGoogle } from '@tabler/icons-svelte';
     import { Github, Google } from "svelte-bootstrap-icons";
 
     import logo from "../../../assets/bluelogo.png"
