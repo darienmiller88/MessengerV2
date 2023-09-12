@@ -6,8 +6,7 @@
 ![](https://img.shields.io/badge/MongoDB-Cloud-green)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/1715535d-5c1e-46d4-80e2-fba5816cf2ca/deploy-status)](https://app.netlify.com/sites/messengerv2/deploys)
 
-## This is a Svelte implementation of my previous messenger clone I made this year. I was not satisfied with the
-## code, so I'm starting fresh here!
+## This is a Svelte implementation of my previous messenger clone I made this year. I was not satisfied with the code, so I'm starting fresh here!
 
 ### Built With
 
