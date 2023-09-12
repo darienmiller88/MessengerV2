@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { IconBrandGithubFilled, IconBrandGoogle,IconDeviceGamepad } from '@tabler/icons-svelte';
+    // import { IconBrandGithubFilled, IconBrandGoogle } from '@tabler/icons-svelte';
     import logo from "../../../assets/bluelogo.png"
     import "../styles.scss"
 
@@ -42,8 +42,8 @@
         </div>
         <div class="button-group form-item-width">
             <!-- <input  type="button"/> -->
-            <button type="button"><IconBrandGithubFilled size={24} stroke={1} /></button>
-            <button type="button"><IconBrandGoogle size={24} stroke={4} /></button>
+            <!-- <button type="button"><IconBrandGithubFilled size={24} stroke={1} /></button>
+            <button type="button"><IconBrandGoogle size={24} stroke={4} /></button> -->
         </div>
         <div class="create-account-wrapper">
             New to Messenger? 
