@@ -25,8 +25,8 @@
   },
   "dependencies": {
     "@steeze-ui/svelte-icon": "^1.5.0",
-    "@tabler/icons": "^2.34.0",
     "@tabler/icons-svelte": "^2.34.0",
-    "axios": "^1.5.0"
+    "axios": "^1.5.0",
+    "svelte-bootstrap-icons": "^3.0.0"
   }
 }
