@@ -1,0 +1,146 @@
+.logo{
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
+
+    img{
+        height: 90px;
+        width: auto;
+    }
+}
+
+.prompt{
+    text-align: center;
+    margin: 25px 0px;
+    font-size: 30px;
+}
+
+form{
+    border: 1px white solid;
+    border-radius: 10px;
+    width: 90%;
+    margin: auto;
+    background-color: white;
+
+    @media only screen and (min-width: 768px) {
+        width: 70%;
+    }
+
+    @media only screen and (min-width: 1200px) {
+        width: 40%;
+    }
+
+    .form-item-width{
+        width: 90%;
+        margin: auto;
+
+        @media only screen and (min-width: 768px) {
+            width: 80%;
+        }
+    }
+
+    .form-input{
+        margin-top: 20px;
+
+        input{
+            font-size: 25px;
+            border-radius: 10px;
+            border: 2px var(--light-grey) solid;
+
+            width: 100%;
+            margin-top: 10px;
+        }
+    }
+
+    .submit{
+        margin-top: 20px;
+
+        .sign-in{
+            background-color: rgb(29, 161, 242);
+            color: white;
+            font-size: 18px;
+            width: 100%;
+            padding: 12px 0px;
+            transition: 0.3s;
+
+            border: none;
+            border-radius: 10px;
+
+            &:hover{
+                cursor: pointer;
+                background-color: rgba(29, 101, 200);
+            }
+
+            &:active{
+                transform: translateY(-5px);
+            }
+        }
+    }
+
+    .continue{
+        display: flex;
+        // border: 2px solid yellow;
+        margin-top: 20px;
+
+        span{
+            color: rgb(100, 100, 100);
+            font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+        
+        .line{
+            height: 0px;
+            width: 25%;
+
+            @media only screen and (min-width: 768px) {
+                width: 32%;
+            }
+        }
+    }
+
+    .button-group{
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+
+        button{
+            padding: 10px;
+            background-color: white;
+            border: 2px solid var(--light-grey);
+            border-radius: 10px;
+            transition: 0.3s;
+            width: 48%;
+            cursor: pointer;
+
+            &:hover{
+                background-color: var(--darker-grey);
+            }
+
+            &:active{
+                border: 2px black solid;
+            }
+        }
+    }
+
+    .create-account-wrapper{
+        margin: 20px 0px;
+        font-size: 15px;
+        text-align: center;
+        color: rgb(100, 100, 100);
+        
+        .create-account{
+            transition: 0.5s;
+            background-color: rgba(0, 0, 0, 0);
+            border: none;
+            text-decoration: underline;
+            color: rgb(100, 100, 100);
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+
+
+            &:hover{
+                color: black;
+            }
+        }
+    }
+}

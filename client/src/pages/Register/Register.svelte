@@ -1,6 +1,6 @@
 <script lang="ts">
-    import Signin from "../../components/Signin/Signin.svelte";
-    import Signup from "../../components/Signup/Signup.svelte";
+    import Signin from "../../components/RegistrationForms/Signin/Signin.svelte";
+    import Signup from "../../components/RegistrationForms/Signup/Signup.svelte";
 
     let isSignin: boolean = true
 </script>

@@ -8,8 +8,8 @@
 
 <main>
   <Router>
-      <Route path="/"                component={Home} />
-      <Route path="/register"        component={Register} />
+      <Route path="/"                component={Register} />
+      <Route path="/home"            component={Home} />
       <Route path="/message-history" component={MessageHistory} />
   </Router>
 </main>
