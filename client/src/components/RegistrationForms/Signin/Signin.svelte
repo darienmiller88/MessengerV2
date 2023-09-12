@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { IconBrandGithubFilled, IconBrandGoogle } from '@tabler/icons-svelte';
+    import { IconBrandGithubFilled, IconBrandGoogle,IconDeviceGamepad } from '@tabler/icons-svelte';
     import logo from "../../../assets/bluelogo.png"
     import "../styles.scss"
 
@@ -37,7 +37,7 @@
         </div>
         <div class="continue form-item-width">
             <hr class="line" />
-            <span>Or continue with</span>
+            <span> Or continue with </span>
             <hr class="line"/>
         </div>
         <div class="button-group form-item-width">
