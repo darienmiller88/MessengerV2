@@ -12,6 +12,8 @@
   
     const signin = () => {
         console.log("name:", username, "and password:", password)
+        username = ""
+        password = ""
     }
 
     

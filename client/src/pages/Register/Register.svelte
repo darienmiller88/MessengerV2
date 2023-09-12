@@ -9,7 +9,7 @@
     {#if isSignin}
         <Signin changeToSignup={() => isSignin = !isSignin } />
     {:else}
-        <Signup changeToSignup={() => isSignin = !isSignin }/>
+        <Signup changeToSignIn={() => isSignin = !isSignin }/>
     {/if}
 </div>
 

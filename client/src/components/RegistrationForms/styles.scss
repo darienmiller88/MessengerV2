@@ -42,6 +42,10 @@ form{
     .form-input{
         margin-top: 20px;
 
+        label{
+            margin-right: 5px;
+        }
+
         input{
             font-size: 25px;
             border-radius: 10px;
