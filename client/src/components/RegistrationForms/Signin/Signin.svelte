@@ -1,10 +1,12 @@
 <script lang="ts">
     // import { IconBrandGithubFilled, IconBrandGoogle } from '@tabler/icons-svelte';
     import { Github, Google } from "svelte-bootstrap-icons";
+    import { usernameStore } from "../../../stores"
+    import { navigate } from "svelte-routing";
+
 
     import logo from "../../../assets/bluelogo.png"
     import "../styles.scss"
-
 
     let username: string = ""
     let password: string = ""
@@ -12,11 +14,12 @@
   
     const signin = () => {
         console.log("name:", username, "and password:", password)
+        $usernameStore = username
         username = ""
         password = ""
-    }
 
-    
+        navigate("/home", {replace: true})
+    }
 </script>
 
 <main>
