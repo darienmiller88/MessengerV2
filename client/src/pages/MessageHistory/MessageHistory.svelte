@@ -2,7 +2,7 @@
 
 </script>
 
-<div></div>
+<div>Message History</div>
 
 <style lang="scss">
 

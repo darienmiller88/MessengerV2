@@ -4,6 +4,7 @@
 
     const Logout = () => {
         $usernameStore = ""
+        window.localStorage.setItem("usernameStore", JSON.stringify($usernameStore))
         navigate("/", {replace: true})
     }
 </script>

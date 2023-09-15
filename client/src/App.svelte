@@ -7,9 +7,8 @@
   import { usernameStore } from "./stores"
 
   //When the value of the username store changes, trigger this if statement to store the value in local storage.
-  $: if($usernameStore || $usernameStore == ""){
-      window.localStorage.setItem("usernameStore", JSON.stringify($usernameStore))
-    }
+  // $: window.localStorage.setItem("usernameStore", JSON.stringify($usernameStore))
+  $: console.log("user", $usernameStore)
 
   onMount(() => {
     let value = window.localStorage.getItem("usernameStore")

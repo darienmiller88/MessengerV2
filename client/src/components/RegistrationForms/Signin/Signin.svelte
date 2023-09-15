@@ -15,6 +15,7 @@
     const signin = () => {
         console.log("name:", username, "and password:", password)
         $usernameStore = username
+        window.localStorage.setItem("usernameStore", JSON.stringify($usernameStore))
         username = ""
         password = ""
 
