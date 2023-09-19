@@ -1,35 +1,41 @@
 <script lang="ts">
     import { ChatDotsFill, PeopleFill, BoxArrowInLeft } from "svelte-bootstrap-icons";
-
+    
+    const iconSize: number = 28
 </script>
 
-<div class="chat-footer-wrapper">
+<div class="sidebar">
     <div class="icon-wrapper">
-        <ChatDotsFill width={24} height={24} class="icon"/>
+        <ChatDotsFill width={iconSize} height={iconSize} class="icon"/>
     </div>
     <div class="icon-wrapper">
-        <PeopleFill width={24} height={24}  class="icon"/>
+        <PeopleFill width={iconSize} height={iconSize}  class="icon"/>
     </div>
     <div class="icon-wrapper">
-        <BoxArrowInLeft width={24} height={24}  class="icon"/>
+        <BoxArrowInLeft width={iconSize} height={iconSize}  class="icon"/>
     </div>
 </div>
 
 <style lang="scss">
-    .chat-footer-wrapper{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+    .sidebar{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
         border-right: 2px solid var(--lighter-grey);
+        
+        @media only screen and (min-width: 992px){
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
         .icon-wrapper{
             display: flex;
+            align-items: center;
             justify-content: center;
 
             transition: 0.4s;
             border-radius: 5px;
             
-            margin-top: 15px;
             padding: 20px 20px;
 
             &:hover{
@@ -39,6 +45,10 @@
 
             &:active{
                 background-color: rgb(60, 60, 60);
+            }
+
+            @media only screen and (min-width: 992px){
+                margin-top: 15px;
             }
         }
     }

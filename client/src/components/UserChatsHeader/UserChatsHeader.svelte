@@ -6,7 +6,7 @@
 <div class="user-chat-header">
     <div class="title">Messages</div>
     <div class="icon-wrapper">
-        <PersonAdd width={24} height={24}/>
+        <PersonAdd width={28} height={28}/>
     </div>
 </div>
 
@@ -19,8 +19,12 @@
         // border: 2px black solid;
 
         .title{
-            font-size: 25px;
+            font-size: 35px;
             font-weight: bolder;
+
+            @media only screen and (min-width: 992px){
+                font-size: 25px;
+            }
         }
 
         .icon-wrapper{

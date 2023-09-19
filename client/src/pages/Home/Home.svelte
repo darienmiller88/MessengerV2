@@ -1,9 +1,8 @@
 <script lang="ts">
     import { usernameStore } from "../../stores"
     import { navigate } from "svelte-routing";
-    import ChatFooter from "../../components/ChatFooter/ChatFooter.svelte";
-    import UserChatsContainer from "../../containers/UserChatsContainer/UserChatsContainer.svelte";
-    import ChatWindowContainer from "../../containers/ChatWindowContainer/ChatWindowContainer.svelte";
+    import DesktopView from "../../views/DesktopView/DesktopView.svelte";
+    import MobileView from "../../views/MobileView/MobileView.svelte";
 
     const Logout = () => {
         $usernameStore = ""
@@ -13,15 +12,10 @@
 </script>
 
 <div class="home">
-    <ChatFooter />
-    <UserChatsContainer />
-    <ChatWindowContainer />
+    <DesktopView />
+    <MobileView />
 </div>
 
 <style lang="scss">
-    .home{
-        display: grid;
-        grid-template-columns: 8% 20% auto;
-        height: 100vh;
-    }
+    
 </style>

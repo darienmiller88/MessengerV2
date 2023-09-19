@@ -2,26 +2,22 @@
     import { Image, SendFill, HandThumbsUpFill } from "svelte-bootstrap-icons";
 
     let isThumbsUp: boolean = true
-    let messageText: string = "darien"
-
-    function toggleThumbsUp(){
-        isThumbsUp = messageText.length > 0
-    }
-    
+    let messageText: string = ""
+    const iconSize: number = 24
 </script>
 
 <div class="chat-input-wrapper">
     <div class="icon-wrapper">
-        <Image width={24} height={24} fill="rgb(29, 161, 242)" />
+        <Image width={iconSize} height={iconSize} fill="rgb(29, 161, 242)" />
     </div>
     <div class="input-wrapper">
-        <textarea rows="1" placeholder="Aa" bind:value={messageText} on:input={toggleThumbsUp}/>
+        <textarea rows="1" placeholder="Aa" bind:value={messageText} on:input={() => isThumbsUp = messageText.length == 0}/>
     </div>
     <div class="icon-wrapper">
         {#if isThumbsUp }
-            <HandThumbsUpFill width={24} height={24} fill="rgb(29, 161, 242)" />
+            <HandThumbsUpFill width={iconSize} height={iconSize} fill="rgb(29, 161, iconSize2)" />
         {:else}            
-            <SendFill width={24} height={24} fill="rgb(29, 161, 242)" />
+            <SendFill width={iconSize} height={iconSize} fill="rgb(29, 161, 242)" />
         {/if}
     </div>
 </div>
@@ -29,22 +25,27 @@
 <style lang="scss">
     .chat-input-wrapper{
         display: grid;
-        grid-template-columns: 5% auto 5%;
+        grid-template-columns: 15% auto 15%;
+
+        @media only screen and (min-width: 992px){
+            grid-template-columns: 5% auto 5%;
+        }
 
         .input-wrapper{
             display: flex;
-
+            
             textarea{
                 margin: auto;
                 padding: 10px 10px;
                 border-radius: 20px;
-                font-size: 16px;
+                font-size: 20px;
                 border: none;
                 outline: none;
 
                 background-color: var(--light-grey);
 
                 width: 100%;
+                // height: 40%;
             }
         }
     
@@ -66,5 +67,7 @@
                 background-color: var(--darker-grey);
             }
         }
+
+       
     }
 </style>

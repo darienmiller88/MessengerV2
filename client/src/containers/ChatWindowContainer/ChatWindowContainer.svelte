@@ -1,7 +1,9 @@
 <script lang="ts">
-    import ChatInputWrapper from "../../components/ChatInputWrapper/ChatInputWrapper.svelte";
+    import ChatInputWrapper from "../../components/InputWrapper/InputWrapper.svelte";
     import ChatWindow from "../../components/ChatWindow/ChatWindow.svelte";
     import ChatWindowHeader from "../../components/ChatWindowHeader/ChatWindowHeader.svelte";
+
+    export let changeToUserChats = () => {}
 </script>
 
 <!-- The chat window will be seperated into three parts:
@@ -12,7 +14,7 @@
 
 -->
 <div class="chatwindow-container">
-    <ChatWindowHeader />
+    <ChatWindowHeader changeToUserChats={changeToUserChats} />
     <ChatWindow />
     <ChatInputWrapper />
 </div>
@@ -21,5 +23,6 @@
     .chatwindow-container{
         display: grid;
         grid-template-rows: 10% 80vh auto;
+        height: 100vh;
     }
 </style>

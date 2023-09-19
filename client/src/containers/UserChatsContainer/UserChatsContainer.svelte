@@ -2,17 +2,22 @@
     import UserChatsHeader from "../../components/UserChatsHeader/UserChatsHeader.svelte";
     import UserChatsWrapper from "../../components/UserChatsWrapper/UserChatsWrapper.svelte";
 
+    export let changeToChatWindow = () => {}
 </script>
 
 <div class="user-chats-container">
     <UserChatsHeader />
-    <UserChatsWrapper />
+    <UserChatsWrapper changeToChatWindow={changeToChatWindow}/>
 </div>
 
 <style lang="scss">
     .user-chats-container{
         display: grid;
-        grid-template-rows: auto 90vh;
+        grid-template-rows: auto 80vh;
         border-right: 2px solid var(--lighter-grey);
+
+        @media only screen and (min-width: 992px){
+            grid-template-rows: auto 90vh;
+        }
     }
 </style>
