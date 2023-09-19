@@ -3,7 +3,9 @@
 
 :root {
   --light-grey:  rgb(240, 240, 240);
+  --lighter-grey:  rgb(200, 200, 200);
   --darker-grey: rgb(150, 150, 150);
+  --messenger-blue: rgb(29, 161, 242);
   /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;

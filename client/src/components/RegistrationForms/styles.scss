@@ -47,12 +47,18 @@ form{
         }
 
         input{
-            font-size: 25px;
+            font-size: 18px;
             border-radius: 10px;
             border: 2px var(--light-grey) solid;
+            outline: none;
 
             width: 100%;
             margin-top: 10px;
+            padding: 5px 10px;
+
+            &:focus{
+                border: 2px solid rgb(29, 161, 242);
+            }
         }
     }
 
