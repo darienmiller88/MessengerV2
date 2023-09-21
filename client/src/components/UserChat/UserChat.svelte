@@ -2,10 +2,15 @@
     import publiclogo from "../../assets/plogo.png"
     import profilepic from "../../assets/profile.png"
     import { type Chat } from "../../types/type";
+    import { groupChatNameStore, groupChatNameStoreKey, isChatActiveStore, isChatActiveStoreKey, persistStoreValue }
+     from "../../stores";
 
     export let isPublic: boolean 
     export let chatInfo: Chat
-    export let changeToChatWindow = () => {}
+    const changeToChatWindow = () => {
+        persistStoreValue<string>(groupChatNameStore, chatInfo.chatName, groupChatNameStoreKey)
+        persistStoreValue<boolean>(isChatActiveStore, !$isChatActiveStore, isChatActiveStoreKey)
+    }
 </script>
 
 <div class="user-chat" on:click={changeToChatWindow} on:keyup={null} tabindex="0" role="button" >
@@ -51,7 +56,7 @@
                 margin: auto;
                 border-radius: 50%;
 
-                width: 85%;
+                width: 80%;
                 height: auto;
             }
         }
@@ -60,6 +65,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-evenly;
+            margin-left: 6px;
             
             .name-time-wrapper{
                 display: flex;

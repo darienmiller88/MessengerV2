@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Image, SendFill, HandThumbsUpFill } from "svelte-bootstrap-icons";
+    import { fillIconColorStore } from "../../stores";
 
     let isThumbsUp: boolean = true
     let messageText: string = ""
@@ -8,16 +9,16 @@
 
 <div class="chat-input-wrapper">
     <div class="icon-wrapper">
-        <Image width={iconSize} height={iconSize} fill="rgb(29, 161, 242)" />
+        <Image width={iconSize} height={iconSize} fill={$fillIconColorStore} />
     </div>
     <div class="input-wrapper">
         <textarea rows="1" placeholder="Aa" bind:value={messageText} on:input={() => isThumbsUp = messageText.length == 0}/>
     </div>
     <div class="icon-wrapper">
         {#if isThumbsUp }
-            <HandThumbsUpFill width={iconSize} height={iconSize} fill="rgb(29, 161, iconSize2)" />
+            <HandThumbsUpFill width={iconSize} height={iconSize} fill={$fillIconColorStore} />
         {:else}            
-            <SendFill width={iconSize} height={iconSize} fill="rgb(29, 161, 242)" />
+            <SendFill width={iconSize} height={iconSize} fill={$fillIconColorStore} />
         {/if}
     </div>
 </div>
@@ -39,13 +40,12 @@
                 padding: 10px 10px;
                 border-radius: 20px;
                 font-size: 20px;
+
                 border: none;
                 outline: none;
-
                 background-color: var(--light-grey);
 
                 width: 100%;
-                // height: 40%;
             }
         }
     
@@ -67,7 +67,5 @@
                 background-color: var(--darker-grey);
             }
         }
-
-       
     }
 </style>

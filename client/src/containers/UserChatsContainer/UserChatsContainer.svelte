@@ -2,12 +2,11 @@
     import UserChatsHeader from "../../components/UserChatsHeader/UserChatsHeader.svelte";
     import UserChatsWrapper from "../../components/UserChatsWrapper/UserChatsWrapper.svelte";
 
-    export let changeToChatWindow = () => {}
 </script>
 
 <div class="user-chats-container">
     <UserChatsHeader />
-    <UserChatsWrapper changeToChatWindow={changeToChatWindow}/>
+    <UserChatsWrapper />
 </div>
 
 <style lang="scss">

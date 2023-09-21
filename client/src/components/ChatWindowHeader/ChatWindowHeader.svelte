@@ -1,16 +1,40 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import { ThreeDots, ArrowLeftCircle } from "svelte-bootstrap-icons";
+    import { 
+        fillIconColorStore, 
+        groupChatNameStore, 
+        groupChatNameStoreKey, 
+        isChatActiveStore, 
+        isChatActiveStoreKey,
+    } from "../../stores";
 
-    export let changeToUserChats = () => {}
+
+    const changeToUserChats = () => {
+        $isChatActiveStore = !$isChatActiveStore
+    }
+
+    onMount(() => {
+        let groupChatName = window.localStorage.getItem(groupChatNameStoreKey)
+        let isChatActive = window.localStorage.getItem(isChatActiveStoreKey)
+
+        if (groupChatName) {
+            $groupChatNameStore = JSON.parse(groupChatName)
+        }
+
+        if (isChatActive) {
+            $isChatActiveStore = JSON.parse(isChatActive)
+        }
+    })
 </script>
 
 <div class="chat-window-header">
     <button class="icon-wrapper back" on:click={changeToUserChats}>
-        <ArrowLeftCircle width={24} height={24} />
+        <ArrowLeftCircle width={24} height={24} fill={$fillIconColorStore}/>
     </button>
-    <div class="group-chat-name">Group chat name</div>
+    <div class="group-chat-name">{$groupChatNameStore}</div>
     <button class="icon-wrapper">
-        <ThreeDots width={24} height={24} />
+        <ThreeDots width={24} height={24} fill={$fillIconColorStore}/>
     </button>
 </div>
 

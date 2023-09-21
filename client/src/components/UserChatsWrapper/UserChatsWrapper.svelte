@@ -20,12 +20,11 @@
         }
     ]
 
-    export let changeToChatWindow = () => {}
 </script>
 
 <div class="user-chats-wrapper">
     {#each chats as chatInfo}
-        <UserChat chatInfo={chatInfo} isPublic={chatInfo.chatName == "Public"} changeToChatWindow={changeToChatWindow}/>
+        <UserChat chatInfo={chatInfo} isPublic={chatInfo.chatName == "Public"} />
     {/each}
 </div>
 

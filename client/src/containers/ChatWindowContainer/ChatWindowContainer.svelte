@@ -3,7 +3,6 @@
     import ChatWindow from "../../components/ChatWindow/ChatWindow.svelte";
     import ChatWindowHeader from "../../components/ChatWindowHeader/ChatWindowHeader.svelte";
 
-    export let changeToUserChats = () => {}
 </script>
 
 <!-- The chat window will be seperated into three parts:
@@ -14,7 +13,7 @@
 
 -->
 <div class="chatwindow-container">
-    <ChatWindowHeader changeToUserChats={changeToUserChats} />
+    <ChatWindowHeader />
     <ChatWindow />
     <ChatInputWrapper />
 </div>

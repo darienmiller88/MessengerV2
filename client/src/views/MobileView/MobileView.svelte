@@ -2,15 +2,16 @@
     import Sidebar from "../../components/Sidebar/Sidebar.svelte";
     import UserChatsContainer from "../../containers/UserChatsContainer/UserChatsContainer.svelte";
     import ChatWindowContainer from "../../containers/ChatWindowContainer/ChatWindowContainer.svelte";
+    import { isChatActiveStore } from "../../stores";
 
-    let isChatWindowActive: boolean = false
+    // let isChatWindowActive: boolean = false
 </script>
 
 <div class="mobile-view">
-    {#if isChatWindowActive}
-        <ChatWindowContainer changeToUserChats={() => isChatWindowActive = !isChatWindowActive }/>
+    {#if $isChatActiveStore}
+        <ChatWindowContainer />
     {:else}
-        <UserChatsContainer changeToChatWindow={() => isChatWindowActive = !isChatWindowActive} />
+        <UserChatsContainer />
         <Sidebar />
     {/if}
 
