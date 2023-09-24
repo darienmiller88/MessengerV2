@@ -41,6 +41,7 @@ form{
 
     .form-input{
         margin-top: 20px;
+        // border: 2px red solid;
 
         label{
             margin-right: 5px;
@@ -52,7 +53,7 @@ form{
             border: 2px var(--light-grey) solid;
             outline: none;
 
-            width: 100%;
+            width: 95%;
             margin-top: 10px;
             padding: 5px 10px;
 
