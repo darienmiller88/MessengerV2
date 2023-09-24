@@ -1,4 +1,5 @@
 <script lang="ts">
+    import profilepic from "../../assets/profile.png"
     import { onMount } from "svelte";
     import { ThreeDots, ArrowLeftCircle } from "svelte-bootstrap-icons";
     import { 
@@ -15,8 +16,8 @@
     }
 
     onMount(() => {
-        let groupChatName = window.localStorage.getItem(groupChatNameStoreKey)
-        let isChatActive = window.localStorage.getItem(isChatActiveStoreKey)
+        let groupChatName: string | null = window.localStorage.getItem(groupChatNameStoreKey)
+        let isChatActive:  string | null = window.localStorage.getItem(isChatActiveStoreKey)
 
         if (groupChatName) {
             $groupChatNameStore = JSON.parse(groupChatName)
@@ -29,10 +30,16 @@
 </script>
 
 <div class="chat-window-header">
-    <button class="icon-wrapper back" on:click={changeToUserChats}>
-        <ArrowLeftCircle width={24} height={24} fill={$fillIconColorStore}/>
-    </button>
-    <div class="group-chat-name">{$groupChatNameStore}</div>
+    <div class="profile-picture-wrapper">
+        <button class="icon-wrapper back" on:click={changeToUserChats}>
+            <ArrowLeftCircle width={24} height={24} fill={$fillIconColorStore}/>
+        </button>
+        <img src={profilepic} alt=""/>
+        <div class="online-status-wrapper">
+            <div class="group-chat-name">{$groupChatNameStore}</div>
+            <div class="online-status">Online</div>
+        </div>
+    </div>
     <button class="icon-wrapper">
         <ThreeDots width={24} height={24} fill={$fillIconColorStore}/>
     </button>
@@ -46,11 +53,32 @@
         padding: 0px 15px;
         border-bottom: 2px solid var(--lighter-grey);
 
-        .back{
-            @media only screen and (min-width: 992px){
-                display: none;
+        .profile-picture-wrapper{
+            display: flex;
+            width: 60%;
+
+            .back{
+                margin-right: 10px;
+                @media only screen and (min-width: 992px){
+                    display: none;
+                }
+            }
+
+            img{
+                width: 45px;
+                height: auto;
+                margin-right: 10px;
+
+                border-radius: 50%;
+            }
+
+            .online-status-wrapper{
+                .online-status{
+                    color: var(--darker-grey);
+                }
             }
         }
+
 
         .group-chat-name{
             font-size: 22px;
@@ -59,7 +87,7 @@
         .icon-wrapper{
             cursor: pointer;
             transition: 0.4s;
-            padding: 8px 10px;
+            // padding: 8px 10px;
             border-radius: 50%;
             border: none;
             background-color: transparent;

@@ -38,9 +38,11 @@
             <label for="password">Password</label><br />
             <input type="password" bind:value={password} required>
         </div>
-        <div class="submit form-item-width">
+        <div class="button-group form-item-width">
             <button class="sign-in" type="submit">Sign in</button>
-            <!-- <input class="sign-in" type="button" value="Sign in" /> -->
+            <button class="sign-in" type="submit" on:click={() => navigate("/home", {replace: true})}>
+                Sign in Anonymously
+            </button>
         </div>
         <div class="continue form-item-width">
             <hr class="line" />
@@ -48,9 +50,8 @@
             <hr class="line"/>
         </div>
         <div class="button-group form-item-width">
-            <!-- <input  type="button"/> -->
-            <button type="button"><Github width={24} height={24}/></button>
-            <button type="button"><Google width={24} height={24}/></button>
+            <button class="auth-button" type="button"><Github width={24} height={24}/></button>
+            <button class="auth-button" type="button"><Google width={24} height={24}/></button>
         </div>
         <div class="create-account-wrapper">
             New to Messenger? 

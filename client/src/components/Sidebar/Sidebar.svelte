@@ -1,7 +1,12 @@
 <script lang="ts">
     import { ChatDotsFill, PeopleFill, BoxArrowInLeft } from "svelte-bootstrap-icons";
-    
+    import { navigate } from "svelte-routing";
+
     const iconSize: number = 28
+
+    const logout = () => {
+        navigate("/", {replace: true})
+    }
 </script>
 
 <div class="sidebar">
@@ -11,8 +16,8 @@
     <div class="icon-wrapper">
         <PeopleFill width={iconSize} height={iconSize}  class="icon"/>
     </div>
-    <div class="icon-wrapper">
-        <BoxArrowInLeft width={iconSize} height={iconSize}  class="icon"/>
+    <div class="icon-wrapper" on:click={logout} tabindex="0" role="button" on:keyup={null}>
+        <BoxArrowInLeft width={iconSize} height={iconSize}  class="icon" />
     </div>
 </div>
 

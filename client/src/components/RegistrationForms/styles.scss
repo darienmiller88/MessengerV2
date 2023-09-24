@@ -64,28 +64,29 @@ form{
 
     .submit{
         margin-top: 20px;
+    }
+    
+    .sign-in{
+        background-color: rgb(29, 161, 242);
+        color: white;
+        font-size: 18px;
+        width: 100%;
+        padding: 12px 0px;
+        transition: 0.3s;
 
-        .sign-in{
-            background-color: rgb(29, 161, 242);
-            color: white;
-            font-size: 18px;
-            width: 100%;
-            padding: 12px 0px;
-            transition: 0.3s;
+        border: none;
+        border-radius: 10px;
 
-            border: none;
-            border-radius: 10px;
+        &:hover{
+            cursor: pointer;
+            background-color: rgba(29, 101, 200);
+        }
 
-            &:hover{
-                cursor: pointer;
-                background-color: rgba(29, 101, 200);
-            }
-
-            &:active{
-                transform: translateY(-5px);
-            }
+        &:active{
+            transform: translateY(-5px);
         }
     }
+
 
     .continue{
         display: flex;
@@ -113,12 +114,15 @@ form{
         margin-top: 20px;
 
         button{
+            width: 48%;
+        }
+
+        .auth-button{
             padding: 10px;
             background-color: white;
             border: 2px solid var(--light-grey);
             border-radius: 10px;
             transition: 0.3s;
-            width: 48%;
             cursor: pointer;
 
             &:hover{

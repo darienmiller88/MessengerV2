@@ -66,7 +66,7 @@
             flex-direction: column;
             justify-content: space-evenly;
             margin-left: 6px;
-            
+
             .name-time-wrapper{
                 display: flex;
                 justify-content: space-between;
@@ -79,6 +79,7 @@
                     color: var(--lighter-grey);
                     font-size: 14px;
                 }
+                margin-bottom: 5px;
             }
 
             .current-message{
