@@ -1,8 +1,10 @@
 <script lang="ts">
-    import profilepic from "../../assets/profile.png"
+    // import profilepic from "../../assets/profile.png"
     import { onMount } from "svelte";
     import { ThreeDots, ArrowLeftCircle } from "svelte-bootstrap-icons";
     import { 
+        chatPictureStore,
+        chatPictureStoreKey,
         fillIconColorStore, 
         groupChatNameStore, 
         groupChatNameStoreKey, 
@@ -18,6 +20,7 @@
     onMount(() => {
         let groupChatName: string | null = window.localStorage.getItem(groupChatNameStoreKey)
         let isChatActive:  string | null = window.localStorage.getItem(isChatActiveStoreKey)
+        let chatPictureURL: string | null = window.localStorage.getItem(chatPictureStoreKey)
 
         if (groupChatName) {
             $groupChatNameStore = JSON.parse(groupChatName)
@@ -26,6 +29,12 @@
         if (isChatActive) {
             $isChatActiveStore = JSON.parse(isChatActive)
         }
+
+        if (chatPictureURL) {
+            $chatPictureStore = JSON.parse(chatPictureURL)
+        }
+
+        console.log(groupChatName, isChatActive, chatPictureURL)
     })
 </script>
 
@@ -34,7 +43,7 @@
         <button class="icon-wrapper back" on:click={changeToUserChats}>
             <ArrowLeftCircle width={24} height={24} fill={$fillIconColorStore}/>
         </button>
-        <img src={profilepic} alt=""/>
+        <img src={$chatPictureStore} alt=""/>
         <div class="online-status-wrapper">
             <div class="group-chat-name">{$groupChatNameStore}</div>
             <div class="online-status">Online</div>

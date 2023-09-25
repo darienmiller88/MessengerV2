@@ -1,10 +1,13 @@
 <script lang="ts">
     import { ChatDotsFill, PeopleFill, BoxArrowInLeft } from "svelte-bootstrap-icons";
     import { navigate } from "svelte-routing";
+    import { groupChatNameStore, chatPictureStore, unpersistStoreValue, groupChatNameStoreKey, chatPictureStoreKey } from "../../stores";
 
     const iconSize: number = 28
 
     const logout = () => {
+        unpersistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
+        // unpersistStoreValue(chatPictureStore, "", chatPictureStoreKey)
         navigate("/", {replace: true})
     }
 </script>

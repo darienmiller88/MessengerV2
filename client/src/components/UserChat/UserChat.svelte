@@ -1,25 +1,27 @@
 <script lang="ts">
-    import publiclogo from "../../assets/plogo.png"
-    import profilepic from "../../assets/profile.png"
     import { type Chat } from "../../types/type";
-    import { groupChatNameStore, groupChatNameStoreKey, isChatActiveStore, isChatActiveStoreKey, persistStoreValue }
-     from "../../stores";
+    import { 
+        groupChatNameStore, 
+        groupChatNameStoreKey, 
+        isChatActiveStore, 
+        isChatActiveStoreKey, 
+        persistStoreValue, 
+        chatPictureStore,
+        chatPictureStoreKey
+    }
+    from "../../stores";
 
-    export let isPublic: boolean 
     export let chatInfo: Chat
     const changeToChatWindow = () => {
-        persistStoreValue<string>(groupChatNameStore, chatInfo.chatName, groupChatNameStoreKey)
-        persistStoreValue<boolean>(isChatActiveStore, !$isChatActiveStore, isChatActiveStoreKey)
+        persistStoreValue(chatPictureStore, chatInfo.picture_url, chatPictureStoreKey)
+        persistStoreValue(groupChatNameStore, chatInfo.chatName, groupChatNameStoreKey)
+        persistStoreValue(isChatActiveStore, !$isChatActiveStore, isChatActiveStoreKey)
     }
 </script>
 
 <div class="user-chat" on:click={changeToChatWindow} on:keyup={null} tabindex="0" role="button" >
     <div class="image-wrapper">
-        {#if isPublic}
-            <img src={publiclogo} alt="chat-pic"/>
-        {:else}
-            <img src={profilepic} alt="chat-pic"/>
-        {/if}
+        <img src={chatInfo.picture_url} alt="chat-pic" />
     </div>
     <div class="chat-info">
         <div class="name-time-wrapper">
