@@ -18,8 +18,8 @@
     }
 
     onMount(() => {
-        let groupChatName: string | null = window.localStorage.getItem(groupChatNameStoreKey)
-        let isChatActive:  string | null = window.localStorage.getItem(isChatActiveStoreKey)
+        let isChatActive:   string | null = window.localStorage.getItem(isChatActiveStoreKey)
+        let groupChatName:  string | null = window.localStorage.getItem(groupChatNameStoreKey)
         let chatPictureURL: string | null = window.localStorage.getItem(chatPictureStoreKey)
 
         if (groupChatName) {

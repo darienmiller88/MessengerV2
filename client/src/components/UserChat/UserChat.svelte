@@ -8,18 +8,22 @@
         persistStoreValue, 
         chatPictureStore,
         chatPictureStoreKey
-    }
-    from "../../stores";
+    } from "../../stores";
 
     export let chatInfo: Chat
+    export let deselectChats = () => {}
     const changeToChatWindow = () => {
+        deselectChats()
+        chatInfo.isChatActive = true
+
         persistStoreValue(chatPictureStore, chatInfo.picture_url, chatPictureStoreKey)
         persistStoreValue(groupChatNameStore, chatInfo.chatName, groupChatNameStoreKey)
         persistStoreValue(isChatActiveStore, !$isChatActiveStore, isChatActiveStoreKey)
     }
+    // $: console.log("chatinfo:", chatInfo)
 </script>
 
-<div class="user-chat" on:click={changeToChatWindow} on:keyup={null} tabindex="0" role="button" >
+<div class={chatInfo.isChatActive ? "user-chat selected" : "user-chat" } on:click={changeToChatWindow} on:keyup={null} tabindex="0" role="button" >
     <div class="image-wrapper">
         <img src={chatInfo.picture_url} alt="chat-pic" />
     </div>
@@ -37,9 +41,10 @@
         display: grid;
         grid-template-columns: 22% auto;
 
-        width: 90%;
+        width: 85%;
         margin: auto;
-        padding: 10px 0px;
+        padding: 10px 10px;
+        border-radius: 10px;
         transition: 0.3s;
 
         &:hover{
@@ -85,8 +90,13 @@
             }
 
             .current-message{
-                color: var(--darker-grey);
+                font-size: 13px;
+                color: rgb(60, 60, 60);
             }
         }
+    }
+
+    .selected{
+        background-color: var(--darkest-grey);
     }
 </style>

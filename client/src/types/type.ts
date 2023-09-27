@@ -3,4 +3,5 @@ export interface Chat{
     currentMessage: string
     time:           string
     picture_url:    string
+    isChatActive:   boolean
 }
