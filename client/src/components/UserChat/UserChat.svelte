@@ -3,12 +3,17 @@
     import { 
         groupChatNameStore, 
         groupChatNameStoreKey, 
-        isChatActiveStore, 
-        isChatActiveStoreKey, 
+        isChatWindowActiveStore, 
+        isChatWindowActiveStoreKey, 
+        isUserChatActiveStore,
+        isUserChatActiveStoreKey,
         persistStoreValue, 
+        persistValue,
+        currentChatName,
         chatPictureStore,
         chatPictureStoreKey
     } from "../../stores";
+    import { onMount } from "svelte";
 
     export let chatInfo: Chat
     export let deselectChats = () => {}
@@ -16,11 +21,23 @@
         deselectChats()
         chatInfo.isChatActive = true
 
+        persistValue(chatInfo.chatName, currentChatName)
         persistStoreValue(chatPictureStore, chatInfo.picture_url, chatPictureStoreKey)
         persistStoreValue(groupChatNameStore, chatInfo.chatName, groupChatNameStoreKey)
-        persistStoreValue(isChatActiveStore, !$isChatActiveStore, isChatActiveStoreKey)
+        persistStoreValue(isChatWindowActiveStore, !$isChatWindowActiveStore, isChatWindowActiveStoreKey)
     }
-    // $: console.log("chatinfo:", chatInfo)
+
+    // When the UserChat component is mounted, highlight the user
+    onMount(() => {
+        let chatName: string | null = window.localStorage.getItem(currentChatName)
+        
+        if (chatName && JSON.parse(chatName) == chatInfo.chatName) {
+            deselectChats()
+            chatInfo.isChatActive = true
+        }
+    })
+
+    
 </script>
 
 <div class={chatInfo.isChatActive ? "user-chat selected" : "user-chat" } on:click={changeToChatWindow} on:keyup={null} tabindex="0" role="button" >
@@ -46,10 +63,10 @@
         padding: 10px 10px;
         border-radius: 10px;
         transition: 0.3s;
+        cursor: pointer;
 
         &:hover{
-            cursor: pointer;
-            background-color: var(--light-grey);
+            background-color: gray;
         }
 
         &:active{
@@ -97,6 +114,8 @@
     }
 
     .selected{
-        background-color: var(--darkest-grey);
+        @media only screen and (min-width: 992px){
+            background-color: var(--darkest-grey);
+        }
     }
 </style>

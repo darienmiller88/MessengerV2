@@ -8,33 +8,31 @@
         fillIconColorStore, 
         groupChatNameStore, 
         groupChatNameStoreKey, 
-        isChatActiveStore, 
-        isChatActiveStoreKey,
+        isChatWindowActiveStore, 
+        isChatWindowActiveStoreKey,
     } from "../../stores";
 
 
     const changeToUserChats = () => {
-        $isChatActiveStore = !$isChatActiveStore
+        $isChatWindowActiveStore = !$isChatWindowActiveStore
     }
 
     onMount(() => {
-        let isChatActive:   string | null = window.localStorage.getItem(isChatActiveStoreKey)
-        let groupChatName:  string | null = window.localStorage.getItem(groupChatNameStoreKey)
-        let chatPictureURL: string | null = window.localStorage.getItem(chatPictureStoreKey)
+        let isChatWindowActive: string | null = window.localStorage.getItem(isChatWindowActiveStoreKey)
+        let groupChatName:      string | null = window.localStorage.getItem(groupChatNameStoreKey)
+        let chatPictureURL:     string | null = window.localStorage.getItem(chatPictureStoreKey)
 
         if (groupChatName) {
             $groupChatNameStore = JSON.parse(groupChatName)
         }
 
-        if (isChatActive) {
-            $isChatActiveStore = JSON.parse(isChatActive)
+        if (isChatWindowActive) {
+            $isChatWindowActiveStore = JSON.parse(isChatWindowActive)
         }
 
         if (chatPictureURL) {
             $chatPictureStore = JSON.parse(chatPictureURL)
         }
-
-        console.log(groupChatName, isChatActive, chatPictureURL)
     })
 </script>
 

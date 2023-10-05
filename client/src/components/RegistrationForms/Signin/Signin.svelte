@@ -1,11 +1,12 @@
 <script lang="ts">
     // import { IconBrandGithubFilled, IconBrandGoogle } from '@tabler/icons-svelte';
     import { Github, Google } from "svelte-bootstrap-icons";
-    import { usernameStore } from "../../../stores"
+    import { usernameStore, persistStoreValue } from "../../../stores"
     import { navigate } from "svelte-routing";
 
 
     import logo from "../../../assets/bluelogo.png"
+    import publicChatPicture from "../../../assets/publiclogo.png"
     import "../styles.scss"
 
     let username: string = ""
@@ -20,6 +21,10 @@
         password = ""
 
         navigate("/home", {replace: true})
+    }
+
+    const signInAnonymously = () => {
+        
     }
 </script>
 

@@ -13,7 +13,7 @@
             isChatActive: true
         },
         {
-            chatName: "L.L.R.D",
+            chatName: "L.R.D.D",
             currentMessage: "What's good guys?",
             time: "11:45 AM",
             picture_url: profilepic,

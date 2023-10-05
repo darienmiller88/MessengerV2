@@ -6,7 +6,8 @@
     const iconSize: number = 28
 
     const logout = () => {
-        unpersistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
+        window.localStorage.clear()
+        // unpersistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
         // unpersistStoreValue(chatPictureStore, "", chatPictureStoreKey)
         navigate("/", {replace: true})
     }
