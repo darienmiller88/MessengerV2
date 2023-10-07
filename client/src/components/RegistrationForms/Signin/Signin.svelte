@@ -1,7 +1,14 @@
 <script lang="ts">
     // import { IconBrandGithubFilled, IconBrandGoogle } from '@tabler/icons-svelte';
     import { Github, Google } from "svelte-bootstrap-icons";
-    import { usernameStore, persistStoreValue, chatPictureStore, chatPictureStoreKey } from "../../../stores"
+    import { 
+        usernameStore, 
+        persistStoreValue, 
+        chatPictureStore, 
+        chatPictureStoreKey, 
+        groupChatNameStore,
+        groupChatNameStoreKey
+    } from "../../../stores"
     import { navigate } from "svelte-routing";
 
     import logo from "../../../assets/bluelogo.png"
@@ -19,11 +26,13 @@
         username = ""
         password = ""
 
+        persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
         persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
         navigate("/home", {replace: true})
     }
 
     const signInAnonymously = () => {
+        persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
         persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
         navigate("/home", {replace: true})
     }

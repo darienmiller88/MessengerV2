@@ -21,7 +21,7 @@
         let isChatWindowActive: string | null = window.localStorage.getItem(isChatWindowActiveStoreKey)
         let groupChatName:      string | null = window.localStorage.getItem(groupChatNameStoreKey)
         let chatPictureURL:     string | null = window.localStorage.getItem(chatPictureStoreKey)
-
+        
         if (groupChatName) {
             $groupChatNameStore = JSON.parse(groupChatName)
         }
