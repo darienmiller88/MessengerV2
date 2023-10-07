@@ -5,8 +5,6 @@
         groupChatNameStoreKey, 
         isChatWindowActiveStore, 
         isChatWindowActiveStoreKey, 
-        isUserChatActiveStore,
-        isUserChatActiveStoreKey,
         persistStoreValue, 
         persistValue,
         currentChatName,
@@ -27,7 +25,7 @@
         persistStoreValue(isChatWindowActiveStore, !$isChatWindowActiveStore, isChatWindowActiveStoreKey)
     }
 
-    // When the UserChat component is mounted, highlight the user
+    // When the UserChat component is mounted, highlight the user that was clicked.
     onMount(() => {
         let chatName: string | null = window.localStorage.getItem(currentChatName)
         

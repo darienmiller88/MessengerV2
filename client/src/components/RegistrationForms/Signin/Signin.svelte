@@ -1,12 +1,11 @@
 <script lang="ts">
     // import { IconBrandGithubFilled, IconBrandGoogle } from '@tabler/icons-svelte';
     import { Github, Google } from "svelte-bootstrap-icons";
-    import { usernameStore, persistStoreValue } from "../../../stores"
+    import { usernameStore, persistStoreValue, chatPictureStore, chatPictureStoreKey } from "../../../stores"
     import { navigate } from "svelte-routing";
 
-
     import logo from "../../../assets/bluelogo.png"
-    import publicChatPicture from "../../../assets/publiclogo.png"
+    import publicChatPicture from "../../../assets/plogo.png"
     import "../styles.scss"
 
     let username: string = ""
@@ -20,11 +19,13 @@
         username = ""
         password = ""
 
+        persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
         navigate("/home", {replace: true})
     }
 
     const signInAnonymously = () => {
-        
+        persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
+        navigate("/home", {replace: true})
     }
 </script>
 
@@ -45,7 +46,7 @@
         </div>
         <div class="button-group form-item-width">
             <button class="sign-in" type="submit">Sign in</button>
-            <button class="sign-in" type="submit" on:click={() => navigate("/home", {replace: true})}>
+            <button class="sign-in" type="submit" on:click={signInAnonymously}>
                 Sign in Anonymously
             </button>
         </div>
