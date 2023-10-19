@@ -12,7 +12,6 @@
         isChatWindowActiveStoreKey,
     } from "../../stores";
 
-
     const changeToUserChats = () => {
         $isChatWindowActiveStore = !$isChatWindowActiveStore
     }
@@ -85,7 +84,6 @@
                 }
             }
         }
-
 
         .group-chat-name{
             font-size: 22px;

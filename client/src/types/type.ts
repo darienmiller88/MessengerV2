@@ -5,3 +5,7 @@ export interface Chat{
     picture_url:    string
     isChatActive:   boolean
 }
+
+export interface User{
+    
+}

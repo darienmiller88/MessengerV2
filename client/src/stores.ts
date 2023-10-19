@@ -6,12 +6,14 @@ export const fillIconColorStore      = writable("rgb(29, 161, 242)")
 export const isChatWindowActiveStore = writable(false)
 export const isUserChatActiveStore   = writable(false)
 export const chatPictureStore        = writable("")
+export const usersStore              = writable([""])
 
 export const isChatWindowActiveStoreKey = "isChatActiveStoreKey"
 export const groupChatNameStoreKey      = "groupChatNameStoreKey"
 export const chatPictureStoreKey        = "chatPictureStoreKey"
 export const isUserChatActiveStoreKey   = "isUserChatActiveKey"
 export const currentChatName            = "currentChatName"
+export const usersStoreKey              = "usersStoreKey"
 
 // Utility function to help persist store values on reload. This is done by simply storing it in local storage.
 export function persistStoreValue<T>(store: Writable<T>, storeValue: T, localStorageKey: string) {

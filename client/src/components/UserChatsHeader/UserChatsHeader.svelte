@@ -1,13 +1,22 @@
 <script lang="ts">
     import { PersonAdd } from "svelte-bootstrap-icons";
+    import Modal from "../Modal/Modal.svelte";
+    import AddNewChatForm from "../../components/AddNewChatForm/AddNewChatForm.svelte"
 
+    let showModal: boolean = false
 </script>
 
 <div class="user-chat-header">
     <div class="title">Messages</div>
-    <div class="icon-wrapper">
+    <div class="icon-wrapper" on:click={() => showModal = true} tabindex="0" role="button" on:keyup={null}>
         <PersonAdd width={28} height={28}/>
     </div>
+    <Modal 
+        show={showModal}
+        modalHeader={"Add new chat/Message new user"}
+        modalContent={AddNewChatForm}
+        onHide={() => showModal = false}
+    />
 </div>
 
 <style lang="scss">
