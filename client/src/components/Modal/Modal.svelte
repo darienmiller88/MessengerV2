@@ -56,6 +56,8 @@
             margin: auto;
             width: 95vw;
             border-radius: 10px;
+            // z-index:  -5;
+
 
             .modal_header{
                 display: flex;
@@ -133,6 +135,7 @@
         @media screen and (min-width: 992px) {
             .modal_body{
                 width: 50vw;
+                // height: 100vh;
             }
         }
     }

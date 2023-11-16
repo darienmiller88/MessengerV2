@@ -1,10 +1,14 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import Select from 'svelte-select';
     import { usersStoreKey, usersStore } from "../../stores"
 
     let groupChatName:       string
     let memberName:          string
     let isCreatingGroupChat: boolean = true
+    let isShowingUsers:      boolean = false
+    let formRef:             any     = null 
+    let usersRef:            any     = null 
     export let onHide = () => {}
 
     const createNewChat = () => {
@@ -23,7 +27,7 @@
     })
 </script>
 
-<div class="form-wrapper">
+<div class="form-wrapper" bind:this={formRef} tabindex="0" role="button" on:keyup={null}>
     <div class="change-form-wrapper">
         <button on:click={() => isCreatingGroupChat = !isCreatingGroupChat}>
             {#if isCreatingGroupChat}
@@ -36,13 +40,13 @@
 
     {#if isCreatingGroupChat}
         <form class="add-new-chat-form" on:submit|preventDefault={createNewChat}>
-            <div class="group-chat-input form-input form-item-width">
+            <div class="group-chat-input form-input">
                 <label for="groupchat">Group Chat Name</label><br />
                 <input bind:value={groupChatName} required/>
             </div>
-            <div class="member-name-input form-input form-item-width">
+            <div class="member-name-input form-input">
                 <label for="members">Members</label><br />
-                <input bind:value={memberName} required/>
+                <Select --border-radius= "10px" --margin="10px 0px" items={$usersStore} multiple required />
             </div>
             <div class="submit">
                 <button>Submit</button>
@@ -50,11 +54,11 @@
         </form>
     {:else}
         <form class="message-user-form" on:submit|preventDefault={createNewChat}>
-            <div class="member-name-input form-input form-item-width">
-                <label for="members">New User</label><br />
-                <input bind:value={memberName} required/>
+            <div class="member-name-input form-input">
+                <label for="users">New User</label><br />
+                <Select --border-radius= "10px" --margin="10px 0px" items={$usersStore} required />
             </div>
-            <div class="message form-input form-item-width">
+            <div class="message form-input">
                 <label for="username">Message</label><br />
                 <textarea rows="4" bind:value={groupChatName} required/>
             </div>
@@ -64,8 +68,6 @@
         </form>
     {/if}
 </div>
-
-
 
 <style lang="scss">
     .form-wrapper{
@@ -94,8 +96,12 @@
             .form-input{
                 margin: auto;
                 width: 90%;
-                // border: 2px yellow solid;
                 margin-top: 10px;
+                // border: 2px yellow solid;
+
+                label{
+                    margin-bottom: 20px;
+                }
         
                 input{
                     width: 99%;
@@ -114,7 +120,7 @@
 
                 textarea{
                     width: 100%;
-                    // margin-top: 10px;
+                    margin-top: 10px;
                     font-size: 20px;
                     border: 2px solid var(--light-grey);
                     border-radius: 10px;
@@ -136,6 +142,7 @@
         
             .submit{
                 text-align: center;
+                z-index: -2;
         
                 button{
                     margin: auto;
