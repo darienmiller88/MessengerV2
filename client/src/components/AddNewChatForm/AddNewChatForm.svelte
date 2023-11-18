@@ -1,18 +1,30 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import { type FilteredUser } from "../../types/type"
     import Select from 'svelte-select';
     import { usersStoreKey, usersStore } from "../../stores"
 
     let groupChatName:       string
-    let memberName:          string
-    let isCreatingGroupChat: boolean = true
-    let isShowingUsers:      boolean = false
-    let formRef:             any     = null 
-    let usersRef:            any     = null 
+    let message:             string
+    let isCreatingGroupChat: boolean  = true
+    let value:               any
     export let onHide = () => {}
 
     const createNewChat = () => {
-        console.log(groupChatName, memberName)
+        let users = (value as FilteredUser[])
+
+        console.log(groupChatName, users)
+        groupChatName = ""
+        value = null
+        onHide()
+    }
+
+    const messageNewUser = () => {
+        let user = (value as FilteredUser)
+
+        console.log(message, user)
+        message = ""
+        value = null
         onHide()
     }
 
@@ -21,13 +33,12 @@
 
         if (users) {
             $usersStore = JSON.parse(users)
-
-            console.log("store:", $usersStore)
+            // console.log("store:", $usersStore)
         }
     })
 </script>
 
-<div class="form-wrapper" bind:this={formRef} tabindex="0" role="button" on:keyup={null}>
+<div class="form-wrapper" tabindex="0" role="button" on:keyup={null}>
     <div class="change-form-wrapper">
         <button on:click={() => isCreatingGroupChat = !isCreatingGroupChat}>
             {#if isCreatingGroupChat}
@@ -40,27 +51,37 @@
 
     {#if isCreatingGroupChat}
         <form class="add-new-chat-form" on:submit|preventDefault={createNewChat}>
+            <div class="member-name-input form-input">
+                <label for="members">Select Group Members</label><br />
+                <Select --border-radius= "10px" --margin="10px 0px" 
+                    items={$usersStore} 
+                    bind:value
+                    multiple 
+                    required 
+                />
+            </div>
             <div class="group-chat-input form-input">
                 <label for="groupchat">Group Chat Name</label><br />
                 <input bind:value={groupChatName} required/>
-            </div>
-            <div class="member-name-input form-input">
-                <label for="members">Members</label><br />
-                <Select --border-radius= "10px" --margin="10px 0px" items={$usersStore} multiple required />
             </div>
             <div class="submit">
                 <button>Submit</button>
             </div>
         </form>
     {:else}
-        <form class="message-user-form" on:submit|preventDefault={createNewChat}>
+        <form class="message-user-form" on:submit|preventDefault={messageNewUser}>
             <div class="member-name-input form-input">
                 <label for="users">New User</label><br />
-                <Select --border-radius= "10px" --margin="10px 0px" items={$usersStore} required />
+                <Select --border-radius= "10px" --margin="10px 0px" 
+                    items={$usersStore} 
+                    bind:value
+                    placeholder="Please select user" 
+                    required 
+                />
             </div>
             <div class="message form-input">
                 <label for="username">Message</label><br />
-                <textarea rows="4" bind:value={groupChatName} required/>
+                <textarea rows="4" bind:value={message} required/>
             </div>
             <div class="submit">
                 <button>Submit</button>
@@ -136,13 +157,8 @@
                 }
             }
         
-            .group-chat-input{
-                margin-bottom: 40px;
-            }
-        
             .submit{
                 text-align: center;
-                z-index: -2;
         
                 button{
                     margin: auto;
@@ -161,7 +177,5 @@
                 }
             }
         }
-    
     }
-
 </style>

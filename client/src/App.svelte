@@ -26,7 +26,7 @@
         },
         {
             chatName: "Vicky",
-            currentMessage: "Hey Vicky!",
+            currentMessage: " Vicky!",
             time: "1:45 PM",
             picture_url: profilepic,
             isChatActive: false

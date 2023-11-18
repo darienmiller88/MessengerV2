@@ -6,6 +6,12 @@ export interface Chat{
     isChatActive:   boolean
 }
 
+export interface FilteredUser{
+    index: Number
+    value: string
+    label: string
+}
+
 export interface User{
     
 }

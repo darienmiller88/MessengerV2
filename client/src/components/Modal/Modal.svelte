@@ -74,7 +74,7 @@
                 .header{
                     // border: 2px solid red;
                     justify-self: right;
-                    font-size: 18px;
+                    font-size: 16px;
 
                     @media screen and (min-width: 768px) {
                         font-size: 25px;
