@@ -1,26 +1,52 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { type FilteredUser } from "../../types/type"
+    import { type FilteredUser, type Chat } from "../../types/type"
+    import { usersStoreKey, usersStore, chatsStore, chatsStoreKey, persistStoreValue } from "../../stores"
     import Select from 'svelte-select';
-    import { usersStoreKey, usersStore } from "../../stores"
+    import defaultPic from "../../assets/default.jpg"
 
     let groupChatName:       string
     let message:             string
     let isCreatingGroupChat: boolean  = true
     let value:               any
+    let newChat:             Chat = {
+        chatName: "",
+        currentMessage: "",
+        time: "",
+        picture_url: "",
+        isChatActive: false
+    }
     export let onHide = () => {}
-
+    
     const createNewChat = () => {
         let users = (value as FilteredUser[])
+
+        newChat.chatName = groupChatName
+        newChat.picture_url = defaultPic
+        newChat.currentMessage = "N/A"
+        newChat.time = "N/A"
+
+        $chatsStore = [...$chatsStore, newChat]
+        persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
 
         console.log(groupChatName, users)
         groupChatName = ""
         value = null
+
+
         onHide()
     }
 
     const messageNewUser = () => {
         let user = (value as FilteredUser)
+
+        newChat.chatName = user.value
+        newChat.currentMessage = message
+        newChat.time = "N/A"
+        newChat.picture_url = defaultPic
+
+        $chatsStore = [...$chatsStore, newChat]
+        persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
 
         console.log(message, user)
         message = ""
@@ -56,6 +82,7 @@
                 <Select --border-radius= "10px" --margin="10px 0px" 
                     items={$usersStore} 
                     bind:value
+                    placeholder="Please select users" 
                     multiple 
                     required 
                 />

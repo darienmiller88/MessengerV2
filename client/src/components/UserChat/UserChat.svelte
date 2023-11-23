@@ -9,7 +9,8 @@
         persistValue,
         currentChatName,
         chatPictureStore,
-        chatPictureStoreKey
+        chatPictureStoreKey,
+        chatsStore
     } from "../../stores";
     import { onMount } from "svelte";
 

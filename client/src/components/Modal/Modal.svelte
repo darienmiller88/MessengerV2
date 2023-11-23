@@ -74,7 +74,7 @@
                 .header{
                     // border: 2px solid red;
                     justify-self: right;
-                    font-size: 16px;
+                    font-size: 17px;
 
                     @media screen and (min-width: 768px) {
                         font-size: 25px;
@@ -85,7 +85,7 @@
                     // border: 2px solid saddlebrown;
                     justify-self: right;
                     transition: 0.5s;
-                    font-size: 40px;
+                    font-size: 35px;
                 }
 
                 .close:hover{

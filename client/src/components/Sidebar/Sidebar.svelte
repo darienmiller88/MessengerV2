@@ -1,6 +1,7 @@
 <script lang="ts">
     import { ChatDotsFill, PeopleFill, BoxArrowInLeft } from "svelte-bootstrap-icons";
     import { navigate } from "svelte-routing";
+    import { chatsStore } from "../../stores"
 
     const iconSize: number = 28
 

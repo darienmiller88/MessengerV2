@@ -2,6 +2,8 @@
     // import profilepic from "../../assets/profile.png"
     import { onMount } from "svelte";
     import { ThreeDots, ArrowLeftCircle } from "svelte-bootstrap-icons";
+    import Modal from "../Modal/Modal.svelte";
+    import DeleteGroupChat from "../DeleteGroupChat/DeleteGroupChat.svelte";
     import { 
         chatPictureStore,
         chatPictureStoreKey,
@@ -10,16 +12,22 @@
         groupChatNameStoreKey, 
         isChatWindowActiveStore, 
         isChatWindowActiveStoreKey,
+        chatsStore,
+        chatsStoreKey
     } from "../../stores";
+    import type { Chat } from "../../types/type";
+
+    // let groupChatName: string | null
+    let showModal: boolean = false
 
     const changeToUserChats = () => {
         $isChatWindowActiveStore = !$isChatWindowActiveStore
     }
 
     onMount(() => {
-        let isChatWindowActive: string | null = window.localStorage.getItem(isChatWindowActiveStoreKey)
         let groupChatName:      string | null = window.localStorage.getItem(groupChatNameStoreKey)
         let chatPictureURL:     string | null = window.localStorage.getItem(chatPictureStoreKey)
+        let isChatWindowActive: string | null = window.localStorage.getItem(isChatWindowActiveStoreKey)
         
         if (groupChatName) {
             $groupChatNameStore = JSON.parse(groupChatName)
@@ -46,9 +54,18 @@
             <div class="online-status">Online</div>
         </div>
     </div>
-    <button class="icon-wrapper">
-        <ThreeDots width={24} height={24} fill={$fillIconColorStore}/>
-    </button>
+    {#if $groupChatNameStore != "Public"}
+        <button class="icon-wrapper" on:click={() => showModal = true} >
+            <ThreeDots width={24} height={24} fill={$fillIconColorStore}/>
+        </button>
+    {/if}
+
+    <Modal 
+        show={showModal}
+        modalHeader={"Delete Conversation"}
+        modalContent={DeleteGroupChat}
+        onHide={() => showModal = false}
+    />
 </div>
 
 <style lang="scss">
