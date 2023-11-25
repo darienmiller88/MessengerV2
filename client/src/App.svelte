@@ -12,9 +12,11 @@
     usersStoreKey, 
     groupChatNameStore, 
     groupChatNameStoreKey, 
+    currentChatName,
     chatsStore,
     chatsStoreKey,
     persistStoreValue,
+    persistValue
   } from "./stores"
 
   let users: string[] = ["Vicky", "Richard", "Darien", "Dalton", "Steve", "Zira", "Max", "Andre", "Isaac"]
@@ -23,6 +25,7 @@
     let groupChatName = window.localStorage.getItem(groupChatNameStoreKey)
     let usersString = window.localStorage.getItem(usersStoreKey)
     let chats = window.localStorage.getItem(chatsStoreKey)
+    let chatName = window.localStorage.getItem(currentChatName)
 
     if (!usersString) {
         $usersStore = users
@@ -36,6 +39,10 @@
 
     if (!chats) {
         persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
+    }
+    
+    if (!chatName) {
+      persistValue("Public", currentChatName)
     }
   })
 

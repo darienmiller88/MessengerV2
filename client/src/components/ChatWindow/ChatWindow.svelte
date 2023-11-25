@@ -7,7 +7,7 @@
 
     const scrollTo = async (node: Element) => {
         console.log(node.scrollHeight, )
-        node.scroll({ top: node.scrollHeight * 2,  behavior: 'smooth' });
+        node.scrollTo({ top: node.scrollHeight * 2,  behavior: 'smooth' });
     }; 
 
     // const scrollToBottom = (node: HTMLElement) => {
@@ -20,23 +20,20 @@
 	// 	return { update: scroll }
 	// };
 
-    $: if ($messagesStore.length && messages) {
-        // let el = document.querySelector(".bottom")
+    $: if ($messagesStore.length) {
+        let el = document.querySelector(".bottom")
 
-        // if (el) {
-        //     el.scrollIntoView({
-        //         behavior: 'smooth'
-        //     });
+        if (el) {
+            el.scrollIntoView({
+                behavior: 'smooth'
+            });
 
-        //     console.log("scrolling...")
-        // }else{
-        //     console.log("el not found");
-        // }
+            console.log("scrolling...")
+        }else{
+            console.log("el not found");
+        }
 
-        
-        scrollTo(messages)
-        // scrollTo(bottom)
-       
+        // scrollTo(messages)       
         // console.log("messages:", $messagesStore.length, "ref:", messagesEnd.s); 
     }
 </script>
@@ -51,7 +48,7 @@
                 isYourMessage={message.isSender}
             />
         {/each}
-        <div class="bottom" bind:this={bottom}/>
+        <div class="bottom" />
     </div>
 </div>
 
