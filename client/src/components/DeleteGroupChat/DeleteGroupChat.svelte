@@ -1,6 +1,13 @@
 <script lang="ts">
     import { type Chat } from "../../types/type";
-    import { groupChatNameStore, groupChatNameStoreKey, chatsStore, persistStoreValue } from "../../stores"
+    import { 
+        isChatWindowActiveStore,
+        isChatWindowActiveStoreKey,
+        groupChatNameStore, 
+        groupChatNameStoreKey, 
+        chatsStore, 
+        persistStoreValue 
+    } from "../../stores"
     
     export let onHide = () => {}
 
@@ -11,6 +18,7 @@
         if (groupChatName) {
             let parsedChatName = (JSON.parse(groupChatName) as string)
 
+            //Assign to the chatsStore a filtered array that does not include to chat to be deleted.
             $chatsStore = $chatsStore.filter((chat: Chat, i: number) => {
                 if(chat.chatName == parsedChatName){
                     chatIndex = i
@@ -21,9 +29,11 @@
 
             $groupChatNameStore = (chatIndex == $chatsStore.length) ? $chatsStore[chatIndex - 1].chatName : $chatsStore[chatIndex].chatName
             persistStoreValue(groupChatNameStore, $groupChatNameStore, groupChatNameStoreKey)
+
+            $isChatWindowActiveStore = !$isChatWindowActiveStore
+            persistStoreValue(isChatWindowActiveStore, $isChatWindowActiveStore, isChatWindowActiveStoreKey)
         }
 
-        // console.log("deleted index:", chatIndex)
         onHide()
     }
 </script>

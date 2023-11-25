@@ -1,10 +1,25 @@
 <script lang="ts">
     import { Image, SendFill, HandThumbsUpFill } from "svelte-bootstrap-icons";
     import { fillIconColorStore } from "../../stores";
+    import { messagesStore } from "../../stores"
+    import { type Message } from "../../types/type"
 
-    let isThumbsUp: boolean = true
-    let messageText: string = ""
-    const iconSize: number = 24
+    let isThumbsUp:  boolean = true
+    let messageText: string  = ""
+    const iconSize:  number  = 24
+
+    const sendMessage = () => {
+        let message: Message = {
+            messageContent: isThumbsUp ? "👍" : messageText,
+            username: "darienmiller88",
+            messageTime: new Date().toLocaleString(),
+            isSender: false
+        }
+
+        isThumbsUp = true
+        $messagesStore = [...$messagesStore, message]
+        messageText = ""
+    }
 </script>
 
 <div class="chat-input-wrapper">
@@ -12,9 +27,9 @@
         <Image width={iconSize} height={iconSize} fill={$fillIconColorStore} />
     </div>
     <div class="input-wrapper">
-        <textarea rows="1" placeholder="Aa" bind:value={messageText} on:input={() => isThumbsUp = messageText.length == 0}/>
+        <textarea placeholder="Aa" bind:value={messageText} on:input={() => isThumbsUp = messageText.length == 0}/>
     </div>
-    <div class="icon-wrapper">
+    <div class="icon-wrapper" on:click={sendMessage} on:keyup={null} tabindex="0" role="button">
         {#if isThumbsUp }
             <HandThumbsUpFill width={iconSize} height={iconSize} fill={$fillIconColorStore} />
         {:else}            
@@ -27,6 +42,11 @@
     .chat-input-wrapper{
         display: grid;
         grid-template-columns: 15% auto 15%;
+        padding: 5px 0px;
+
+        @media only screen and (min-width: 768px){
+            grid-template-columns: 10% auto 10%;
+        }
 
         @media only screen and (min-width: 992px){
             grid-template-columns: 5% auto 5%;
@@ -39,13 +59,21 @@
                 margin: auto;
                 padding: 10px 10px;
                 border-radius: 20px;
-                font-size: 20px;
+                font-size: 16px;
 
                 border: none;
                 outline: none;
                 background-color: var(--light-grey);
 
                 width: 100%;
+
+                @media only screen and (min-width: 768px){
+                    font-size: 35px;
+                }
+
+                @media only screen and (min-width: 992px){
+                    font-size: 20px;
+                }
             }
         }
     

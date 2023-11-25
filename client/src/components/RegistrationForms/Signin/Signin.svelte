@@ -54,7 +54,7 @@
             <input type="password" bind:value={password} required>
         </div>
         <div class="button-group form-item-width">
-            <button class="sign-in" type="submit">Sign in</button>
+            <button class="sign-in" type="submit" disabled>Sign in</button>
             <button class="sign-in" type="submit" on:click={signInAnonymously}>
                 Sign in Anonymously
             </button>

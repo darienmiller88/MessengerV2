@@ -64,6 +64,14 @@
         transition: 0.3s;
         cursor: pointer;
 
+        @media only screen and (min-width: 768px){
+            grid-template-columns: 12% auto;
+        }
+
+        @media only screen and (min-width: 992px){
+            grid-template-columns: 22% auto;
+        }
+
         &:hover{
             background-color: gray;
         }
@@ -81,6 +89,14 @@
 
                 width: 80%;
                 height: auto;
+
+                @media only screen and (min-width: 768px){
+                    width: 70%;
+                }
+
+                @media only screen and (min-width: 992px){
+                    width: 80%;
+                }
             }
         }
 
@@ -96,11 +112,27 @@
 
                 .name{
                     font-size: 18px;
+
+                    @media only screen and (min-width: 768px){
+                        font-size: 25px;
+                    }
+
+                    @media only screen and (min-width: 992px){
+                        font-size: 20px;
+                    }
                 }
 
                 .time{
                     color: var(--lighter-grey);
                     font-size: 14px;
+
+                    @media only screen and (min-width: 768px){
+                        font-size: 20px;
+                    }
+
+                    @media only screen and (min-width: 768px){
+                        font-size: 14px;
+                    }
                 }
                 margin-bottom: 5px;
             }
@@ -108,6 +140,14 @@
             .current-message{
                 font-size: 13px;
                 color: rgb(60, 60, 60);
+
+                @media only screen and (min-width: 768px){
+                    font-size: 20px;
+                }
+
+                @media only screen and (min-width: 768px){
+                    font-size: 15px;
+                }
             }
         }
     }

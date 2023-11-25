@@ -1,7 +1,7 @@
 <script lang="ts">
     import ChatInputWrapper from "../../components/InputWrapper/InputWrapper.svelte";
-    import ChatWindow from "../../components/ChatWindow/ChatWindow.svelte";
     import ChatWindowHeader from "../../components/ChatWindowHeader/ChatWindowHeader.svelte";
+    import ChatWindow       from "../../components/ChatWindow/ChatWindow.svelte";
 
 </script>
 
@@ -23,5 +23,9 @@
         display: grid;
         grid-template-rows: 10% 80vh auto;
         height: 100vh;
+
+        @media only screen and (min-width: 768px){
+            grid-template-rows: 10% 75vh auto;
+        }
     }
 </style>

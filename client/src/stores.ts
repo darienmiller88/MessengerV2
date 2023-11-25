@@ -1,5 +1,5 @@
 import { writable, type Writable } from "svelte/store";
-import { type Chat } from "./types/type"
+import { type Chat, type Message } from "./types/type"
 import publicpic from "./assets/plogo.png"
 
 export const usernameStore           = writable("");
@@ -9,6 +9,26 @@ export const isChatWindowActiveStore = writable(false)
 export const isUserChatActiveStore   = writable(false)
 export const chatPictureStore        = writable("")
 export const usersStore              = writable([""])
+export const messagesStore           = writable<Message[]>([
+    {
+        messageContent: "Hey dudes, Farizzle!",
+        messageTime: "11:30 PM",
+        username: "darienmiller88",
+        isSender: true
+    },
+    {
+        messageContent: "Just testing this out.",
+        messageTime: "11:31 PM",
+        username: "darienmiller88",
+        isSender: true
+    },
+    {
+        messageContent: "👍",
+        messageTime: "11:35 PM",
+        username: "cyrus",
+        isSender: false
+    },
+])
 export const chatsStore              = writable<Chat[]>([{
     chatName: "Public",
     currentMessage: "N/A",
@@ -46,6 +66,7 @@ export const isUserChatActiveStoreKey   = "isUserChatActiveKey"
 export const currentChatName            = "currentChatName"
 export const usersStoreKey              = "usersStoreKey"
 export const chatsStoreKey              = "chatsStoreKey"
+
 
 // Utility function to help persist store values on reload. This is done by simply storing it in local storage.
 export function persistStoreValue<T>(store: Writable<T>, storeValue: T, localStorageKey: string) {

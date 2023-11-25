@@ -46,9 +46,9 @@
 <div class="chat-window-header">
     <div class="profile-picture-wrapper">
         <button class="icon-wrapper back" on:click={changeToUserChats}>
-            <ArrowLeftCircle width={24} height={24} fill={$fillIconColorStore}/>
+            <ArrowLeftCircle width={28} height={28} fill={$fillIconColorStore}/>
         </button>
-        <img src={$chatPictureStore} alt=""/>
+        <img src={$chatPictureStore} alt="chat-pic"/>
         <div class="online-status-wrapper">
             <div class="group-chat-name">{$groupChatNameStore}</div>
             <div class="online-status">Online</div>
@@ -93,6 +93,14 @@
                 margin-right: 10px;
 
                 border-radius: 50%;
+
+                @media only screen and (min-width: 768px){
+                    width: 65px;
+                }
+
+                @media only screen and (min-width: 992px){
+                    width: 45px;
+                }
             }
 
             .online-status-wrapper{
@@ -104,6 +112,14 @@
 
         .group-chat-name{
             font-size: 22px;
+
+            @media only screen and (min-width: 768px){
+                font-size: 30px;
+            }
+
+            @media only screen and (min-width: 992px){
+                font-size: 22px;
+            }
         }
 
         .icon-wrapper{
