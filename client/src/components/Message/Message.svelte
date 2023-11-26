@@ -1,12 +1,20 @@
 <script lang="ts">
     import pic from "../../assets/plogo.png"
-    import { fillIconColorStore } from "../../stores";
+    import { fillIconColorStore, chosenMessageStore } from "../../stores";
     import { ThreeDotsVertical, HandThumbsUpFill } from "svelte-bootstrap-icons";
+    import Modal from "../Modal/Modal.svelte";
+    import DeleteMessageForm from "../DeleteMessageForm/DeleteMessageForm.svelte";
 
     export let messageContent: string
     export let username:       string
     export let time:           string
     export let isYourMessage:  boolean
+
+    let showModal: boolean = false
+    const storeMessage = () => {
+        $chosenMessageStore = messageContent
+        showModal = true
+    }
 </script>
 
 <div class={isYourMessage ? "message-wrapper sender" : "message-wrapper receiver"}>
@@ -24,10 +32,17 @@
             <div class="message">{messageContent}</div>
         {/if}
     </div>
-    <div class="delete-wrapper">
+    <div class="delete-wrapper" on:click={storeMessage} tabindex="0" role="button" on:keyup={null}>
         <ThreeDotsVertical />
     </div>
 </div>
+
+<Modal 
+    show={showModal}
+    modalHeader={"Delete Message"}
+    modalContent={DeleteMessageForm}
+    onHide={() => showModal = false}
+/>
 
 <style lang="scss">
     .sender{
@@ -37,6 +52,7 @@
         .message-content-wrapper{
             .data{
                 justify-content: flex-end;
+                align-items: flex-end;
             }
 
             .message{
@@ -101,6 +117,11 @@
 
             .data{
                 display: flex;
+                flex-direction: column;
+
+                @media screen and (min-width: 992px) {
+                    flex-direction: row;   
+                }
 
                 .name{
                     margin-right: 6px;

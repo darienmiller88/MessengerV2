@@ -8,6 +8,7 @@ export const fillIconColorStore      = writable("rgb(29, 161, 242)")
 export const isChatWindowActiveStore = writable(false)
 export const isUserChatActiveStore   = writable(false)
 export const chatPictureStore        = writable("")
+export const chosenMessageStore      = writable("")
 export const usersStore              = writable([""])
 export const messagesStore           = writable<Message[]>([
     {
