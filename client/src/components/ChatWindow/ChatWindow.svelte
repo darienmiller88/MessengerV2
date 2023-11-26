@@ -1,45 +1,27 @@
 <script lang="ts">
     import Message from "../Message/Message.svelte";
     import { messagesStore } from "../../stores";
+    import { afterUpdate } from 'svelte';
 
-    let messages: Element
-    let bottom: Element
+    let messagesRef: HTMLElement
 
     const scrollTo = async (node: Element) => {
-        console.log(node.scrollHeight, )
-        node.scrollTo({ top: node.scrollHeight * 2,  behavior: 'smooth' });
+        node.scrollTo({ top: node.scrollHeight,  behavior: 'smooth' });
     }; 
 
-    // const scrollToBottom = (node: HTMLElement) => {
-	// 	const scroll = () => node.scroll({
-	// 		top: node.scrollHeight,
-	// 		behavior: 'smooth',
-	// 	});
-	// 	scroll();
-
-	// 	return { update: scroll }
-	// };
-
-    $: if ($messagesStore.length) {
-        let el = document.querySelector(".bottom")
-
-        if (el) {
-            el.scrollIntoView({
-                behavior: 'smooth'
-            });
-
-            console.log("scrolling...")
-        }else{
-            console.log("el not found");
+    afterUpdate(() => {        
+		if($messagesStore.length) {
+            scrollTo(messagesRef);
         }
+    });
 
-        // scrollTo(messages)       
-        // console.log("messages:", $messagesStore.length, "ref:", messagesEnd.s); 
+    $: if ($messagesStore.length && messagesRef) {   
+        scrollTo(messagesRef)       
     }
 </script>
 
 <div class="window">
-    <div class="window-inner" bind:this={messages}>
+    <div class="window-inner" bind:this={messagesRef}>
         {#each $messagesStore as message}
             <Message 
                 messageContent={message.messageContent} 
@@ -48,7 +30,6 @@
                 isYourMessage={message.isSender}
             />
         {/each}
-        <div class="bottom" />
     </div>
 </div>
 
