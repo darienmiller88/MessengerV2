@@ -19,6 +19,7 @@
             isSender: isYourMessage
         }
 
+        console.log("chosen message:", $chosenMessageStore);
         showModal = true
     }
 </script>

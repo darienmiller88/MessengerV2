@@ -11,24 +11,24 @@ export const chatPictureStore        = writable("")
 export const chosenMessageStore      = writable<Message>()
 export const usersStore              = writable([""])
 export const messagesStore           = writable<Message[]>([
-    {
-        messageContent: "Hey dudes, Farizzle!",
-        messageTime: "11:30 PM",
-        username: "darienmiller88",
-        isSender: true
-    },
-    {
-        messageContent: "Just testing this out.",
-        messageTime: "11:31 PM",
-        username: "darienmiller88",
-        isSender: true
-    },
-    {
-        messageContent: "👍",
-        messageTime: "11:35 PM",
-        username: "cyrus",
-        isSender: false
-    },
+    // {
+    //     messageContent: "Hey dudes, Farizzle!",
+    //     messageTime: "11:30 PM",
+    //     username: "darienmiller88",
+    //     isSender: true
+    // },
+    // {
+    //     messageContent: "Just testing this out.",
+    //     messageTime: "11:31 PM",
+    //     username: "darienmiller88",
+    //     isSender: true
+    // },
+    // {
+    //     messageContent: "👍",
+    //     messageTime: "11:35 PM",
+    //     username: "cyrus",
+    //     isSender: false
+    // },
 ])
 export const chatsStore              = writable<Chat[]>([{
     chatName: "Public",
