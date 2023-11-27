@@ -5,10 +5,9 @@
     export let onHide = () => {}
     const deleteMessage = () => {
         $messagesStore = $messagesStore.filter((message: Message) => {
-            return message.messageContent != $chosenMessageStore
+            return JSON.stringify(message) != JSON.stringify($chosenMessageStore)
         })
-        console.log("messages:", $messagesStore);
-        
+
         onHide()
     }
 </script>

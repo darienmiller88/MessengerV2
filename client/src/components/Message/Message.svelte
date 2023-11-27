@@ -12,7 +12,13 @@
 
     let showModal: boolean = false
     const storeMessage = () => {
-        $chosenMessageStore = messageContent
+        $chosenMessageStore = {
+            messageContent: messageContent,
+            messageTime: time,
+            username: username,
+            isSender: isYourMessage
+        }
+
         showModal = true
     }
 </script>
