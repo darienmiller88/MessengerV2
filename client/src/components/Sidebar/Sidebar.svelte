@@ -13,6 +13,16 @@
         navigate("/", {replace: true})
     }
 
+    const changeColorTheme = () => {
+        isDarkMode = !isDarkMode
+
+        if (isDarkMode) {
+            document.body.classList.add("dark")
+        } else {
+            document.body.classList.remove("dark")
+        }
+    }
+
     let showModal: boolean = false
     let isDarkMode: boolean = false
 </script>
@@ -20,7 +30,7 @@
 <div class="sidebar">
     <div class="sidebar-mobile-view">
         <div class="toggle-wrapper">
-            <DarkModeToggle isDarkMode={isDarkMode} changeColorTheme={() => isDarkMode = !isDarkMode}/>
+            <DarkModeToggle isDarkMode={isDarkMode} changeColorTheme={changeColorTheme}/>
         </div>
         <div class="icon-wrapper">
             <ChatDotsFill width={iconSize} height={iconSize} class="icon"/>
@@ -50,7 +60,7 @@
 
         <div class="settings-wrapper">
             <div class="toggle-wrapper">
-                <DarkModeToggle isDarkMode={isDarkMode} changeColorTheme={() => isDarkMode = !isDarkMode}/>
+                <DarkModeToggle isDarkMode={isDarkMode} changeColorTheme={changeColorTheme}/>
             </div>
             <div class="profile-pic-wrapper" on:click={() => showModal = true} tabindex="0" role="button" on:keyup={null}>
                 <img src={pic} alt="pic" />

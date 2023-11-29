@@ -6,6 +6,7 @@
 
     let isThumbsUp:  boolean = true
     let messageText: string  = ""
+    let showIcon:    boolean = true
     const iconSize:  number  = 24
 
     const sendMessage = () => {
@@ -19,6 +20,11 @@
         isThumbsUp = true
         $messagesStore = [...$messagesStore, message]
         messageText = ""
+        showIcon = false
+
+        setTimeout(() => {
+            showIcon = true
+        }, 3000);
     }
 </script>
 
@@ -29,13 +35,16 @@
     <div class="input-wrapper">
         <textarea placeholder="Aa" bind:value={messageText} on:input={() => isThumbsUp = messageText.length == 0}/>
     </div>
-    <div class="icon-wrapper" on:click={sendMessage} on:keyup={null} tabindex="0" role="button">
-        {#if isThumbsUp }
-            <HandThumbsUpFill width={iconSize} height={iconSize} fill={$fillIconColorStore}/>
-        {:else}            
-            <SendFill width={iconSize} height={iconSize} fill={$fillIconColorStore} />
-        {/if}
-    </div>
+
+    {#if showIcon }
+        <div class="icon-wrapper" on:click={sendMessage} on:keyup={null} tabindex="0" role="button">
+            {#if isThumbsUp }
+                <HandThumbsUpFill width={iconSize} height={iconSize} fill={$fillIconColorStore}/>
+            {:else}            
+                <SendFill width={iconSize} height={iconSize} fill={$fillIconColorStore} />
+            {/if}
+        </div>
+    {/if}
 </div>
 
 <style lang="scss">

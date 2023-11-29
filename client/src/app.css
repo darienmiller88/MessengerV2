@@ -21,12 +21,18 @@
 
 body{
   margin: 0;
+  transition: 0.4s;
 
   font-family: 'Gentium Book Plus', serif;
   font-family: 'Kanit', sans-serif;
   font-family: 'Open Sans', sans-serif;
   font-family: 'Oswald', sans-serif;
   font-family: 'Rubik', sans-serif;
+}
+
+body.dark{
+  background-color: black;
+  color: white;
 }
 
 /* button {
