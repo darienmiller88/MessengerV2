@@ -13,7 +13,7 @@
             messageContent: isThumbsUp ? "👍" : messageText,
             username: "darienmiller88",
             messageTime: new Date().toLocaleString(),
-            isSender: false
+            isSender: true
         }
 
         isThumbsUp = true
@@ -31,7 +31,7 @@
     </div>
     <div class="icon-wrapper" on:click={sendMessage} on:keyup={null} tabindex="0" role="button">
         {#if isThumbsUp }
-            <HandThumbsUpFill width={iconSize} height={iconSize} fill={$fillIconColorStore} />
+            <HandThumbsUpFill width={iconSize} height={iconSize} fill={$fillIconColorStore}/>
         {:else}            
             <SendFill width={iconSize} height={iconSize} fill={$fillIconColorStore} />
         {/if}
@@ -82,7 +82,6 @@
             justify-content: center;
             align-items: center;
 
-            // border: 2px solid yellowgreen;
             padding: 10px 10px;
             transition: 0.4s;
             

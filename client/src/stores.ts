@@ -10,55 +10,14 @@ export const isUserChatActiveStore   = writable(false)
 export const chatPictureStore        = writable("")
 export const chosenMessageStore      = writable<Message>()
 export const usersStore              = writable([""])
-export const messagesStore           = writable<Message[]>([
-    // {
-    //     messageContent: "Hey dudes, Farizzle!",
-    //     messageTime: "11:30 PM",
-    //     username: "darienmiller88",
-    //     isSender: true
-    // },
-    // {
-    //     messageContent: "Just testing this out.",
-    //     messageTime: "11:31 PM",
-    //     username: "darienmiller88",
-    //     isSender: true
-    // },
-    // {
-    //     messageContent: "👍",
-    //     messageTime: "11:35 PM",
-    //     username: "cyrus",
-    //     isSender: false
-    // },
-])
+export const messagesStore           = writable<Message[]>([])
 export const chatsStore              = writable<Chat[]>([{
     chatName: "Public",
     currentMessage: "N/A",
     time: "N/A",
     picture_url: publicpic,
     isChatActive: true
-},
-    {
-            chatName: "L.R.D.D",
-            currentMessage: "What's good guys?",
-            time: "11:45 AM",
-            picture_url: publicpic,
-            isChatActive: false
-        },
-        {
-            chatName: "Vicky",
-            currentMessage: "Hey Vicky!",
-            time: "1:45 PM",
-            picture_url: publicpic,
-            isChatActive: false
-        },
-        {
-            chatName: "Dalton",
-            currentMessage: "Hey dude!",
-            time: "1:45 PM",
-            picture_url: publicpic,
-            isChatActive: false 
-        }
-])
+}])
 
 export const isChatWindowActiveStoreKey = "isChatActiveStoreKey"
 export const groupChatNameStoreKey      = "groupChatNameStoreKey"

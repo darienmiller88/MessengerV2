@@ -13,7 +13,10 @@
         isChatWindowActiveStore, 
         isChatWindowActiveStoreKey,
         chatsStore,
-        chatsStoreKey
+        chatsStoreKey,
+
+        persistStoreValue
+
     } from "../../stores";
     import type { Chat } from "../../types/type";
 
@@ -22,6 +25,7 @@
 
     const changeToUserChats = () => {
         $isChatWindowActiveStore = !$isChatWindowActiveStore
+        persistStoreValue(isChatWindowActiveStore, $isChatWindowActiveStore, isChatWindowActiveStoreKey)
     }
 
     onMount(() => {
