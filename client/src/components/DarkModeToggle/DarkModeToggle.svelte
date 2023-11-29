@@ -1,10 +1,11 @@
 <script lang="ts">
-    export let isDarkMode: boolean
+    import { isDarkModeStore, isDarkModeStoreKey } from "../../stores";
+
     export let changeColorTheme = () => {}
 </script>
 
 <div>
-    <button class={`mode-toggle ${isDarkMode ? "" : "toggle-right"}`} on:click={changeColorTheme}>
+    <button class={`mode-toggle ${$isDarkModeStore ? "" : "toggle-right"}`} on:click={changeColorTheme}>
         <div class="slider"></div>
     </button>
 </div>

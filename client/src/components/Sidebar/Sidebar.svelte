@@ -1,6 +1,7 @@
 <script lang="ts">
     import { ChatDotsFill, PeopleFill, BoxArrowInLeft } from "svelte-bootstrap-icons";
     import { navigate } from "svelte-routing";
+    import { isDarkModeStore, isDarkModeStoreKey } from "../../stores";
     import Modal from "../Modal/Modal.svelte";
     import ProfileForm from "../ProfileForm/ProfileForm.svelte";
     import DarkModeToggle from "../DarkModeToggle/DarkModeToggle.svelte";
@@ -14,32 +15,33 @@
     }
 
     const changeColorTheme = () => {
-        isDarkMode = !isDarkMode
+        $isDarkModeStore = !$isDarkModeStore
 
-        if (isDarkMode) {
+        if ($isDarkModeStore) {
             document.body.classList.add("dark")
         } else {
             document.body.classList.remove("dark")
         }
     }
 
+    console.log("is dark mode:", $isDarkModeStore);
+    
     let showModal: boolean = false
-    let isDarkMode: boolean = false
 </script>
 
 <div class="sidebar">
     <div class="sidebar-mobile-view">
         <div class="toggle-wrapper">
-            <DarkModeToggle isDarkMode={isDarkMode} changeColorTheme={changeColorTheme}/>
+            <DarkModeToggle changeColorTheme={changeColorTheme}/>
         </div>
-        <div class="icon-wrapper">
-            <ChatDotsFill width={iconSize} height={iconSize} class="icon"/>
+        <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"}>
+            <ChatDotsFill width={iconSize} height={iconSize}/>
         </div>
-        <div class="icon-wrapper">
-            <PeopleFill width={iconSize} height={iconSize}  class="icon"/>
+        <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"}>
+            <PeopleFill width={iconSize} height={iconSize} class="icon"/>
         </div>
-        <div class="icon-wrapper" on:click={logout} tabindex="0" role="button" on:keyup={null}>
-            <BoxArrowInLeft width={iconSize} height={iconSize}  class="icon" />
+        <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"} on:click={logout} tabindex="0" role="button" on:keyup={null}>
+            <BoxArrowInLeft width={iconSize} height={iconSize} class="icon" />
         </div>
         <div class="profile-pic-wrapper" on:click={() => showModal = true} tabindex="0" role="button" on:keyup={null}>
             <img src={pic} alt="pic" />
@@ -47,20 +49,20 @@
     </div>
     <div class="sidebar-desktop-view">
         <div class="icons-wrapper">
-            <div class="icon-wrapper">
+            <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"}>
                 <ChatDotsFill width={iconSize} height={iconSize} class="icon"/>
             </div>
-            <div class="icon-wrapper">
+            <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"}>
                 <PeopleFill width={iconSize} height={iconSize}  class="icon"/>
             </div>
-            <div class="icon-wrapper" on:click={logout} tabindex="0" role="button" on:keyup={null}>
+            <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"} on:click={logout} tabindex="0" role="button" on:keyup={null}>
                 <BoxArrowInLeft width={iconSize} height={iconSize}  class="icon" />
             </div>
         </div>
 
         <div class="settings-wrapper">
             <div class="toggle-wrapper">
-                <DarkModeToggle isDarkMode={isDarkMode} changeColorTheme={changeColorTheme}/>
+                <DarkModeToggle changeColorTheme={changeColorTheme}/>
             </div>
             <div class="profile-pic-wrapper" on:click={() => showModal = true} tabindex="0" role="button" on:keyup={null}>
                 <img src={pic} alt="pic" />
@@ -153,6 +155,7 @@
         border-radius: 5px;
         
         padding: 20px 20px;
+        
 
         &:hover{
             cursor: pointer;
@@ -166,5 +169,9 @@
         @media only screen and (min-width: 992px){
             margin-top: 15px;
         }
+    }
+
+    .icon-wrapper-dark-mode{
+        color: white;
     }
 </style>
