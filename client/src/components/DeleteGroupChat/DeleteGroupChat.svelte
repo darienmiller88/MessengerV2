@@ -1,9 +1,8 @@
 <script lang="ts">
     import { type Chat } from "../../types/type";
     import { 
-        isChatWindowActiveStore,
-        isChatWindowActiveStoreKey,
-        currentChatName,
+        chatPictureStore,
+        chatPictureStoreKey,
         groupChatNameStore, 
         groupChatNameStoreKey, 
         chatsStore, 
@@ -33,7 +32,8 @@
             $groupChatNameStore = (chatIndex == $chatsStore.length) ? $chatsStore[chatIndex - 1].chatName : $chatsStore[chatIndex].chatName
             persistStoreValue(groupChatNameStore, $groupChatNameStore, groupChatNameStoreKey)
             // persistValue($groupChatNameStore, currentChatName)
-
+            $chatPictureStore = (chatIndex == $chatsStore.length) ? $chatsStore[chatIndex - 1].picture_url : $chatsStore[chatIndex].picture_url
+            persistStoreValue(chatPictureStore, $chatPictureStore, chatPictureStoreKey)
             // currentChatName = (chatIndex == $chatsStore.length) ? $chatsStore[chatIndex - 1].chatName : $chatsStore[chatIndex].chatName
             // $isChatWindowActiveStore = !$isChatWindowActiveStore
             // persistStoreValue(isChatWindowActiveStore, $isChatWindowActiveStore, isChatWindowActiveStoreKey)
