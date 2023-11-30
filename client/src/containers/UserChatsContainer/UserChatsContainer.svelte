@@ -13,10 +13,10 @@
     .user-chats-container{
         display: grid;
         grid-template-rows: auto 80vh;
-        border-right: 2px solid var(--lighter-grey);
-
+        
         @media only screen and (min-width: 992px){
             grid-template-rows: auto 90vh;
+            border-right: 2px solid var(--lighter-grey);
         }
     }
 </style>

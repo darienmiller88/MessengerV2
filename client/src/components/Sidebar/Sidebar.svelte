@@ -1,11 +1,12 @@
 <script lang="ts">
     import { ChatDotsFill, PeopleFill, BoxArrowInLeft } from "svelte-bootstrap-icons";
     import { navigate } from "svelte-routing";
-    import { isDarkModeStore, isDarkModeStoreKey } from "../../stores";
+    import { isDarkModeStore, isDarkModeStoreKey, persistStoreValue } from "../../stores";
     import Modal from "../Modal/Modal.svelte";
     import ProfileForm from "../ProfileForm/ProfileForm.svelte";
     import DarkModeToggle from "../DarkModeToggle/DarkModeToggle.svelte";
     import pic from "../../assets/profile.png"
+    import { onMount } from "svelte";
 
     const iconSize: number = 28
 
@@ -16,6 +17,7 @@
 
     const changeColorTheme = () => {
         $isDarkModeStore = !$isDarkModeStore
+        persistStoreValue(isDarkModeStore, $isDarkModeStore, isDarkModeStoreKey)
 
         if ($isDarkModeStore) {
             document.body.classList.add("dark")
@@ -24,7 +26,13 @@
         }
     }
 
-    console.log("is dark mode:", $isDarkModeStore);
+    onMount(() => {
+        let isDarkModeValue: string | null = window.localStorage.getItem(isDarkModeStoreKey)
+
+        if (isDarkModeValue) {
+            $isDarkModeStore = (JSON.parse(isDarkModeValue) as boolean)
+        }
+    })
     
     let showModal: boolean = false
 </script>

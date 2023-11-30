@@ -12,13 +12,10 @@
         groupChatNameStoreKey, 
         isChatWindowActiveStore, 
         isChatWindowActiveStoreKey,
-        chatsStore,
-        chatsStoreKey,
-
+        isDarkModeStore,
         persistStoreValue
 
     } from "../../stores";
-    import type { Chat } from "../../types/type";
 
     // let groupChatName: string | null
     let showModal: boolean = false
@@ -29,9 +26,9 @@
     }
 
     onMount(() => {
-        let groupChatName:      string | null = window.localStorage.getItem(groupChatNameStoreKey)
-        let chatPictureURL:     string | null = window.localStorage.getItem(chatPictureStoreKey)
-        let isChatWindowActive: string | null = window.localStorage.getItem(isChatWindowActiveStoreKey)
+        let groupChatName:        string | null = window.localStorage.getItem(groupChatNameStoreKey)
+        let chatPictureURL:       string | null = window.localStorage.getItem(chatPictureStoreKey)
+        let isChatWindowActive:   string | null = window.localStorage.getItem(isChatWindowActiveStoreKey)
         
         if (groupChatName) {
             $groupChatNameStore = JSON.parse(groupChatName)
@@ -54,7 +51,7 @@
         </button>
         <img src={$chatPictureStore} alt="chat-pic"/>
         <div class="online-status-wrapper">
-            <div class="group-chat-name">{$groupChatNameStore}</div>
+            <div class={$isDarkModeStore ? "group-chat-name dark-mode-theme" : "group-chat-name" }>{$groupChatNameStore}</div>
             <div class="online-status">Online</div>
         </div>
     </div>
@@ -110,6 +107,10 @@
             .online-status-wrapper{
                 .online-status{
                     color: var(--darker-grey);
+                }
+
+                .dark-mode-theme{
+                    color: white;
                 }
             }
         }

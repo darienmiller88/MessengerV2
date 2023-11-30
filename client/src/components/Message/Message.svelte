@@ -1,6 +1,6 @@
 <script lang="ts">
     import pic from "../../assets/plogo.png"
-    import { fillIconColorStore, chosenMessageStore } from "../../stores";
+    import { fillIconColorStore, chosenMessageStore, isDarkModeStore } from "../../stores";
     import { ThreeDotsVertical, HandThumbsUpFill } from "svelte-bootstrap-icons";
     import Modal from "../Modal/Modal.svelte";
     import DeleteMessageForm from "../DeleteMessageForm/DeleteMessageForm.svelte";
@@ -39,7 +39,7 @@
             <div class="message">{messageContent}</div>
         {/if}
     </div>
-    <div class="delete-wrapper" on:click={storeMessage} tabindex="0" role="button" on:keyup={null}>
+    <div class={$isDarkModeStore ? "delete-wrapper dark-mode-theme" : "delete-wrapper"} on:click={storeMessage} tabindex="0" role="button" on:keyup={null}>
         <ThreeDotsVertical />
     </div>
 </div>
@@ -170,6 +170,10 @@
                 cursor: pointer;
                 background-color: var(--light-grey);
             }
+        }
+
+        .dark-mode-theme{
+            color: white;
         }
     }
 </style>

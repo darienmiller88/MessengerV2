@@ -3,7 +3,6 @@
 
     export let onHide = () => {}
     const saveSettings = () => {
-        
         onHide()
     }
 </script>
@@ -25,9 +24,11 @@
 
 <style lang="scss">
     .profile-form{
+        $val: 30px;
+
         .input-wrapper{
             // border: 2px solid saddlebrown;
-            margin: 20px 0px;
+            margin: 20px $val;
 
             @media screen and (min-width: 992px) {
                 margin: 20px 50px;
@@ -59,7 +60,7 @@
         .profile-pic-wrapper{
             display: flex;
             align-items: center;
-            padding: 10px 5px;
+            padding: 10px $val;
             // border: 2px solid red;
 
             @media screen and (min-width: 992px){

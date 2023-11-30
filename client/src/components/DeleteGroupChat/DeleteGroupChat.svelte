@@ -3,10 +3,13 @@
     import { 
         isChatWindowActiveStore,
         isChatWindowActiveStoreKey,
+        currentChatName,
         groupChatNameStore, 
         groupChatNameStoreKey, 
         chatsStore, 
-        persistStoreValue 
+        persistStoreValue, 
+        persistValue
+
     } from "../../stores"
     
     export let onHide = () => {}
@@ -29,9 +32,11 @@
 
             $groupChatNameStore = (chatIndex == $chatsStore.length) ? $chatsStore[chatIndex - 1].chatName : $chatsStore[chatIndex].chatName
             persistStoreValue(groupChatNameStore, $groupChatNameStore, groupChatNameStoreKey)
+            // persistValue($groupChatNameStore, currentChatName)
 
-            $isChatWindowActiveStore = !$isChatWindowActiveStore
-            persistStoreValue(isChatWindowActiveStore, $isChatWindowActiveStore, isChatWindowActiveStoreKey)
+            // currentChatName = (chatIndex == $chatsStore.length) ? $chatsStore[chatIndex - 1].chatName : $chatsStore[chatIndex].chatName
+            // $isChatWindowActiveStore = !$isChatWindowActiveStore
+            // persistStoreValue(isChatWindowActiveStore, $isChatWindowActiveStore, isChatWindowActiveStoreKey)
         }
 
         onHide()

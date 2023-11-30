@@ -10,7 +10,7 @@
         currentChatName,
         chatPictureStore,
         chatPictureStoreKey,
-        chatsStore
+        isDarkModeStore
     } from "../../stores";
     import { onMount } from "svelte";
 
@@ -45,7 +45,7 @@
     </div>
     <div class="chat-info">
         <div class="name-time-wrapper">
-            <div class="name">{chatInfo.chatName}</div>
+            <div class={$isDarkModeStore ? "name dark-mode-theme" : "name"}>{chatInfo.chatName}</div>
             <div class="time">{chatInfo.time}</div>
         </div>
         <div class="current-message">{chatInfo.currentMessage}</div>
@@ -134,6 +134,11 @@
                         font-size: 14px;
                     }
                 }
+
+                .dark-mode-theme{
+                    color: white;
+                }
+                
                 margin-bottom: 5px;
             }
 

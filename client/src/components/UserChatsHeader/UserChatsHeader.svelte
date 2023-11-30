@@ -1,14 +1,18 @@
 <script lang="ts">
     import { PersonAdd } from "svelte-bootstrap-icons";
+    import { isDarkModeStore, isDarkModeStoreKey } from "../../stores";
     import Modal from "../Modal/Modal.svelte";
     import AddNewChatForm from "../../components/AddNewChatForm/AddNewChatForm.svelte"
+    import { onMount } from "svelte";
 
     let showModal: boolean = false
+
+   
 </script>
 
 <div class="user-chat-header">
-    <div class="title">Messages</div>
-    <div class="icon-wrapper" on:click={() => showModal = true} tabindex="0" role="button" on:keyup={null}>
+    <div class={$isDarkModeStore ? "title dark-mode-theme" : "title"}>Messages</div>
+    <div class={$isDarkModeStore ? "icon-wrapper dark-mode-theme" : "icon-wrapper"} on:click={() => showModal = true} tabindex="0" role="button" on:keyup={null}>
         <PersonAdd width={28} height={28}/>
     </div>
     <Modal 
@@ -49,6 +53,10 @@
             &:active{
                 background-color: rgb(60, 60, 60);
             }
+        }
+
+        .dark-mode-theme{
+            color: white;
         }
     }
 </style>

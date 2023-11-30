@@ -21,7 +21,7 @@
 
 body{
   margin: 0;
-  transition: 0.4s;
+  transition: 0.2s;
 
   font-family: 'Gentium Book Plus', serif;
   font-family: 'Kanit', sans-serif;
@@ -32,7 +32,7 @@ body{
 
 body.dark{
   background-color: black;
-  color: white;
+  /* color: white; */
 }
 
 /* button {
