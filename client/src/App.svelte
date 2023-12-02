@@ -51,6 +51,8 @@
     if (isDarkModeValue && (JSON.parse(isDarkModeValue) as boolean)) {
       document.body.classList.add("dark")
     }
+
+    console.log("pusher key:", import.meta.env.VITE_PUSHER_KEY, "process.env:") // undefined
   })
 
 </script>

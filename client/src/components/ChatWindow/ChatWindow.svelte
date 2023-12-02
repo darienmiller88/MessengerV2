@@ -48,6 +48,4 @@
             overflow-y: scroll;
         }
     }
-    
-    
 </style>

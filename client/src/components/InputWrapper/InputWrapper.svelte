@@ -3,6 +3,9 @@
     import { fillIconColorStore } from "../../stores";
     import { messagesStore } from "../../stores"
     import { type Message } from "../../types/type"
+    import { onMount } from "svelte";
+    // import { API_KEY } from 'env/static/private';
+    import Pusher from "pusher-js"
 
     let isThumbsUp:  boolean = true
     let messageText: string  = ""
@@ -26,6 +29,19 @@
             showIcon = true
         }, 3000);
     }
+
+    onMount(() => {
+        // Enable pusher logging - don't include this in production
+        // Pusher.logToConsole = true;
+        const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
+            cluster: import.meta.env.VITE_PUSHER_CLUSTER
+        });
+
+        const channel = pusher.subscribe('my-channel');
+        channel.bind('my-event', function(data: any) {
+            alert(JSON.stringify(data));
+        });
+    })
 </script>
 
 <div class="chat-input-wrapper">
@@ -52,6 +68,7 @@
         display: grid;
         grid-template-columns: 15% auto 15%;
         padding: 5px 0px;
+        border-top: 2px var(--lighter-grey) solid;
 
         @media only screen and (min-width: 768px){
             grid-template-columns: 10% auto 10%;
