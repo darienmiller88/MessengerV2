@@ -17,7 +17,7 @@
         let message: Message = {
             message_content: isThumbsUp ? "👍" : messageText,
             message_date: new Date().toLocaleString(),
-            username: "darienmiller88",
+            username: $usernameStore,
             isSender: true
         }
 
@@ -26,33 +26,41 @@
         messageText = ""
         showIcon = false
 
-        // const channel = pusher.channel("public")
         const response = await messageApi.post("/", message)
         console.log("res:", response);
         
-        
-        // channel.trigger("public_message", message)
-
         setTimeout(() => {
             showIcon = true
-        }, 3000);
+        }, 2000);
     }
 
     onMount(() => {
-        const channel = pusher.subscribe('public');
+        let username: string | null = window.localStorage.getItem(usernameStoreKey)
+
+        if (username) {
+            $usernameStore = username
+        }
+
         console.log("hostname:",window.location.hostname);
         console.log("username:", $usernameStore);
+        const channel = pusher.subscribe('public');
         
-        
-        channel.bind('public_message', function(message: Message) {            
-            $messagesStore = [...$messagesStore, {
-                username: "darienmiller88",
-                message_date: new Date(message.message_date).toLocaleString(),
-                message_content: message.message_content,
-                isSender: false
-            }]
+        channel.bind('public_message', function(message: Message) {   
+            if ($usernameStore != message.username) {
+                $messagesStore = [...$messagesStore, {
+                    username: $usernameStore,
+                    message_date: new Date(message.message_date).toLocaleString(),
+                    message_content: message.message_content,
+                    isSender: false
+                }]
+            }
         });
     })
+
+    $: if ($messagesStore.length) {
+        console.log("messages:", $messagesStore.length);
+       
+    }
 </script>
 
 <div class="chat-input-wrapper">
