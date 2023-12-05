@@ -24,9 +24,9 @@
     <div class="window-inner" bind:this={messagesRef}>
         {#each $messagesStore as message}
             <Message 
-                messageContent={message.messageContent} 
+                messageContent={message.message_content} 
                 username={message.username} 
-                time={message.messageTime} 
+                time={message.message_date} 
                 isYourMessage={message.isSender}
             />
         {/each}

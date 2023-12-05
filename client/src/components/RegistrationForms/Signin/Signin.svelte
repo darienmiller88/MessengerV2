@@ -3,6 +3,7 @@
     import { Github, Google } from "svelte-bootstrap-icons";
     import { 
         usernameStore, 
+        usernameStoreKey,
         persistStoreValue, 
         chatPictureStore, 
         chatPictureStoreKey, 
@@ -10,6 +11,9 @@
         groupChatNameStoreKey
     } from "../../../stores"
     import { navigate } from "svelte-routing";
+    // import {  } from "uuid";
+    import newUniqueId from 'locally-unique-id-generator'
+
 
     import logo from "../../../assets/bluelogo.png"
     import publicChatPicture from "../../../assets/plogo.png"
@@ -17,6 +21,7 @@
 
     let username: string = ""
     let password: string = ""
+    let uuid:     string = ""
     export let changeToSignup = () => {}
   
     const signin = () => {
@@ -32,6 +37,10 @@
     }
 
     const signInAnonymously = () => {
+        let anonymousUsername: string = newUniqueId()
+
+        $usernameStore = anonymousUsername
+        persistStoreValue(usernameStore, $usernameStore, usernameStoreKey)
         persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
         persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
         navigate("/home", {replace: true})

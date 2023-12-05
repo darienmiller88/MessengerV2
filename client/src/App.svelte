@@ -6,6 +6,8 @@
   import profilepic from "./assets/profile.png"
   import Home from "./pages/Home/Home.svelte";
   import Register from "./pages/Register/Register.svelte";
+  import newUniqueId from 'locally-unique-id-generator'
+
   import MessageHistory from "./pages/MessageHistory/MessageHistory.svelte";
   import { 
     usersStore, 
@@ -21,7 +23,7 @@
     persistValue
   } from "./stores"
 
-  let users: string[] = ["Vicky", "Richard", "Darien", "Dalton", "Steve", "Zira", "Max", "Andre", "Isaac"]
+  let users: string[] = ["Vicky", "Kash", "Richard", "Darien", "Dalton", "Steve", "Zira", "Max", "Andre", "Isaac"]
 
   onMount(() => {
     let groupChatName = window.localStorage.getItem(groupChatNameStoreKey)
@@ -51,8 +53,8 @@
     if (isDarkModeValue && (JSON.parse(isDarkModeValue) as boolean)) {
       document.body.classList.add("dark")
     }
+    console.log("id:", newUniqueId()); // f81e7af3-fcf4-4cdd-b3a3-14a8087aa191
 
-    console.log("pusher key:", import.meta.env.VITE_PUSHER_KEY, "process.env:") // undefined
   })
 
 </script>

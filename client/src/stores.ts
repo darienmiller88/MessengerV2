@@ -20,6 +20,7 @@ export const chatsStore              = writable<Chat[]>([{
     isChatActive: true
 }])
 
+export const usernameStoreKey           = "usernameStoreKey"
 export const isChatWindowActiveStoreKey = "isChatActiveStoreKey"
 export const groupChatNameStoreKey      = "groupChatNameStoreKey"
 export const chatPictureStoreKey        = "chatPictureStoreKey"

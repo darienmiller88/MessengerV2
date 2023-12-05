@@ -4,19 +4,20 @@
     import { messagesStore } from "../../stores"
     import { type Message } from "../../types/type"
     import { onMount } from "svelte";
-    // import { API_KEY } from 'env/static/private';
-    import Pusher from "pusher-js"
+    import pusher from "../../pusher/pusher";
+    import { messageApi } from "../../api/api";
+    import { usernameStore, usernameStoreKey } from "../../stores";
 
     let isThumbsUp:  boolean = true
     let messageText: string  = ""
     let showIcon:    boolean = true
     const iconSize:  number  = 24
 
-    const sendMessage = () => {
+    const sendMessage = async () => {
         let message: Message = {
-            messageContent: isThumbsUp ? "👍" : messageText,
+            message_content: isThumbsUp ? "👍" : messageText,
+            message_date: new Date().toLocaleString(),
             username: "darienmiller88",
-            messageTime: new Date().toLocaleString(),
             isSender: true
         }
 
@@ -25,21 +26,31 @@
         messageText = ""
         showIcon = false
 
+        // const channel = pusher.channel("public")
+        const response = await messageApi.post("/", message)
+        console.log("res:", response);
+        
+        
+        // channel.trigger("public_message", message)
+
         setTimeout(() => {
             showIcon = true
         }, 3000);
     }
 
     onMount(() => {
-        // Enable pusher logging - don't include this in production
-        // Pusher.logToConsole = true;
-        const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
-            cluster: import.meta.env.VITE_PUSHER_CLUSTER
-        });
-
-        const channel = pusher.subscribe('my-channel');
-        channel.bind('my-event', function(data: any) {
-            alert(JSON.stringify(data));
+        const channel = pusher.subscribe('public');
+        console.log("hostname:",window.location.hostname);
+        console.log("username:", $usernameStore);
+        
+        
+        channel.bind('public_message', function(message: Message) {            
+            $messagesStore = [...$messagesStore, {
+                username: "darienmiller88",
+                message_date: new Date(message.message_date).toLocaleString(),
+                message_content: message.message_content,
+                isSender: false
+            }]
         });
     })
 </script>

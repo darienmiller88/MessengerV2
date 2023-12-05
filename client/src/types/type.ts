@@ -13,10 +13,10 @@ export interface FilteredUser{
 }
 
 export interface Message{
-    messageContent: string
-    messageTime:    string
-    username:       string
-    isSender:       boolean
+    message_content: string
+    message_date:    string
+    username:        string
+    isSender:        boolean
 }
 
 export interface User{
