@@ -12,6 +12,6 @@ COPY . /app
 # Create the binary needed to run the go program.
 RUN go build -o /deploy
 
-EXPOSE 8080
+# EXPOSE 8080
 
 CMD [ "/deploy" ]
