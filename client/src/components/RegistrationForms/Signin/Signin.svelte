@@ -12,7 +12,7 @@
     } from "../../../stores"
     import { navigate } from "svelte-routing";
     // import {  } from "uuid";
-    import newUniqueId from 'locally-unique-id-generator'
+    import { v4 as uuid } from 'uuid';
 
 
     import logo from "../../../assets/bluelogo.png"
@@ -21,7 +21,6 @@
 
     let username: string = ""
     let password: string = ""
-    let uuid:     string = ""
     export let changeToSignup = () => {}
   
     const signin = () => {
@@ -37,7 +36,7 @@
     }
 
     const signInAnonymously = () => {
-        let anonymousUsername: string = newUniqueId()
+        let anonymousUsername: string = (uuid() as string)
 
         $usernameStore = anonymousUsername
         persistStoreValue(usernameStore, $usernameStore, usernameStoreKey)

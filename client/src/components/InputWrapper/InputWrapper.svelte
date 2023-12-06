@@ -48,7 +48,7 @@
         channel.bind('public_message', function(message: Message) {   
             if ($usernameStore != message.username) {
                 $messagesStore = [...$messagesStore, {
-                    username: $usernameStore,
+                    username: message.username,
                     message_date: new Date(message.message_date).toLocaleString(),
                     message_content: message.message_content,
                     isSender: false
