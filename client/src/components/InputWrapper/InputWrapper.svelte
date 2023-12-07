@@ -45,7 +45,6 @@
             $usernameStore = username
         }
 
-        console.log("hostname:",window.location.hostname);
         console.log("username:", $usernameStore);
         const channel = pusher.subscribe('public');
         

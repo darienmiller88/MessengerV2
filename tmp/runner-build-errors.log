@@ -1,3 +1,0 @@
-# MessengerV2/api/controllers
-api\controllers\MessageController.go:39:2: undefined: err
-api\controllers\MessageController.go:41:5: undefined: err

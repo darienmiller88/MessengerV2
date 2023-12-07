@@ -1,7 +1,7 @@
 <script lang="ts">
     import { ChatDotsFill, PeopleFill, BoxArrowInLeft } from "svelte-bootstrap-icons";
     import { navigate } from "svelte-routing";
-    import { isDarkModeStore, isDarkModeStoreKey, persistStoreValue } from "../../stores";
+    import { messagesStore, isDarkModeStore, isDarkModeStoreKey, persistStoreValue } from "../../stores";
     import Modal from "../Modal/Modal.svelte";
     import ProfileForm from "../ProfileForm/ProfileForm.svelte";
     import DarkModeToggle from "../DarkModeToggle/DarkModeToggle.svelte";
@@ -11,6 +11,7 @@
     const iconSize: number = 28
 
     const logout = () => {
+        $messagesStore = []
         window.localStorage.clear()
         navigate("/", {replace: true})
     }

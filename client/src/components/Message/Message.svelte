@@ -13,8 +13,8 @@
     let showModal: boolean = false
     const storeMessage = () => {
         $chosenMessageStore = {
-            messageContent: messageContent,
-            messageTime: time,
+            message_content: messageContent,
+            message_date: time,
             username: username,
             isSender: isYourMessage
         }
@@ -38,9 +38,11 @@
             <div class="message">{messageContent}</div>
         {/if}
     </div>
-    <div class={$isDarkModeStore ? "delete-wrapper dark-mode-theme" : "delete-wrapper"} on:click={storeMessage} tabindex="0" role="button" on:keyup={null}>
-        <ThreeDotsVertical />
-    </div>
+    {#if isYourMessage }
+        <div class={$isDarkModeStore ? "delete-wrapper dark-mode-theme" : "delete-wrapper"} on:click={storeMessage} tabindex="0" role="button" on:keyup={null}>
+            <ThreeDotsVertical />
+        </div>
+    {/if}
 </div>
 
 <Modal 

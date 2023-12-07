@@ -36,7 +36,7 @@
     }
 
     const signInAnonymously = () => {
-        let anonymousUsername: string = (uuid() as string)
+        let anonymousUsername: string = "user " + (uuid() as string).substring(0, 8)
 
         $usernameStore = anonymousUsername
         persistStoreValue(usernameStore, $usernameStore, usernameStoreKey)
