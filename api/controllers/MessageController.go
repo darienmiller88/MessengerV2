@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -35,7 +36,11 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 	}
 
 	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
-	m.pusherClient.Trigger("public", "public_message", message)
+	err := m.pusherClient.Trigger("public", "public_message", message)
+
+	if err != nil{
+		fmt.Println("err broadcasting messages:", err)
+	}
 	
 	return c.Status(http.StatusOK).JSON(message)
 }

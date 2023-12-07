@@ -4,9 +4,9 @@
     import { messagesStore } from "../../stores"
     import { type Message } from "../../types/type"
     import { onMount } from "svelte";
-    import pusher from "../../pusher/pusher";
     import { messageApi } from "../../api/api";
     import { usernameStore, usernameStoreKey } from "../../stores";
+    import pusher from "../../pusher/pusher";
 
     let isThumbsUp:  boolean = true
     let messageText: string  = ""
@@ -26,12 +26,16 @@
         messageText = ""
         showIcon = false
 
-        const response = await messageApi.post("/", message)
-        console.log("res:", response);
-        
-        setTimeout(() => {
-            showIcon = true
-        }, 2000);
+        try {
+            const response = await messageApi.post("/", message)
+            console.log("res:", response);
+            
+            setTimeout(() => {
+                showIcon = true
+            }, 2000);
+        } catch (error) {
+            console.log("err:", error);
+        }
     }
 
     onMount(() => {
