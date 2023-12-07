@@ -32,7 +32,7 @@ func main(){
 	app.Mount("/api/v1", index.Router)
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.JSON(fiber.Map{"message": "hello world change"})
+		return c.JSON(fiber.Map{"message": "hello world"})
 	})
 
 	fmt.Println("running on port:", os.Getenv("PORT"))

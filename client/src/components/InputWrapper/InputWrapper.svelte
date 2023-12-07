@@ -56,11 +56,6 @@
             }
         });
     })
-
-    $: if ($messagesStore.length) {
-        console.log("messages:", $messagesStore.length);
-       
-    }
 </script>
 
 <div class="chat-input-wrapper">
