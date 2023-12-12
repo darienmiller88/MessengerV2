@@ -7,6 +7,7 @@
     import { messageApi } from "../../api/api";
     import { usernameStore, usernameStoreKey } from "../../stores";
     import pusher from "../../pusher/pusher";
+    // import { socket, MESSAGE_TYPE } from "../../websocket/websocket"
 
     let isThumbsUp:  boolean = true
     let messageText: string  = ""
@@ -26,6 +27,19 @@
         messageText = ""
         showIcon = false
 
+        // const res = io.emit("public_endpoint", {
+        //     body: {
+        //         message_content: message.message_content, 
+        //         message_date: new Date().toLocaleString(),
+        //         username: message.username
+        //     }
+        // }, (res: any) => {
+        //     console.log("res:", res);
+            
+        // })
+
+    
+
         try {
             const response = await messageApi.post("/", message)
             console.log("res:", response);
@@ -44,8 +58,34 @@
         if (username) {
             $usernameStore = username
         }
-
         console.log("username:", $usernameStore);
+
+        // socket.onopen = () => {
+        //     console.log("connected successfully!");
+        // }
+
+        // socket.onclose = event => {
+        //     console.log("Socket Closed Connection: ", event);
+        // };
+
+        // socket.onerror = error => {
+        //     console.log("Socket Error: ", error);
+        // };
+
+        // socket.onmessage = msg => {
+        //     console.log("message received!", msg.data);
+            
+        // }
+
+        // io.on("receive", (message) => {
+        //     $messagesStore = [...$messagesStore, {
+        //         username: message.body.username,
+        //         message_date: new Date(message.body.message_date).toLocaleString(),
+        //         message_content: message.body.message_content,
+        //         isSender: false
+        //     }]
+        // })
+
         const channel = pusher.subscribe('public');
         
         channel.bind('public_message', function(message: Message) {   

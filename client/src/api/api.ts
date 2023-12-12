@@ -19,5 +19,5 @@ export const userApi = axios.create({
 
 export const messageApi = axios.create({
     baseURL: messageApiURL,
-    // withCredentials: true,
+    withCredentials: true,
 })

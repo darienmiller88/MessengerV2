@@ -35,12 +35,15 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 		c.Status(http.StatusBadRequest).JSON(err)
 	}
 
+	fmt.Println("message:", message)
+	
 	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
 	err := m.pusherClient.Trigger("public", "public_message", message)
 
 	if err != nil{
 		fmt.Println("err broadcasting messages:", err)
 	}
+
 	
 	return c.Status(http.StatusOK).JSON(message)
 }

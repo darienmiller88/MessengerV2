@@ -1,3 +1,7 @@
+github.com/ambelovsky/go-structs v1.1.0 h1:LXj4/mHnYw0qhXQhOo96+ULGQ88H8qMcZd5SHef8boY=
+github.com/ambelovsky/go-structs v1.1.0/go.mod h1:zN3RBXQvxgjjq/Q/WZS7p5AEK+qC9mNg7ycnvoQ63Ak=
+github.com/ambelovsky/gosf v0.0.0-20201109201340-237aea4d6109 h1:Tp8GVfUOEmJftBqi4+/aXTwJzm24POo6wIHeuTqaT+Y=
+github.com/ambelovsky/gosf v0.0.0-20201109201340-237aea4d6109/go.mod h1:MUREokfMKREm1fOm2babarrkYdk/dGHWY+ITC3qHHPQ=
 github.com/ambelovsky/gosf-socketio v0.0.0-20220810204405-0f97832ec7af h1:SXdLHP09xttaOeI9q3+strkbVIAmdo6CJwa9EqqMnug=
 github.com/ambelovsky/gosf-socketio v0.0.0-20220810204405-0f97832ec7af/go.mod h1:1w9JQkj1okH2vn3f95PdSbVvGg6d+x+TcaXQFpCfxmA=
 github.com/andybalholm/brotli v1.0.5 h1:8uQZIdzKmjc/iuPu7O2ioW48L81FgatrcpfFmiq/cCs=
@@ -31,6 +35,8 @@ github.com/mattn/go-isatty v0.0.19/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D
 github.com/mattn/go-runewidth v0.0.15 h1:UNAjwbU9l54TA3KzvqLGxwWjHmMgBUVhBiTjelZgg3U=
 github.com/mattn/go-runewidth v0.0.15/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
 github.com/mattn/go-sqlite3 v1.14.6/go.mod h1:NyWgC/yNuGj7Q9rpYnZvas74GogHl5/Z4A/KQRfk6bU=
+github.com/mitchellh/mapstructure v1.5.0 h1:jeMsZIYE/09sWLaz43PL7Gy6RuMjD2eJVyuac5Z2hdY=
+github.com/mitchellh/mapstructure v1.5.0/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
 github.com/nerock/ozzo-validation v3.6.0+incompatible h1:FJAwVlYGLEiAWLKLkAVdJV+PWferYgdpsZoXOzXiXF8=
 github.com/nerock/ozzo-validation v3.6.0+incompatible/go.mod h1:Pw60lMeQZZ2sCT1bhDFFdX6j+7YlYvPnrhXYDFNDUNE=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=

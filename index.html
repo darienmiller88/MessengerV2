@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./styles.css">
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>Chat</h1>
+        <div class="chat-window">
+            <div class="chat-window-inner">
+
+            </div>
+            <!-- <div class="user-typing">User is typing...</div> -->
+            <div class="bottom"></div>
+        </div>
+        <div class="input-wrapper">
+            <input class="input" placeholder="enter message"/>
+            <button class="button">Send</button>
+        </div>  
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js"></script>
+        <script>
+            const socket = io.connect('ws://localhost:9999', { transports: ['websocket'] });
+            const button = document.querySelector(".button")
+            const chatWindowInner = document.querySelector(".chat-window-inner")
+            const input = document.querySelector(".input")
+            const bottom = document.querySelector(".bottom")
+    
+            socket.on('receive', (response) => {
+                console.log("res:", response);
+                chatWindowInner.append(createMessage(response.body.message_content, false))
+            });
+
+            button.addEventListener("click", e => {
+                chatWindowInner.append(createMessage(input.value, true))
+                bottom.scrollIntoView({behavior: "smooth"})
+                socket.emit('public_endpoint', { 
+                    body: {
+                        message_content: input.value, 
+                        message_date: new Date().toLocaleString() 
+                    }
+                }, (res) => {
+                    console.log("res:", res);
+                    
+                });
+
+                input.value = ""
+                console.log("clicked!");
+            })
+
+            function createMessage(messageText, isSender){
+                const message = document.createElement("div")
+
+                message.classList.add("message")
+                message.classList.add(isSender ? "sender" : "receiver")
+                message.append(messageText)
+
+                return message
+            }
+          </script>
+    </body>
+</html>
