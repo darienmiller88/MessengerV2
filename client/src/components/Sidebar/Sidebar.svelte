@@ -2,15 +2,17 @@
     import { ChatDotsFill, PeopleFill, BoxArrowInLeft } from "svelte-bootstrap-icons";
     import { navigate } from "svelte-routing";
     import { messagesStore, isDarkModeStore, isDarkModeStoreKey, persistStoreValue } from "../../stores";
+    import { onMount } from "svelte";
     import Modal from "../Modal/Modal.svelte";
     import ProfileForm from "../ProfileForm/ProfileForm.svelte";
     import DarkModeToggle from "../DarkModeToggle/DarkModeToggle.svelte";
     import pic from "../../assets/profile.png"
-    import { onMount } from "svelte";
+    import pusher from "../../pusher/pusher";
 
     const iconSize: number = 28
 
     const logout = () => {
+        pusher.unsubscribe("public")
         $messagesStore = []
         window.localStorage.clear()
         navigate("/", {replace: true})

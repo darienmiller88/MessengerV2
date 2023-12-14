@@ -36,7 +36,7 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 	}
 
 	fmt.Println("message:", message)
-	
+
 	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
 	err := m.pusherClient.Trigger("public", "public_message", message)
 
@@ -49,6 +49,7 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 }
 
 func (m *MessageController) GetMessage(c *fiber.Ctx) error{
+	
 	return c.Status(http.StatusOK).JSON(fiber.Map{"message": "One message"})
 }
 
@@ -57,5 +58,36 @@ func (m *MessageController) GetMessages(c *fiber.Ctx) error{
 }
 
 func (m *MessageController) DeleteMessage(c *fiber.Ctx) error{
-	return c.Status(http.StatusOK).JSON(fiber.Map{"message": "Delete message"})
+	id      := c.Params("id")
+	message := models.Message{}
+
+	if err := c.BodyParser(&message); err != nil{
+		c.Status(http.StatusInternalServerError).JSON(err)
+	}
+
+	fmt.Println("id:", id)
+	
+	err := m.pusherClient.Trigger("public", "delete_public_message", message)
+
+	if err != nil{
+		fmt.Println("err broadcasting messages:", err)
+	}
+
+	return c.Status(http.StatusOK).JSON(message)
+}
+
+func (m *MessageController) UserTyping(c *fiber.Ctx) error{
+	data := make(map[string]interface{})
+
+	if err := c.BodyParser(&data); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(err)
+	}
+
+	err := m.pusherClient.Trigger("public", "user_typing", data["username"])
+
+	if err != nil{
+		fmt.Println("err broadcasting messages:", err)
+	}
+
+	return c.Status(http.StatusOK).JSON(data)
 }

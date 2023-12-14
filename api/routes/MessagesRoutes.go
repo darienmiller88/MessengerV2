@@ -14,6 +14,7 @@ func (m *MessagesRoutes) Init(){
 	m.Router = fiber.New()
 	m.messageController.Init()
 
+	m.Router.Post("/userTyping", m.messageController.UserTyping)
 	m.Router.Post("/", m.messageController.PostMessage)
 	m.Router.Get("/", m.messageController.GetMessages)
 	m.Router.Get("/:id", m.messageController.GetMessage)

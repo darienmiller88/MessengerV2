@@ -145,6 +145,7 @@
                 padding: 10px 10px;
                 margin: 5px;
                 width: fit-content;
+                height: fit-content;
 
                 border-radius: 20px;
                 overflow-wrap: break-word;

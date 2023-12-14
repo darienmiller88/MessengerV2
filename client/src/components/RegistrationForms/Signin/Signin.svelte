@@ -35,10 +35,9 @@
         navigate("/home", {replace: true})
     }
 
-    const signInAnonymously = () => {
-        let anonymousUsername: string = "user " + (uuid() as string).substring(0, 8)
-
-        $usernameStore = anonymousUsername
+    const signInAnonymously = () => {        
+        $usernameStore = "user-" + (uuid() as string).substring(0, 8)        
+        
         persistStoreValue(usernameStore, $usernameStore, usernameStoreKey)
         persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
         persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)

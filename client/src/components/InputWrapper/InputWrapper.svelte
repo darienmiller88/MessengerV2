@@ -12,6 +12,9 @@
     let isThumbsUp:  boolean = true
     let messageText: string  = ""
     let showIcon:    boolean = true
+    let canPublish:  boolean = true
+    let firstKey:    number  = 0
+    let secondKey:   number  = 0
     const iconSize:  number  = 24
 
     const sendMessage = async () => {
@@ -27,22 +30,8 @@
         messageText = ""
         showIcon = false
 
-        // const res = io.emit("public_endpoint", {
-        //     body: {
-        //         message_content: message.message_content, 
-        //         message_date: new Date().toLocaleString(),
-        //         username: message.username
-        //     }
-        // }, (res: any) => {
-        //     console.log("res:", res);
-            
-        // })
-
-    
-
         try {
-            const response = await messageApi.post("/", message)
-            console.log("res:", response);
+            await messageApi.post("/", message)
             
             setTimeout(() => {
                 showIcon = true
@@ -52,43 +41,47 @@
         }
     }
 
+    const handleKeyInput = async (e: any) => {        
+        //if the first key the user clicked down was shift, and the next key they clicked was enter, add a new line.
+        if (firstKey === 16 && e.keyCode == 13) {
+            messageText += "\n"
+        }else if (e.keyCode === 13 && messageText.trim().length > 0) {
+            sendMessage()
+        }
+
+        if (canPublish) {
+            try {
+                await messageApi.post("/userTyping", { username: $usernameStore})
+                
+                canPublish = false
+                setTimeout(() => {
+                    canPublish = true
+                }, 200);
+            } catch (error) {
+                console.log("error:", error);
+            }
+        }
+
+        firstKey = 0
+    }
+
+    //ONLY set the first key pressed down if the key is the "shift" key.
+    const handleKeyDown = (e: any) => {
+        if (e.keyCode === 16) {
+            firstKey = e.keyCode   
+        }
+    }
+
     onMount(() => {
         let username: string | null = window.localStorage.getItem(usernameStoreKey)
 
         if (username) {
-            $usernameStore = username
+            $usernameStore = JSON.parse(username)
         }
-        console.log("username:", $usernameStore);
-
-        // socket.onopen = () => {
-        //     console.log("connected successfully!");
-        // }
-
-        // socket.onclose = event => {
-        //     console.log("Socket Closed Connection: ", event);
-        // };
-
-        // socket.onerror = error => {
-        //     console.log("Socket Error: ", error);
-        // };
-
-        // socket.onmessage = msg => {
-        //     console.log("message received!", msg.data);
-            
-        // }
-
-        // io.on("receive", (message) => {
-        //     $messagesStore = [...$messagesStore, {
-        //         username: message.body.username,
-        //         message_date: new Date(message.body.message_date).toLocaleString(),
-        //         message_content: message.body.message_content,
-        //         isSender: false
-        //     }]
-        // })
 
         const channel = pusher.subscribe('public');
         
-        channel.bind('public_message', function(message: Message) {   
+        channel.bind('public_message', (message: Message) => {   
             if ($usernameStore != message.username) {
                 $messagesStore = [...$messagesStore, {
                     username: message.username,
@@ -98,6 +91,14 @@
                 }]
             }
         });
+
+       channel.bind("delete_public_message", (messageToDelete: Message) => {
+            $messagesStore = $messagesStore.filter((message: Message) => {
+                return !(message.username == messageToDelete.username 
+                    && message.message_content == messageToDelete.message_content
+                        && message.message_date == messageToDelete.message_date)
+            })
+       })
     })
 </script>
 
@@ -106,7 +107,12 @@
         <Image width={iconSize} height={iconSize} fill={$fillIconColorStore} />
     </div>
     <div class="input-wrapper">
-        <textarea placeholder="Aa" bind:value={messageText} on:input={() => isThumbsUp = messageText.length == 0}/>
+        <textarea placeholder="Aa" 
+            bind:value={messageText} 
+            on:input={() => isThumbsUp = messageText.trim().length == 0}
+            on:keyup={handleKeyInput}
+            on:keydown={handleKeyDown}
+        />
     </div>
 
     {#if showIcon }

@@ -4,9 +4,7 @@
     import ChatWindowContainer from "../../containers/ChatWindowContainer/ChatWindowContainer.svelte";
     import { isChatWindowActiveStore } from "../../stores";
 
-    // let isChatWindowActive: boolean = false
     console.log($isChatWindowActiveStore);
-    
 </script>
 
 <div class="mobile-view">

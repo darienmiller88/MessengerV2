@@ -5,10 +5,8 @@ import(
 )
 
 var schema string = `
-CREATE TABLE person (
-    first_name text,
-    last_name text,
-    email text
+CREATE TABLE users (
+    
 );
 
 CREATE TABLE place (

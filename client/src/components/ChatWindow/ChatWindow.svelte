@@ -1,9 +1,11 @@
 <script lang="ts">
     import Message from "../Message/Message.svelte";
-    import { messagesStore } from "../../stores";
-    import { afterUpdate } from 'svelte';
+    import { messagesStore, usernameStore } from "../../stores";
+    import { afterUpdate, onMount } from 'svelte';
+    import pusher from "../../pusher/pusher";
 
     let messagesRef: HTMLElement
+    let userTypingText: string = ""
 
     const scrollTo = async (node: Element) => {
         node.scrollTo({ top: node.scrollHeight,  behavior: 'smooth' });
@@ -14,6 +16,20 @@
             scrollTo(messagesRef);
         }
     });
+
+    onMount(() => {
+        const channel = pusher.subscribe("public")
+
+        channel.bind("user_typing", (username: string) => {
+            if ($usernameStore != username) {
+                userTypingText = username + " is typing...";
+               
+                setTimeout(() => {
+                    userTypingText = ""
+                }, 900)
+            }
+        })
+    })
 
     $: if ($messagesStore.length && messagesRef) {   
         scrollTo(messagesRef)       
@@ -32,6 +48,9 @@
         {/each}
     </div>
 </div>
+<div class="is-typing">
+    {userTypingText}
+</div>
 
 <style lang="scss">
     .window{
@@ -47,5 +66,10 @@
 
             overflow-y: scroll;
         }
+    }
+
+    .is-typing{
+        text-align: center;
+        // border: 2px solid red;
     }
 </style>

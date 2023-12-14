@@ -1,14 +1,22 @@
 <script lang="ts">
-    import { messagesStore, chosenMessageStore } from "../../stores";
+    import { messagesStore, chosenMessageStore, usernameStore, usernameStoreKey } from "../../stores";
     import { type Message} from "../../types/type"
+    import { messageApi } from "../../api/api";
 
     export let onHide = () => {}
-    const deleteMessage = () => {
+    const deleteMessage = async () => {
         $messagesStore = $messagesStore.filter((message: Message) => {
             return !(message.username == $chosenMessageStore.username 
-                && message.messageContent == $chosenMessageStore.messageContent
-                    && message.messageTime == $chosenMessageStore.messageTime)
+                && message.message_content == $chosenMessageStore.message_content
+                    && message.message_date == $chosenMessageStore.message_date)
         })
+
+        try {
+            const response = await messageApi.delete(`/${$usernameStore}`, { data: $chosenMessageStore })
+            console.log("delete res:", response);
+        } catch (error) {
+            console.log("err:", error)
+        }
 
         onHide()
     }

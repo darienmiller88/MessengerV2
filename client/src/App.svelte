@@ -33,28 +33,28 @@
     let chatName = window.localStorage.getItem(currentChatName)
     let username = window.localStorage.getItem(usernameStoreKey)
     let isDarkModeValue: string | null = window.localStorage.getItem(isDarkModeStoreKey)
-    
+      
     if (!usersString) {
       $usersStore = users
       persistStoreValue(usersStore, users, usersStoreKey)
       console.log("users in app:", $usersStore)
     }
-    
+  
     if (!groupChatName) {
       $groupChatNameStore = "Public"
     }
-    
+  
     if (!chats) {
-        persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
-      }
-      
-      if (!chatName) {
-        persistValue("Public", currentChatName)
-      }
-      
-      if (isDarkModeValue && (JSON.parse(isDarkModeValue) as boolean)) {
-        document.body.classList.add("dark")
-      }      
+      persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
+    }
+    
+    if (!chatName) {
+      persistValue("Public", currentChatName)
+    }
+    
+    if (isDarkModeValue && (JSON.parse(isDarkModeValue) as boolean)) {
+      document.body.classList.add("dark")
+    }      
   })
 
 </script>
