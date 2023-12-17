@@ -1,20 +1,54 @@
 package database
 
-import(
-
-)
-
+// DROP TABLE IF EXISTS user_chats;
+// DROP TABLE IF EXISTS messages;
+// DROP TABLE IF EXISTS users;
+// DROP TABLE IF EXISTS chats;
 var schema string = `
-CREATE TABLE users (
-    
+CREATE TABLE IF NOT EXISTS users (
+    id              SERIAL NOT NULL,
+    created_at      TIMESTAMP,
+    updated_at      TIMESTAMP,   
+    username        VARCHAR(20) UNIQUE,
+    password        VARCHAR(50),
+    profile_picture text,
+    PRIMARY KEY (id)
 );
 
-CREATE TABLE place (
-    country text,
-    city text NULL,
-    telcode integer
-)`
+CREATE TABLE IF NOT EXISTS chats(
+    id         SERIAL NOT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP, 
+    chat_name  VARCHAR(50),
+    PRIMARY KEY (id)
+);
 
+CREATE TABLE IF NOT EXISTS messages (
+    id              SERIAL NOT NULL,
+    created_at      TIMESTAMP,
+    updated_at      TIMESTAMP, 
+    receiver        VARCHAR(20),
+    message_content TEXT,
+    message_date    TEXT,
+    username        VARCHAR(20),
+    chat_id         INT,
+    PRIMARY KEY (id),
+    FOREIGN KEY(username) REFERENCES users(username),
+    FOREIGN KEY(receiver) REFERENCES users(username),
+    FOREIGN KEY(chat_id)  REFERENCES chats(id)
+);
+
+CREATE TABLE IF NOT EXISTS user_chats(
+    id         SERIAL NOT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP, 
+    chat_id    INT,
+    username   VARCHAR(20),
+    PRIMARY KEY (id),
+    FOREIGN KEY(chat_id)  REFERENCES chats(id),
+    FOREIGN KEY(username) REFERENCES users(username)
+);
+`
 func GetSchema() string{
 	return schema
 }

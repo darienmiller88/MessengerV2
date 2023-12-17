@@ -2,15 +2,19 @@ package models
 
 import (
 	"regexp"
+	"time"
 
 	"github.com/go-ozzo/ozzo-validation"
 	"github.com/nerock/ozzo-validation/is"
 )
 
 type User struct{
-	Username string `json:"username"`
-	Password string `json:"password"`
-
+	ID             int       `json:"id"              db:"id"`
+	CreatedAt      time.Time `json:"created_at"      db:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at"      db:"updated_at"`
+	Username       string    `json:"username"        db:"username"`
+	Password       string    `json:"password"        db:"password"`
+	ProfilePicture string    `json:"profile_picture" db:"profile_picture"`
 }
 
 func (u *User) Validate() error{

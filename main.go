@@ -10,10 +10,8 @@ import (
 	"MessengerV2/api/database"
 	"MessengerV2/api/pusherclient"
 	"MessengerV2/api/routes"
-	// "MessengerV2/socketserver"
 
 	"github.com/gofiber/fiber/v2"
-	// "github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	// "github.com/gofiber/fiber/v2/middleware/limiter"
@@ -24,7 +22,6 @@ func main(){
 	err := godotenv.Load()
 	app := fiber.New()
 	index := routes.Index{}
-	// ws := socketServer.NewSocketServer(false)
 	
 	if err != nil{
 		fmt.Println("err:", err)
@@ -41,20 +38,6 @@ func main(){
 	app.Use(logger.New())
 	app.Mount("/api/v1", index.Router)
 	
-	// app.Get("/ws", adaptor.HTTPHandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-	// 	fmt.Printf("w's type is %T\n", res)
-	// 	socketServer.ServeWebSocketServer(ws, res, req)
-	// }))
-	
-	// go ws.Start()
 	fmt.Println("running on port:", os.Getenv("PORT"))
 	app.Listen(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }
-
-// func (w *wrapper) Hijack() (net.Conn, *bufio.ReadWriter, error) {
-// 	h, ok := w.underlyingResponseWriter.(http.Hijacker)
-// 	if !ok {
-// 		return nil, nil, errors.New("hijack not supported")
-// 	}
-// 	return h.Hijack()
-// }

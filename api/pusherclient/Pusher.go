@@ -1,7 +1,6 @@
 package pusherclient
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/pusher/pusher-http-go/v5"
@@ -17,8 +16,6 @@ func Init(){
 		Cluster: os.Getenv("PUSHER_CLUSTER"),
 		Secure:  true,
 	}
-
-	fmt.Println("pusherclient:", pusherClient)
 }
 
 func GetPusherClient() pusher.Client{

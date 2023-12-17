@@ -44,12 +44,10 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 		fmt.Println("err broadcasting messages:", err)
 	}
 
-	
 	return c.Status(http.StatusOK).JSON(message)
 }
 
 func (m *MessageController) GetMessage(c *fiber.Ctx) error{
-	
 	return c.Status(http.StatusOK).JSON(fiber.Map{"message": "One message"})
 }
 

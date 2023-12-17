@@ -3,7 +3,7 @@
     import { fillIconColorStore } from "../../stores";
     import { messagesStore } from "../../stores"
     import { type Message } from "../../types/type"
-    import { onMount } from "svelte";
+    import { onMount, type EventDispatcher } from "svelte";
     import { messageApi } from "../../api/api";
     import { usernameStore, usernameStoreKey } from "../../stores";
     import pusher from "../../pusher/pusher";
@@ -56,7 +56,7 @@
                 canPublish = false
                 setTimeout(() => {
                     canPublish = true
-                }, 200);
+                }, 400);
             } catch (error) {
                 console.log("error:", error);
             }

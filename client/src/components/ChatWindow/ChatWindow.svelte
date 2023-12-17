@@ -26,7 +26,7 @@
                
                 setTimeout(() => {
                     userTypingText = ""
-                }, 900)
+                }, 950)
             }
         })
     })
