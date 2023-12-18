@@ -1,41 +1,50 @@
 package models
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"time"
 
 	"github.com/go-ozzo/ozzo-validation"
+	"github.com/jmoiron/sqlx"
 	// "github.com/nerock/ozzo-validation/is"
 )
 
 type Message struct{    
-	ID             int       `json:"id"              db:"id"`
-	CreatedAt      time.Time `json:"created_at"      db:"created_at"`
-	UpdatedAt      time.Time `json:"updated_at"      db:"updated_at"`
-	Receiver       string    `json:"receiver"        db:"receiver"`
-	MessageContent string    `json:"message_content" db:"message_content"`
-	MessageDate    string    `json:"message_date"    db:"message_date"`
-	Username       string    `json:"username"        db:"username"`
-	ChatID         int       `json:"-"               db:"chat_id"`
+	ID             int            `json:"id"              db:"id"`
+	CreatedAt      time.Time      `json:"created_at"      db:"created_at"`
+	UpdatedAt      time.Time      `json:"updated_at"      db:"updated_at"`
+	Receiver       sql.NullString `json:"receiver"        db:"receiver"`
+	MessageContent string         `json:"message_content" db:"message_content"`
+	MessageDate    string         `json:"message_date"    db:"message_date"`
+	Username       string         `json:"username"        db:"username"`
+	ChatID         sql.NullInt64  `json:"-"               db:"chat_id"`
+
+	//This model will keep a reference to the database to verify usernames.
+	DB             *sqlx.DB		  `json:"-"`
 }
 
 func (m *Message) Validate() error{
 	return validation.ValidateStruct(
-		&m, 
+		m, 
 		validation.Field(&m.MessageContent, validation.Required),
-		validation.Field(&m.Username, validation.Required),
-		validation.Field(&m.Receiver, validation.Required, validation.By(m.CheckUsername)),
+		validation.Field(&m.Username, validation.Required, validation.By(m.CheckUsername)),
 	)
 }
 
 func (m *Message) CheckUsername(val interface{}) error{
 	username, success := val.(string)
+	user := User{}
 
 	if !success {
-		return errors.New("Error parsing value")
+		return errors.New("Error parsing value, expected string.")
 	}
-	
+
+	if err := m.DB.Get(&user, "SELECT * FROM users WHERE username=$1", username); err != nil{
+		return errors.New(fmt.Sprintf("Username \"%s\" was not found.", username))
+	}
+
 	fmt.Println(username)
 
 	return nil

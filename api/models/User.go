@@ -19,8 +19,8 @@ type User struct{
 
 func (u *User) Validate() error{
 	return validation.ValidateStruct(
-		&u,
-		validation.Field(&u.Username, validation.Required, validation.Length(4, 12), is.Alphanumeric),
+		u,
+		validation.Field(&u.Username, validation.Required, validation.Length(4, 15), is.Alphanumeric),
 		validation.Field(&u.Password, 
 			validation.Required,
 			validation.Length(6, 50),
@@ -30,9 +30,6 @@ func (u *User) Validate() error{
 		),
 	)
 }
-
-
-
 
 // func trimPasswordCheck(password interface{}) error{
 // 	pass, _ := password.(string)

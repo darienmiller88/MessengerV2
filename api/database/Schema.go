@@ -1,14 +1,14 @@
 package database
 
-// DROP TABLE IF EXISTS user_chats;
-// DROP TABLE IF EXISTS messages;
-// DROP TABLE IF EXISTS users;
-// DROP TABLE IF EXISTS chats;
 var schema string = `
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS user_chats;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS chats;
 CREATE TABLE IF NOT EXISTS users (
     id              SERIAL NOT NULL,
-    created_at      TIMESTAMP,
-    updated_at      TIMESTAMP,   
+    created_at      TIMESTAMP NOT NULL,
+    updated_at      TIMESTAMP NOT NULL,    
     username        VARCHAR(20) UNIQUE,
     password        VARCHAR(50),
     profile_picture text,
@@ -17,20 +17,20 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS chats(
     id         SERIAL NOT NULL,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP, 
-    chat_name  VARCHAR(50),
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL, 
+    chat_name  VARCHAR(50) NOT NULL,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS messages (
     id              SERIAL NOT NULL,
-    created_at      TIMESTAMP,
-    updated_at      TIMESTAMP, 
+    created_at      TIMESTAMP NOT NULL,
+    updated_at      TIMESTAMP NOT NULL, 
     receiver        VARCHAR(20),
     message_content TEXT,
     message_date    TEXT,
-    username        VARCHAR(20),
+    username        VARCHAR(20) NOT NULL,
     chat_id         INT,
     PRIMARY KEY (id),
     FOREIGN KEY(username) REFERENCES users(username),
@@ -40,8 +40,8 @@ CREATE TABLE IF NOT EXISTS messages (
 
 CREATE TABLE IF NOT EXISTS user_chats(
     id         SERIAL NOT NULL,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP, 
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL, 
     chat_id    INT,
     username   VARCHAR(20),
     PRIMARY KEY (id),
