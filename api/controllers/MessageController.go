@@ -31,14 +31,12 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 		return c.Status(http.StatusInternalServerError).JSON(err)
 	}
 
-	// if err := message.Validate(); err != nil{
-	// 	return c.Status(http.StatusBadRequest).JSON(err)
-	// }
+	if err := message.Validate(); err != nil{
+		return c.Status(http.StatusBadRequest).JSON(err)
+	}
 	
-	message.CreatedAt = time.Now()
-	message.UpdatedAt = time.Now()
+	message.InitCreatedAt()
 	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
-	// tx := m.db.MustBegin()
 	
 	result, err := m.db.NamedExec("INSERT INTO messages (message_content, message_date, created_at, updated_at, username) " +
 	"VALUES(:message_content, :message_date, :created_at, :updated_at, :username)", &message)
@@ -49,10 +47,10 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 	
 	fmt.Println("result", result)
 	fmt.Println("message:", message)
-	// tx.Commit()
-	// if err := m.pusherClient.Trigger("public", "public_message", message); err != nil{
-	// 	fmt.Println("err broadcasting messages:", err)
-	// }
+	
+	if err := m.pusherClient.Trigger("public", "public_message", message); err != nil{
+		fmt.Println("err broadcasting messages:", err)
+	}
 
 	return c.Status(http.StatusOK).JSON(message)
 }
@@ -98,10 +96,7 @@ func (m *MessageController) DeleteMessage(c *fiber.Ctx) error{
 	}
 
 	fmt.Println("id:", id)
-	
-	err := m.pusherClient.Trigger("public", "delete_public_message", message)
-
-	if err != nil{
+	if err := m.pusherClient.Trigger("public", "delete_public_message", message); err != nil{
 		fmt.Println("err broadcasting messages:", err)
 	}
 

@@ -1,16 +1,16 @@
 package database
 
+// DROP TABLE IF EXISTS messages;
+// DROP TABLE IF EXISTS user_chats;
+// DROP TABLE IF EXISTS users;
+// DROP TABLE IF EXISTS chats;
 var schema string = `
-DROP TABLE IF EXISTS messages;
-DROP TABLE IF EXISTS user_chats;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS chats;
 CREATE TABLE IF NOT EXISTS users (
     id              SERIAL NOT NULL,
     created_at      TIMESTAMP NOT NULL,
     updated_at      TIMESTAMP NOT NULL,    
     username        VARCHAR(20) UNIQUE,
-    password        VARCHAR(50),
+    password        VARCHAR(200),
     profile_picture text,
     PRIMARY KEY (id)
 );

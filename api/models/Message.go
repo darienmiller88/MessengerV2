@@ -49,3 +49,8 @@ func (m *Message) CheckUsername(val interface{}) error{
 
 	return nil
 }
+
+func (m *Message) InitCreatedAt(){
+	m.CreatedAt = time.Now()
+	m.UpdatedAt = time.Now()
+}
