@@ -19,6 +19,7 @@ type User struct{
 	Username       string         `json:"username"        db:"username"`
 	Password       string         `json:"password"        db:"password"`
 	ProfilePicture sql.NullString `json:"profile_picture" db:"profile_picture"`
+	IsAnonymous    bool           `json:"is_anonymous"    db:"is_anonymous"`
 
 	//Hold a reference to the database to check and see if a username is taken.
 	DB             *sqlx.DB       `json:"-"`

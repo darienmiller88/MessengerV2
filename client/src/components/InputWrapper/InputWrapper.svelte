@@ -31,7 +31,7 @@
         showIcon = false
 
         try {
-            // await messageApi.post("/", message)
+            await messageApi.post("/", message)
             
             setTimeout(() => {
                 showIcon = true
