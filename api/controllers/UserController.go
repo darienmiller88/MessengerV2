@@ -22,7 +22,7 @@ type UserController struct {
 
 func (u *UserController) Init() {
 	u.db = database.GetDB()
-	u.sessionLen = 500 //in seconds
+	u.sessionLen = 5000 //in seconds
 }
 
 func (u *UserController) Signin(c *fiber.Ctx) error {
@@ -41,8 +41,7 @@ func (u *UserController) Signin(c *fiber.Ctx) error {
 		return c.Status(http.StatusNotFound).JSON(fiber.Map{"err": "Username or Password incorrect. Please try again."})
 	}
 
-	u.setCookie(c, u.getJwtToken(user))
-
+	u.setCookie(c, u.getJwtToken(user), u.sessionLen)
 	return c.Status(http.StatusOK).JSON(fiber.Map{"message": "You're signed in!"})
 }
 
@@ -74,15 +73,13 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
 	}
 
-	u.setCookie(c, u.getJwtToken(user))
-	
-
+	u.setCookie(c, u.getJwtToken(user), u.sessionLen)
 	return c.Status(http.StatusOK).JSON(user)
 }
 
 func (u *UserController) Signout(c *fiber.Ctx) error {
-	c.ClearCookie("user")
-	return c.Status(http.StatusOK).JSON(fiber.Map{"message": "signed out"})
+	u.setCookie(c, "", 0)
+ 	return c.Status(http.StatusOK).JSON(fiber.Map{"message": "signed out"})
 }
 
 func (u *UserController) GetUsers(c *fiber.Ctx) error {
@@ -91,8 +88,6 @@ func (u *UserController) GetUsers(c *fiber.Ctx) error {
 	if err := u.db.Select(&users, "SELECT * FROM users"); err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"err": err.Error()})
 	}
-
-	// fmt.Println("name from token;", name)
 
 	fmt.Println("context:", c.UserContext().Value("username"))
 	return c.Status(http.StatusOK).JSON(users)
@@ -110,11 +105,17 @@ func (u *UserController) GetUserByID(c *fiber.Ctx) error {
 }
 
 func (u *UserController) GetUserByUsername(c *fiber.Ctx) error {
-	username := c.Params("username")
-	user := models.User{}
+	usernameFromContext := c.UserContext().Value("username").(string)
+	usernameFromURL     := c.Params("username")
+	user                := models.User{}
 
-	if err := u.db.Get(&user, "SELECT * FROM users WHERE username=$1", username); err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"err": fmt.Sprintf("No user with username %s found.", username)})
+	if usernameFromContext != usernameFromURL {
+		return c.Status(http.StatusForbidden).JSON(fiber.Map{"err": fmt.Sprintf("User %s is not allowed to "+
+			"view information from user %s", usernameFromContext, usernameFromURL)})
+	}
+
+	if err := u.db.Get(&user, "SELECT * FROM users WHERE username=$1", usernameFromURL); err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"err": fmt.Sprintf("No user with username %s found.", usernameFromURL)})
 	}
 
 	return c.Status(http.StatusOK).JSON(user)
@@ -144,14 +145,14 @@ func (u *UserController) getJwtToken(user models.User) string{
 	return tokenString
 }
 
-func (u *UserController) setCookie(c *fiber.Ctx, value string) {
+func (u *UserController) setCookie(c *fiber.Ctx, value string, sessionLen int) {
 	c.Cookie(&fiber.Cookie{
 		Name:     "user",
 		Path:     "/",
 		HTTPOnly: true,
 		Secure:   true,
 		SameSite: "None",
-		MaxAge:   500,
-		Value: value,
+		Expires:  time.Now().Add(time.Duration(sessionLen) * time.Second),
+		Value:    value,
 	})
 }
