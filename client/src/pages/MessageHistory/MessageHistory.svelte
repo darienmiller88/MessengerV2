@@ -8,7 +8,13 @@
     let messages: Message[] = []
 
     onMount(async () => {
-       
+       try {
+            const res = await messageApi.get("/message-history")
+       } catch (error: any) {
+            if (error.response.status == 401) {
+                console.log("err unauthroized");
+            }
+       }
     })
 </script>
 
