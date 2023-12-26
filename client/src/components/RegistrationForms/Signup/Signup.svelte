@@ -21,7 +21,7 @@
         <img src={logo} alt="logo"/>
     </div>
     <div class="prompt">Sign up for a new account!</div>
-    <form on:submit|preventDefault={signup}>
+    <form on:submit|preventDefault={signup} class="registration-form">
         <div class="email-input form-input form-item-width">
             <label for="username">Username</label>
             <Asterisk height={10} width={10} color={"red"}/><br />

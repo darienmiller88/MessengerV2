@@ -9,7 +9,6 @@ import (
 
 	"github.com/go-ozzo/ozzo-validation"
 	"github.com/jmoiron/sqlx"
-	"github.com/nerock/ozzo-validation/is"
 )
 
 type User struct{
@@ -31,8 +30,8 @@ func (u *User) Validate() error{
 		validation.Field(&u.Username, 
 			validation.Required, 
 			validation.Length(4, 15), 
-			is.Alphanumeric,
 			validation.Match(regexp.MustCompile("[0-9]")).Error("Username must contain at least one number"),
+			validation.Match(regexp.MustCompile("[a-z]|[A-Z]")).Error("Username must contain at least one letter."),
 			validation.By(u.CheckUsername),
 		),
 		validation.Field(&u.Password, 

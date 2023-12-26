@@ -1,8 +1,10 @@
 package routes
 
 import(
-	"github.com/gofiber/fiber/v2"
 	"MessengerV2/api/controllers"
+	"MessengerV2/api/middlewares"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type MessagesRoutes struct{
@@ -14,10 +16,10 @@ func (m *MessagesRoutes) Init(){
 	m.Router = fiber.New()
 	m.messageController.Init()
 
-	m.Router.Post("/userTyping", m.messageController.UserTyping)
-	m.Router.Post("/", m.messageController.PostMessage)
-	m.Router.Get("/", m.messageController.GetMessages)
-	m.Router.Get("/:id", m.messageController.GetMessageByID)
-	m.Router.Get("/message-history/:username", m.messageController.GetMessageHistory)
-	m.Router.Delete("/:id", m.messageController.DeleteMessage)
+	m.Router.Post("/userTyping", middlewares.Auth, m.messageController.UserTyping)
+	m.Router.Post("/", middlewares.Auth, m.messageController.PostMessage)
+	m.Router.Delete("/:id", middlewares.Auth, m.messageController.DeleteMessage)
+	m.Router.Get("/", middlewares.Auth, m.messageController.GetMessages)
+	m.Router.Get("/:id", middlewares.Auth, m.messageController.GetMessageByID)
+	m.Router.Get("/message-history/:username", middlewares.Auth, middlewares.ProtectUser, m.messageController.GetMessageHistory)
 }

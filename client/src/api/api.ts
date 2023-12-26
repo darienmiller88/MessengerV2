@@ -14,7 +14,7 @@ const messageApiURL =  window.location.hostname === "localhost"
 
 export const userApi = axios.create({
     baseURL: userApiURL,
-    // withCredentials: true,
+    withCredentials: true,
 });
 
 export const messageApi = axios.create({

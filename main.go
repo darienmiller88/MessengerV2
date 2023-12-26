@@ -36,10 +36,6 @@ func main(){
 		AllowCredentials: true,
 	}))
 	app.Use(logger.New())
-	app.Use(func(c *fiber.Ctx) error{
-		fmt.Println("param:", c.Params("username")) // Returns ""
-		return c.Next()
-	})
 	app.Mount("/api/v1", index.Router)
 
 	fmt.Println("running on port:", os.Getenv("PORT"))

@@ -1,7 +1,7 @@
 <script lang="ts">
-    import Sidebar from "../../components/Sidebar/Sidebar.svelte";
-    import UserChatsContainer from "../../containers/UserChatsContainer/UserChatsContainer.svelte";
-    import ChatWindowContainer from "../../containers/ChatWindowContainer/ChatWindowContainer.svelte";
+    import Sidebar from "../../../../components/Sidebar/Sidebar.svelte";
+    import UserChatsContainer from "../../../../containers/UserChatsContainer/UserChatsContainer.svelte";
+    import ChatWindowContainer from "../../../../containers/ChatWindowContainer/ChatWindowContainer.svelte";
 
 </script>
 

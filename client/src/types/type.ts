@@ -20,5 +20,11 @@ export interface Message{
 }
 
 export interface User{
-    
+    username:       string         
+    password:       string         
+	profile_picture: {
+        String: string,
+        valid: boolean
+    }
+	is_anonymous:    boolean           
 }

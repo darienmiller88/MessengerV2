@@ -11,12 +11,11 @@
         groupChatNameStoreKey
     } from "../../../stores"
     import { navigate } from "svelte-routing";
-    // import {  } from "uuid";
     import { v4 as uuid } from 'uuid';
-
-
     import logo from "../../../assets/bluelogo.png"
     import publicChatPicture from "../../../assets/plogo.png"
+    import { userApi } from "../../../api/api";
+    import { type User } from "../../../types/type";
     import "../styles.scss"
 
     let username: string = ""
@@ -35,14 +34,36 @@
         navigate("/home", {replace: true})
     }
 
-    const signInAnonymously = () => {        
-        $usernameStore = "user-" + (uuid() as string).substring(0, 8)        
-        
-        persistStoreValue(usernameStore, $usernameStore, usernameStoreKey)
-        persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
-        persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
-        navigate("/home", {replace: true})
+    const signInAnonymously = async () => {        
+        try {
+            $usernameStore = "User-" + (uuid() as string).substring(0, 8)
+            persistStoreValue(usernameStore, $usernameStore, usernameStoreKey)
+            persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
+            persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
+
+            const user: User = {
+                username: $usernameStore,
+                password: $usernameStore,
+                profile_picture: {
+                    String: "rfnmdkl",
+                    valid: true
+                },
+                is_anonymous: true,
+            }
+
+            console.log("user:", user);
+            
+
+            const response = await userApi.post("/signup", user)
+
+            console.log("res:", response.data);
+            // navigate("/home", {replace: true})
+        } catch (error: any) {
+            console.log("err:", error.response.data);
+        }
     }
+
+   
 </script>
 
 <main>
@@ -51,7 +72,7 @@
     </div>
 
     <div class="prompt">Sign in to your account</div>
-    <form on:submit|preventDefault={signin}>
+    <div class="registration-form">
         <div class="email-input form-input form-item-width">
             <label for="username">Username</label><br />
             <input bind:value={username} required/>
@@ -81,7 +102,7 @@
                 Create an account
             </button>
         </div>
-    </form>
+    </div>
 </main>
 
 <style lang="scss">

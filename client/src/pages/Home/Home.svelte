@@ -1,14 +1,23 @@
 <script lang="ts">
-    import { usernameStore } from "../../stores"
+    import DesktopView from "./views/DesktopViews/DesktopView.svelte";
+    import MobileView from "./views/MobileView/MobileView.svelte";
+    import { onMount } from "svelte";
     import { navigate } from "svelte-routing";
-    import DesktopView from "../../views/DesktopView/DesktopView.svelte";
-    import MobileView from "../../views/MobileView/MobileView.svelte";
+    import { messageApi } from "../../api/api";
 
-    const Logout = () => {
-        $usernameStore = ""
-        window.localStorage.setItem("usernameStore", JSON.stringify($usernameStore))
-        navigate("/", {replace: true})
-    }
+    onMount(async () => {
+        try {
+            const res = await messageApi.get("/")
+            console.log("res:", res);
+
+        } catch (error: any) {
+            console.log("err:", error);
+            
+            // if (error.response.status == 401) {
+            //     navigate("/", {replace: true})
+            // }
+        }
+    })
 </script>
 
 <div class="home">

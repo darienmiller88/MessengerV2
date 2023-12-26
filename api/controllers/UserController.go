@@ -13,6 +13,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"golang.org/x/crypto/bcrypt"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/sethvargo/go-password/password"
 )
 
 type UserController struct {
@@ -25,6 +26,10 @@ func (u *UserController) Init() {
 	u.sessionLen = 5000 //in seconds
 }
 
+func (U *UserController) CheckAuth(c *fiber.Ctx) error{
+	return c.Status(http.StatusOK).JSON(fiber.Map{"success": "You're logged in"})
+}
+
 func (u *UserController) Signin(c *fiber.Ctx) error {
 	user := models.User{}
 	possibleUser := models.User{}
@@ -32,6 +37,7 @@ func (u *UserController) Signin(c *fiber.Ctx) error {
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(err)
 	}
+
 
 	//Check the database to see if the user was there, and compare their password to the user provided one.
 	usernameErr := u.db.Get(&possibleUser, "SELECT * FROM users WHERE username=$1", user.Username)
@@ -56,6 +62,13 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 	user.Username = strings.Trim(user.Username, " ")
 	user.Password = strings.Trim(user.Password, " ")
 
+	//Add password gen for anonymous user
+	if user.IsAnonymous{
+		randomPassword, _ := password.Generate(12, 8, 0, false, false)
+		user.Password = randomPassword
+	}
+
+	fmt.Println("user:", user) 
 	//Validate for all user credentials.
 	if err := user.Validate(); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(err)
@@ -65,8 +78,8 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 
 	user.InitCreatedAt()
 	user.Password = string(hashedPassword)
-	result, _ := u.db.PrepareNamed("INSERT INTO users (created_at, updated_at, username, password) " +
-		"VALUES (:created_at, :updated_at, :username, :password) RETURNING id")
+	result, _ := u.db.PrepareNamed("INSERT INTO users (created_at, updated_at, username, password, is_anonymous) " +
+		"VALUES (:created_at, :updated_at, :username, :password, :is_anonymous) RETURNING id")
 
 	//Execute the prepared statement. This will allow the id of the created user to be returned.
 	if err := result.Get(&user.ID, user); err != nil {
@@ -105,17 +118,14 @@ func (u *UserController) GetUserByID(c *fiber.Ctx) error {
 }
 
 func (u *UserController) GetUserByUsername(c *fiber.Ctx) error {
-	usernameFromContext := c.UserContext().Value("username").(string)
-	usernameFromURL     := c.Params("username")
-	user                := models.User{}
+	username := c.Params("username")
+	user     := models.User{}
 
-	if usernameFromContext != usernameFromURL {
-		return c.Status(http.StatusForbidden).JSON(fiber.Map{"err": fmt.Sprintf("User %s is not allowed to "+
-			"view information from user %s", usernameFromContext, usernameFromURL)})
-	}
-
-	if err := u.db.Get(&user, "SELECT * FROM users WHERE username=$1", usernameFromURL); err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"err": fmt.Sprintf("No user with username %s found.", usernameFromURL)})
+	if err := u.db.Get(&user, "SELECT * FROM users WHERE username=$1", username); err != nil {
+		fmt.Println("err:", err)
+		return c.Status(http.StatusInternalServerError).JSON(
+			fiber.Map{"err": fmt.Sprintf("No user with username %s found.", username)},
+		)
 	}
 
 	return c.Status(http.StatusOK).JSON(user)
@@ -153,6 +163,7 @@ func (u *UserController) setCookie(c *fiber.Ctx, value string, sessionLen int) {
 		Secure:   true,
 		SameSite: "None",
 		Expires:  time.Now().Add(time.Duration(sessionLen) * time.Second),
+		MaxAge:   sessionLen,
 		Value:    value,
 	})
 }

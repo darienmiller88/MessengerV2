@@ -1,8 +1,8 @@
 <script lang="ts">
-    import Sidebar from "../../components/Sidebar/Sidebar.svelte";
-    import UserChatsContainer from "../../containers/UserChatsContainer/UserChatsContainer.svelte";
-    import ChatWindowContainer from "../../containers/ChatWindowContainer/ChatWindowContainer.svelte";
-    import { isChatWindowActiveStore } from "../../stores";
+    import Sidebar from "../../../../components/Sidebar/Sidebar.svelte";
+    import UserChatsContainer from "../../../../containers/UserChatsContainer/UserChatsContainer.svelte";
+    import ChatWindowContainer from "../../../../containers/ChatWindowContainer/ChatWindowContainer.svelte";
+    import { isChatWindowActiveStore } from "../../../../stores";
 
     console.log($isChatWindowActiveStore);
 </script>

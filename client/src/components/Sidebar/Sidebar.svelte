@@ -1,8 +1,9 @@
 <script lang="ts">
-    import { ChatDotsFill, PeopleFill, BoxArrowInLeft } from "svelte-bootstrap-icons";
+    import { ChatDotsFill, PeopleFill, BoxArrowInLeft, HSquareFill } from "svelte-bootstrap-icons";
     import { navigate } from "svelte-routing";
-    import { messagesStore, isDarkModeStore, isDarkModeStoreKey, persistStoreValue } from "../../stores";
+    import { messagesStore, isDarkModeStore, isDarkModeStoreKey, persistStoreValue, usernameStore } from "../../stores";
     import { onMount } from "svelte";
+    import { userApi } from "../../api/api";
     import Modal from "../Modal/Modal.svelte";
     import ProfileForm from "../ProfileForm/ProfileForm.svelte";
     import DarkModeToggle from "../DarkModeToggle/DarkModeToggle.svelte";
@@ -11,11 +12,28 @@
 
     const iconSize: number = 28
 
-    const logout = () => {
-        pusher.unsubscribe("public")
-        $messagesStore = []
-        window.localStorage.clear()
-        navigate("/", {replace: true})
+    const Logout = async () => {
+        try {
+            const res = await userApi.post("/signout", {username: $usernameStore})
+            console.log("res:", res);
+            
+            $usernameStore = ""
+            $messagesStore = []
+            pusher.unsubscribe("public")
+            window.localStorage.clear()
+            
+            navigate("/", {replace: true})
+        } catch (error) {
+            console.log("err:", error);
+        }
+    }
+
+    const changeToMessageHistory = () => {
+        navigate("/message-history", {replace: true})
+    }
+
+    const changeToHome = () => {
+        navigate("/home", {replace: true})
     }
 
     const changeColorTheme = () => {
@@ -45,13 +63,16 @@
         <div class="toggle-wrapper">
             <DarkModeToggle changeColorTheme={changeColorTheme}/>
         </div>
-        <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"}>
+        <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"} on:click={changeToHome} tabindex="0" role="button" on:keyup={null}>
             <ChatDotsFill width={iconSize} height={iconSize}/>
         </div>
         <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"}>
             <PeopleFill width={iconSize} height={iconSize} class="icon"/>
         </div>
-        <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"} on:click={logout} tabindex="0" role="button" on:keyup={null}>
+        <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"}  on:click={changeToMessageHistory} tabindex="0" role="button" on:keyup={null}>
+            <HSquareFill width={iconSize} height={iconSize} class="icon"/>
+        </div>
+        <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"} on:click={Logout} tabindex="0" role="button" on:keyup={null}>
             <BoxArrowInLeft width={iconSize} height={iconSize} class="icon" />
         </div>
         <div class="profile-pic-wrapper" on:click={() => showModal = true} tabindex="0" role="button" on:keyup={null}>
@@ -60,13 +81,16 @@
     </div>
     <div class="sidebar-desktop-view">
         <div class="icons-wrapper">
-            <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"}>
+            <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"} on:click={changeToHome} tabindex="0" role="button" on:keyup={null} >
                 <ChatDotsFill width={iconSize} height={iconSize} class="icon"/>
             </div>
             <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"}>
                 <PeopleFill width={iconSize} height={iconSize}  class="icon"/>
             </div>
-            <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"} on:click={logout} tabindex="0" role="button" on:keyup={null}>
+            <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"}  on:click={changeToMessageHistory} tabindex="0" role="button" on:keyup={null}>
+                <HSquareFill width={iconSize} height={iconSize} class="icon" />
+            </div>
+            <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"} on:click={Logout} tabindex="0" role="button" on:keyup={null}>
                 <BoxArrowInLeft width={iconSize} height={iconSize}  class="icon" />
             </div>
         </div>
@@ -99,7 +123,7 @@
 
         .sidebar-mobile-view{
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            grid-template-columns: repeat(6, 1fr);
             height: 100%;
 
             .toggle-wrapper{
@@ -165,8 +189,7 @@
         transition: 0.4s;
         border-radius: 5px;
         
-        padding: 20px 20px;
-        
+        padding: 8px 8px;        
 
         &:hover{
             cursor: pointer;
@@ -179,6 +202,7 @@
 
         @media only screen and (min-width: 992px){
             margin-top: 15px;
+            padding: 20px 20px;
         }
     }
 

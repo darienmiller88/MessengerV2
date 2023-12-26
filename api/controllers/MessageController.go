@@ -38,14 +38,13 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 	message.InitCreatedAt()
 	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
 	
-	result, err := m.db.NamedExec("INSERT INTO messages (message_content, message_date, created_at, updated_at, username) " +
-	"VALUES(:message_content, :message_date, :created_at, :updated_at, :username)", &message)
+	result, _ := m.db.PrepareNamed("INSERT INTO messages (message_content, message_date, created_at, updated_at, username) " +
+	"VALUES(:message_content, :message_date, :created_at, :updated_at, :username) RETURNING id")
 	
-	if err != nil{
+	if err := result.Get(&message.ID, message); err != nil{
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"err": err.Error()})
 	}
 	
-	fmt.Println("result", result)
 	fmt.Println("message:", message)
 	
 	if err := m.pusherClient.Trigger("public", "public_message", message); err != nil{
@@ -110,9 +109,7 @@ func (m *MessageController) UserTyping(c *fiber.Ctx) error{
 		return c.Status(http.StatusBadRequest).JSON(err)
 	}
 
-	err := m.pusherClient.Trigger("public", "user_typing", data["username"])
-
-	if err != nil{
+	if err := m.pusherClient.Trigger("public", "user_typing", data["username"]); err != nil{
 		fmt.Println("err broadcasting messages:", err)
 	}
 

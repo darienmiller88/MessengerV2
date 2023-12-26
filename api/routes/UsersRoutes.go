@@ -7,20 +7,23 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type UserRoutes struct{
+type UserRoutes struct {
 	Router         *fiber.App
 	userController controllers.UserController
 }
 
-func (u *UserRoutes) Init(){
+func (u *UserRoutes) Init() {
 	u.Router = fiber.New()
 	u.userController.Init()
 
-	u.Router.Post("/signout", u.userController.Signout)
-	u.Router.Use(middlewares.ProtectSignin).Post("/signin", u.userController.Signin)
-	u.Router.Use(middlewares.ProtectSignin).Post("/signup", u.userController.Signup)
-	u.Router.Use(middlewares.Auth).Get("/:id", u.userController.GetUserByID)
-	u.Router.Use(middlewares.Auth).Delete("/:id", u.userController.DeleteUser)
-	u.Router.Use(middlewares.Auth).Get("/", u.userController.GetUsers)
-	u.Router.Use(middlewares.Auth, middlewares.ProtectUser).Get("/username/:username", u.userController.GetUserByUsername)
+	u.Router.Post("/signout",  u.userController.Signout)
+	u.Router.Use("/signin",    middlewares.ProtectSignin).Post("/signin", u.userController.Signin)
+	u.Router.Use("/signup",    middlewares.ProtectSignin).Post("/signup", u.userController.Signup)
+	u.Router.Get("/",          middlewares.Auth, u.userController.GetUsers)
+	u.Router.Get("/:id",       middlewares.Auth, u.userController.GetUserByID)
+	u.Router.Delete("/:id",    middlewares.Auth, u.userController.DeleteUser)
+	u.Router.Get("/checkauth", middlewares.Auth, u.userController.CheckAuth) //Throw away route to check log in status
+	u.Router.Get("/username/:username", middlewares.Auth, middlewares.ProtectUser, u.userController.GetUserByUsername)
+	// u.Router.Use(middlewares.Auth).Route("/", func(router fiber.Router) {
+	// })
 }
