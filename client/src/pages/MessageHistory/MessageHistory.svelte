@@ -10,6 +10,7 @@
     onMount(async () => {
        try {
             const res = await messageApi.get("/message-history")
+            console.log("res:", res);
        } catch (error: any) {
             if (error.response.status == 401) {
                 console.log("err unauthroized");

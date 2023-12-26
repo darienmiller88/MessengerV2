@@ -45,19 +45,17 @@
                 username: $usernameStore,
                 password: $usernameStore,
                 profile_picture: {
-                    String: "rfnmdkl",
+                    String: "",
                     valid: true
                 },
                 is_anonymous: true,
             }
 
             console.log("user:", user);
-            
-
             const response = await userApi.post("/signup", user)
 
             console.log("res:", response.data);
-            // navigate("/home", {replace: true})
+            navigate("/home", {replace: true})
         } catch (error: any) {
             console.log("err:", error.response.data);
         }
