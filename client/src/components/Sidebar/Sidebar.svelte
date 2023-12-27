@@ -115,6 +115,9 @@
 
 <style lang="scss">
     .sidebar{
+        // This will allow the sidebar to fill up any div it is wrapped in.
+        width: 100%;
+        height: 100%;
 
         // Show border on the right side only on desktops.
         @media screen and (min-width: 992px) {

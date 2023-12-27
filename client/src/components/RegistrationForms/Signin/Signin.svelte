@@ -55,7 +55,7 @@
             const response = await userApi.post("/signup", user)
 
             console.log("res:", response.data);
-            navigate("/home", {replace: true})
+            // navigate("/home", {replace: true})
         } catch (error: any) {
             console.log("err:", error.response.data);
         }

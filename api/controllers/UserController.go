@@ -61,7 +61,7 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 	user.Username = strings.Trim(user.Username, " ")
 	user.Password = strings.Trim(user.Password, " ")
 
-	//Add password gen for anonymous user
+	//Add password gen for anonymous user to clear password validation
 	if user.IsAnonymous{
 		randomPassword, _ := password.Generate(12, 8, 0, false, false)
 		user.Password = randomPassword
@@ -86,7 +86,7 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 	}
 
 	u.setCookie(c, u.getJwtToken(user), u.sessionLen)
-	return c.Status(http.StatusOK).JSON(user)
+	return c.Status(http.StatusCreated).JSON(user)
 }
 
 func (u *UserController) Signout(c *fiber.Ctx) error {
