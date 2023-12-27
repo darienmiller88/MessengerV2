@@ -2,7 +2,9 @@
     import Message from "../Message/Message.svelte";
     import { messagesStore, usernameStore } from "../../stores";
     import { afterUpdate, onMount } from 'svelte';
+    import { navigate } from "svelte-routing";
     import pusher from "../../pusher/pusher";
+    import { messageApi } from "../../api/api";
 
     let messagesRef: HTMLElement
     let userTypingText: string = ""
@@ -17,7 +19,17 @@
         }
     });
 
-    onMount(() => {
+    onMount(async () => {
+        try {
+            const res = await messageApi.get("/")
+            console.log("res:", res.data);
+            
+        } catch (error: any) {
+            if (error.response.status == 401) {
+                navigate("/", {replace: true})
+            }
+        }
+
         const channel = pusher.subscribe("public")
 
         channel.bind("user_typing", (username: string) => {

@@ -6,23 +6,16 @@
     import { isDarkModeStore } from "../../stores"
     import { type Message } from "../../types/type"
 
-    let messages: Message[] = [
-        {
-            message_content: "hi guys",
-            message_date: new Date().toLocaleString(),
-            username: "darienm99",
-            isSender: true
-        },
-    ]
+    let messages: Message[] = []
 
     onMount(async () => {
        try {
-            const res = await messageApi.get("/message-history")
-            console.log("res:", res);
+            const res = await messageApi.get(`/message-history/${"darienm99"}`)
+            console.log("res:", res.data);
        } catch (error: any) {
             if (error.response.status == 401) {
                 console.log("err unauthroized");
-
+                navigate("/", {replace: true})
             }
        }
     })

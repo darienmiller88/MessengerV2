@@ -13,9 +13,9 @@
         } catch (error: any) {
             console.log("err:", error);
             
-            // if (error.response.status == 401) {
-            //     navigate("/", {replace: true})
-            // }
+            if (error.response.status == 401) {
+                navigate("/", {replace: true})
+            }
         }
     })
 </script>

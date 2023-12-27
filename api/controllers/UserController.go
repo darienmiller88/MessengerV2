@@ -27,7 +27,7 @@ func (u *UserController) Init() {
 }
 
 func (U *UserController) CheckAuth(c *fiber.Ctx) error{
-	return c.Status(http.StatusOK).JSON(fiber.Map{"success": "You're logged in"})
+	return c.Status(http.StatusOK).SendString("You're logged in")
 }
 
 func (u *UserController) Signin(c *fiber.Ctx) error {
@@ -43,11 +43,11 @@ func (u *UserController) Signin(c *fiber.Ctx) error {
 	passwordErr := bcrypt.CompareHashAndPassword([]byte(possibleUser.Password), []byte(user.Password))
 
 	if usernameErr != nil || passwordErr != nil {
-		return c.Status(http.StatusNotFound).JSON(fiber.Map{"err": "Username or Password incorrect. Please try again."})
+		return c.Status(http.StatusNotFound).SendString("Username or Password incorrect. Please try again.")
 	}
 
 	u.setCookie(c, u.getJwtToken(user), u.sessionLen)
-	return c.Status(http.StatusOK).JSON(fiber.Map{"message": "You're signed in!"})
+	return c.Status(http.StatusOK).SendString("You're signed in!")
 }
 
 func (u *UserController) Signup(c *fiber.Ctx) error {
@@ -82,7 +82,7 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 
 	//Execute the prepared statement. This will allow the id of the created user to be returned.
 	if err := result.Get(&user.ID, user); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
+		return c.Status(http.StatusBadRequest).SendString( err.Error())
 	}
 
 	u.setCookie(c, u.getJwtToken(user), u.sessionLen)
@@ -91,14 +91,14 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 
 func (u *UserController) Signout(c *fiber.Ctx) error {
 	u.setCookie(c, "", 0)
- 	return c.Status(http.StatusOK).JSON(fiber.Map{"message": "signed out"})
+ 	return c.Status(http.StatusOK).SendString("signed out")
 }
 
 func (u *UserController) GetUsers(c *fiber.Ctx) error {
 	users := []models.User{}
 
 	if err := u.db.Select(&users, "SELECT * FROM users"); err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"err": err.Error()})
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 
 	fmt.Println("context:", c.UserContext().Value("username"))
@@ -110,7 +110,7 @@ func (u *UserController) GetUserByID(c *fiber.Ctx) error {
 	user := models.User{}
 
 	if err := u.db.Get(&user, "SELECT * FROM users WHERE id=$1", id); err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"err": fmt.Sprintf("No user with id %s found.", id)})
+		return c.Status(http.StatusInternalServerError).SendString(fmt.Sprintf("No user with id %s found.", id))
 	}
 
 	return c.Status(http.StatusOK).JSON(user)
@@ -122,9 +122,7 @@ func (u *UserController) GetUserByUsername(c *fiber.Ctx) error {
 
 	if err := u.db.Get(&user, "SELECT * FROM users WHERE username=$1", username); err != nil {
 		fmt.Println("err:", err)
-		return c.Status(http.StatusInternalServerError).JSON(
-			fiber.Map{"err": fmt.Sprintf("No user with username %s found.", username)},
-		)
+		return c.Status(http.StatusInternalServerError).SendString(fmt.Sprintf("No user with username %s found.", username))
 	}
 
 	return c.Status(http.StatusOK).JSON(user)
@@ -137,10 +135,10 @@ func (u *UserController) DeleteUser(c *fiber.Ctx) error {
 	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 0 {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"err": fmt.Sprintf("No user with id %s found.", id)})
+		return c.Status(http.StatusInternalServerError).SendString(fmt.Sprintf("No user with id %s found.", id))
 	}
 
-	return c.Status(http.StatusOK).JSON(fiber.Map{"success": fmt.Sprintf("Deleted user with id %s", id)})
+	return c.Status(http.StatusOK).SendString(fmt.Sprintf("Deleted user with id \"%s\"", id))
 }
 
 func (u *UserController) getJwtToken(user models.User) string{

@@ -14,7 +14,7 @@ func ProtectSignin(c *fiber.Ctx) error{
 
 	//If the user is currently signed in, and they try to access the signin or signup route, block the request
 	if err == nil && pageHit {
-		return c.Status(http.StatusForbidden).JSON(fiber.Map{"err": fmt.Sprintf("Cannot access %s while signed in.", c.Path())})
+		return c.Status(http.StatusForbidden).SendString(fmt.Sprintf("Cannot access %s while signed in.", c.Path()))
 	}
 	
 	return c.Next()

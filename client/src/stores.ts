@@ -3,6 +3,7 @@ import { type Chat, type Message } from "./types/type"
 import publicpic from "./assets/plogo.png"
 
 export const usernameStore           = writable("");
+export const isAnonymousStore        = writable(false)
 export const groupChatNameStore      = writable("")
 export const fillIconColorStore      = writable("rgb(29, 161, 242)")
 export const isChatWindowActiveStore = writable(false)
@@ -21,6 +22,7 @@ export const chatsStore              = writable<Chat[]>([{
 }])
 
 export const usernameStoreKey           = "usernameStoreKey"
+export const isAnonymousStoreKey        = "isAnonymousStoreKey"
 export const isChatWindowActiveStoreKey = "isChatActiveStoreKey"
 export const groupChatNameStoreKey      = "groupChatNameStoreKey"
 export const chatPictureStoreKey        = "chatPictureStoreKey"
