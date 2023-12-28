@@ -3,18 +3,17 @@
     import { fillIconColorStore } from "../../stores";
     import { messagesStore } from "../../stores"
     import { type Message } from "../../types/type"
-    import { onMount, type EventDispatcher } from "svelte";
+    import { onMount } from "svelte";
     import { messageApi } from "../../api/api";
     import { usernameStore, usernameStoreKey } from "../../stores";
     import pusher from "../../pusher/pusher";
-    // import { socket, MESSAGE_TYPE } from "../../websocket/websocket"
 
     let isThumbsUp:  boolean = true
     let messageText: string  = ""
     let showIcon:    boolean = true
     let canPublish:  boolean = true
+    let canType:     boolean = false
     let firstKey:    number  = 0
-    let secondKey:   number  = 0
     const iconSize:  number  = 24
 
     const sendMessage = async () => {
@@ -26,6 +25,7 @@
         }
 
         isThumbsUp = true
+        canType = !canType
         $messagesStore = [...$messagesStore, message]
         messageText = ""
         showIcon = false
@@ -35,7 +35,8 @@
             
             setTimeout(() => {
                 showIcon = true
-            }, 2000);
+                canType = !canType
+            }, 1000);
         } catch (error) {
             console.log("err:", error);
         }
@@ -112,6 +113,8 @@
             on:input={() => isThumbsUp = messageText.trim().length == 0}
             on:keyup={handleKeyInput}
             on:keydown={handleKeyDown}
+
+           disabled={canType}
         />
     </div>
 

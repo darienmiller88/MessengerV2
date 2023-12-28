@@ -27,7 +27,7 @@ func Init(){
 		fmt.Println("Connection established! :)")
 	}
 
-	_db.MustExec(GetSchema())
+	//_db.MustExec(GetSchema())
 	
 	chat := models.Chat{}
 	err = _db.Get(&chat, "SELECT * FROM chats WHERE chat_name=$1", "Public")
