@@ -6,7 +6,6 @@
     import { navigate } from "svelte-routing";
     import { Moon, Pulse } from 'svelte-loading-spinners';
 
-
     let username:          string = ""
     let password:          string = ""
     let usernameError:     string = ""
@@ -38,10 +37,9 @@
                 isPasswordInvalid = true
                 passwordError = error.response.data.password
             }
-            
-            isLoading = false
         }
-
+        
+        isLoading = false
         username = ""
         password = ""
     }

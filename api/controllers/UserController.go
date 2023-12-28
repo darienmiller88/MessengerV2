@@ -82,7 +82,7 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 
 	//Execute the prepared statement. This will allow the id of the created user to be returned.
 	if err := result.Get(&user.ID, user); err != nil {
-		return c.Status(http.StatusBadRequest).SendString( err.Error())
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
 	u.setCookie(c, u.getJwtToken(user), u.sessionLen)
@@ -90,6 +90,19 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 }
 
 func (u *UserController) Signout(c *fiber.Ctx) error {
+	user := models.User{}
+
+	if err := c.BodyParser(&user); err != nil{
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+
+	if user.IsAnonymous{
+		result, _       := u.db.Exec("DELETE FROM users WHERE username=$1", user.Username)
+		rowsAffected, _ := result.RowsAffected()
+
+		fmt.Println("rows:", rowsAffected)
+	}
+
 	u.setCookie(c, "", 0)
  	return c.Status(http.StatusOK).SendString("signed out")
 }

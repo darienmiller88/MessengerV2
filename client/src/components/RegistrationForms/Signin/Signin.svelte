@@ -1,6 +1,6 @@
 <script lang="ts">
-    // import { IconBrandGithubFilled, IconBrandGoogle } from '@tabler/icons-svelte';
     import { Github, Google } from "svelte-bootstrap-icons";
+    import { Moon } from 'svelte-loading-spinners';
     import { 
         usernameStore, 
         usernameStoreKey,
@@ -20,15 +20,17 @@
     import { type User } from "../../../types/type";
     import "../styles.scss"
 
-    let username:    string = ""
-    let password:    string = ""
-    let signinError: string = ""
+    let username:      string = ""
+    let password:      string = ""
+    let isLoading:     boolean = false
+    let signinError:   string = ""
     let isSigninError: boolean = false
     export let changeToSignup = () => {}
   
     const signin = async () => {        
         try {
             $usernameStore = username
+            isLoading = true
 
             const userCredentials = {
                 username,
@@ -51,12 +53,15 @@
                 signinError = error.response.data
                 console.log("error:", error.response);                
             }
-        }
 
+        }
+        
+        isLoading = false
         username = ""
         password = ""
     }
 
+    // When signing in a user anonymously, generate a random username
     const signInAnonymously = async () => {        
         try {
             $usernameStore = "User-" + (uuid() as string).substring(0, 8)
@@ -83,9 +88,7 @@
         } catch (error: any) {
             console.log("err:", error.response.data);
         }
-    }
-
-   
+    }   
 </script>
 
 <main>

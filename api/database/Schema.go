@@ -1,10 +1,10 @@
 package database
 
-// DROP TABLE IF EXISTS messages;
-// DROP TABLE IF EXISTS user_chats;
-// DROP TABLE IF EXISTS users;
-// DROP TABLE IF EXISTS chats;
 var schema string = `
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS user_chats;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS chats;
 CREATE TABLE IF NOT EXISTS users (
     id              SERIAL NOT NULL,
     created_at      TIMESTAMP NOT NULL,
@@ -34,9 +34,9 @@ CREATE TABLE IF NOT EXISTS messages (
     username        VARCHAR(20) NOT NULL,
     chat_id         INT,
     PRIMARY KEY (id),
-    FOREIGN KEY(username) REFERENCES users(username),
-    FOREIGN KEY(receiver) REFERENCES users(username),
-    FOREIGN KEY(chat_id)  REFERENCES chats(id)
+    FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE,
+    FOREIGN KEY(receiver) REFERENCES users(username) ON DELETE CASCADE,
+    FOREIGN KEY(chat_id)  REFERENCES chats(id)       ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS user_chats(
@@ -46,8 +46,8 @@ CREATE TABLE IF NOT EXISTS user_chats(
     chat_id    INT,
     username   VARCHAR(20),
     PRIMARY KEY (id),
-    FOREIGN KEY(chat_id)  REFERENCES chats(id),
-    FOREIGN KEY(username) REFERENCES users(username)
+    FOREIGN KEY(chat_id)  REFERENCES chats(id)       ON DELETE CASCADE,
+    FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE
 );
 `
 func GetSchema() string{

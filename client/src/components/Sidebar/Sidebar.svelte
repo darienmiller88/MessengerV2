@@ -1,7 +1,14 @@
 <script lang="ts">
     import { ChatDotsFill, PeopleFill, BoxArrowInLeft, HSquareFill } from "svelte-bootstrap-icons";
     import { navigate } from "svelte-routing";
-    import { messagesStore, isDarkModeStore, isDarkModeStoreKey, persistStoreValue, usernameStore } from "../../stores";
+    import { 
+        messagesStore, 
+        isAnonymousStore,
+        isDarkModeStore, 
+        isDarkModeStoreKey, 
+        persistStoreValue, 
+        usernameStore 
+    } from "../../stores";
     import { onMount } from "svelte";
     import { userApi } from "../../api/api";
     import Modal from "../Modal/Modal.svelte";
@@ -14,7 +21,7 @@
 
     const Logout = async () => {
         try {
-            const res = await userApi.post("/signout", {username: $usernameStore})
+            const res = await userApi.post("/signout", {username: $usernameStore, isAnonymous: $isAnonymousStore})
             console.log("res:", res);
             
             $usernameStore = ""
