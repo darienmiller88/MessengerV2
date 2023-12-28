@@ -41,6 +41,7 @@
             
 
             isSigninError = false
+            persistStoreValue(usernameStore, username, usernameStoreKey)
             persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
             persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
             navigate("/home", {replace: true})
@@ -60,7 +61,7 @@
         try {
             $usernameStore = "User-" + (uuid() as string).substring(0, 8)
             persistStoreValue(usernameStore, $usernameStore, usernameStoreKey)
-            // persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
+            persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
             persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
             persistStoreValue(isAnonymousStore, true, isAnonymousStoreKey)
 
