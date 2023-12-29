@@ -20,17 +20,18 @@
     import { type User } from "../../../types/type";
     import "../styles.scss"
 
-    let username:      string = ""
-    let password:      string = ""
-    let isLoading:     boolean = false
-    let signinError:   string = ""
-    let isSigninError: boolean = false
+    let username:                string = ""
+    let password:                string = ""
+    let signinError:             string = ""
+    let isSigninError:           boolean = false
+    let isSigninLoading:         boolean = false
+    let isSigninAnoymousLoading: boolean = false
     export let changeToSignup = () => {}
   
     const signin = async () => {        
         try {
             $usernameStore = username
-            isLoading = true
+            isSigninLoading = true
 
             const userCredentials = {
                 username,
@@ -56,7 +57,10 @@
 
         }
         
-        isLoading = false
+        setTimeout(() => {
+            isSigninLoading = false
+            
+        }, 2000);
         username = ""
         password = ""
     }
@@ -64,6 +68,7 @@
     // When signing in a user anonymously, generate a random username
     const signInAnonymously = async () => {        
         try {
+            isSigninAnoymousLoading = true
             $usernameStore = "User-" + (uuid() as string).substring(0, 8)
             persistStoreValue(usernameStore, $usernameStore, usernameStoreKey)
             persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
@@ -88,6 +93,10 @@
         } catch (error: any) {
             console.log("err:", error.response.data);
         }
+
+        setTimeout(() => {
+            isSigninAnoymousLoading = false
+        }, 2000);
     }   
 </script>
 
@@ -112,8 +121,24 @@
         {/if}
 
         <div class="button-group form-item-width">
-            <button class="sign-in" type="submit">Sign in</button>
-            <button class="sign-in" type="button" on:click={signInAnonymously}>Sign in Anonymously</button>
+            <button class="sign-in" type="submit" disabled={isSigninLoading}>
+                {#if isSigninLoading}
+                    <div class="loading-wrapper">
+                        <Moon size="30" color="#FF3E00" unit="px" duration="1s"/>
+                    </div>
+                {:else}
+                    Sign in
+                {/if}
+            </button>
+            <button class="sign-in" type="button" on:click={signInAnonymously} disabled={isSigninAnoymousLoading}>
+                {#if isSigninAnoymousLoading}
+                    <div class="loading-wrapper">
+                        <Moon size="30" color="#FF3E00" unit="px" duration="1s"/>
+                    </div>                
+                {:else}
+                    Sign in Anonymously
+                {/if}
+            </button>
         </div>
         <div class="continue form-item-width">
             <hr class="line" />
@@ -138,5 +163,11 @@
         color: red;
         text-align: center;
         margin: 10px;
+   }
+
+   .loading-wrapper{
+        display: grid;
+        margin: auto;
+        width: fit-content;
    }
 </style>
