@@ -16,10 +16,10 @@ type Message struct{
 	CreatedAt      time.Time      `json:"created_at"      db:"created_at"`
 	UpdatedAt      time.Time      `json:"updated_at"      db:"updated_at"`
 	Receiver       sql.NullString `json:"receiver"        db:"receiver"`
+	ChatID         sql.NullInt64  `json:"-"               db:"chat_id"`
 	MessageContent string         `json:"message_content" db:"message_content"`
 	MessageDate    string         `json:"message_date"    db:"message_date"`
 	Username       string         `json:"username"        db:"username"`
-	ChatID         sql.NullInt64  `json:"-"               db:"chat_id"`
 
 	//This model will keep a reference to the database to verify usernames.
 	DB             *sqlx.DB		  `json:"-"`

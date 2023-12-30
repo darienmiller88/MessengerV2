@@ -41,8 +41,6 @@
             const res = await userApi.post("/signin", userCredentials)
 
             console.log("res:", res.data);
-            
-
             isSigninError = false
             persistStoreValue(usernameStore, username, usernameStoreKey)
             persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
@@ -54,13 +52,9 @@
                 signinError = error.response.data
                 console.log("error:", error.response);                
             }
-
         }
         
-        setTimeout(() => {
-            isSigninLoading = false
-            
-        }, 2000);
+        isSigninLoading = false
         username = ""
         password = ""
     }
@@ -94,9 +88,7 @@
             console.log("err:", error.response.data);
         }
 
-        setTimeout(() => {
-            isSigninAnoymousLoading = false
-        }, 2000);
+        isSigninAnoymousLoading = false
     }   
 </script>
 

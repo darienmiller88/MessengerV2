@@ -3,11 +3,11 @@
     import MobileView from "./views/MobileView/MobileView.svelte";
     import { onMount } from "svelte";
     import { navigate } from "svelte-routing";
-    import { messageApi } from "../../api/api";
+    import { userApi } from "../../api/api";
 
     onMount(async () => {
         try {
-            const res = await messageApi.get("/")
+            const res = await userApi.get("/checkauth")
             console.log("res:", res.data);
 
         } catch (error: any) {

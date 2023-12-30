@@ -3,14 +3,14 @@
     import { onMount } from "svelte";
     import { navigate } from "svelte-routing";
     import { messageApi } from "../../api/api";
-    import { isDarkModeStore } from "../../stores"
+    import { isDarkModeStore, usernameStore } from "../../stores"
     import { type Message } from "../../types/type"
 
     let messages: Message[] = []
 
     onMount(async () => {
        try {
-            const res = await messageApi.get(`/message-history/${"darienm99"}`)
+            const res = await messageApi.get(`/message-history/${$usernameStore}`)
             console.log("res:", res.data);
        } catch (error: any) {
             if (error.response.status == 401) {

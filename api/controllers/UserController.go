@@ -26,17 +26,32 @@ func (u *UserController) Init() {
 	u.sessionLen = 5000 //in seconds
 }
 
-func (U *UserController) CheckAuth(c *fiber.Ctx) error{
+func (u *UserController) CheckAuth(c *fiber.Ctx) error{
 	return c.Status(http.StatusOK).SendString("You're logged in")
 }
 
-func (u *UserController) Signin(c *fiber.Ctx) error {
+func (u *UserController) Test(c *fiber.Ctx) error {
 	user := models.User{}
+
+	if err := c.BodyParser(&user); err != nil {
+		return c.Status(http.StatusUnprocessableEntity).JSON(err)
+	}
+
+
+	fmt.Println("user:", user)
+
+	return c.SendString("success")
+}
+
+func (u *UserController) Signin(c *fiber.Ctx) error {
+	user := models.User{DB: u.db}
 	possibleUser := models.User{}
 
 	if err := c.BodyParser(&user); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(err)
+		return c.Status(http.StatusUnprocessableEntity).JSON(err)
 	}
+
+	fmt.Println("user: ", user)
 
 	//Check the database to see if the user was there, and compare their password to the user provided one.
 	usernameErr := u.db.Get(&possibleUser, "SELECT * FROM users WHERE username=$1", user.Username)
@@ -54,7 +69,7 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 	user := models.User{DB: u.db}
 
 	if err := c.BodyParser(&user); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(err)
+		return c.Status(http.StatusUnprocessableEntity).JSON(err)
 	}
 
 	//Before validating, trim the password and username for spaces to get the "real" length.
@@ -67,7 +82,6 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 		user.Password = randomPassword
 	}
 
-	fmt.Println("user:", user) 
 	//Validate for all user credentials.
 	if err := user.Validate(); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(err)
@@ -89,15 +103,22 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 	return c.Status(http.StatusCreated).JSON(user)
 }
 
+//Signout accepts a body with a "username" and "is_anonymous" field.
 func (u *UserController) Signout(c *fiber.Ctx) error {
-	user := models.User{}
+	isAnonymous, anonymousErr := c.UserContext().Value("token").(jwt.MapClaims)["is_anonymous"].(bool)
+	
+	if !anonymousErr{
+		return c.Status(http.StatusUnprocessableEntity).SendString("Could not parse \"is_anonymous\" field.")
+	}
+	
+	username, usernameErr := c.UserContext().Value("token").(jwt.MapClaims)["username"].(string)
 
-	if err := c.BodyParser(&user); err != nil{
-		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	if !usernameErr{
+		return c.Status(http.StatusUnprocessableEntity).SendString("Could not parse \"username\" field.")
 	}
 
-	if user.IsAnonymous{
-		result, _       := u.db.Exec("DELETE FROM users WHERE username=$1", user.Username)
+	if isAnonymous{
+		result, _       := u.db.Exec("DELETE FROM users WHERE username=$1", username)
 		rowsAffected, _ := result.RowsAffected()
 
 		fmt.Println("rows:", rowsAffected)
@@ -157,11 +178,11 @@ func (u *UserController) DeleteUser(c *fiber.Ctx) error {
 func (u *UserController) getJwtToken(user models.User) string{
 	expiry := time.Now().Add(time.Duration(u.sessionLen) * time.Second)
 	tokenString, _ := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"username": user.Username,
-		"exp"     : expiry.Unix(),
+		"exp"     :     expiry.Unix(),
+		"username":     user.Username,
+		"is_anonymous": user.IsAnonymous,
 	}).SignedString([]byte(os.Getenv("JWT_SECRET")))
 
-	fmt.Println("token:", tokenString)
 	return tokenString
 }
 

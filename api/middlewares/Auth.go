@@ -18,7 +18,7 @@ func Auth(c *fiber.Ctx) error{
 
 	//Parse the token and pull out the username from the token.
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		c.SetUserContext(context.WithValue(c.Context(), "username", claims["username"]))
+		c.SetUserContext(context.WithValue(c.Context(), "token", claims))
 	}
 
 	return c.Next()

@@ -5,10 +5,11 @@ import (
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func ProtectUser(c *fiber.Ctx) error{
-	usernameFromContext := c.UserContext().Value("username").(string)
+	usernameFromContext := c.UserContext().Value("token").(jwt.MapClaims)["username"]
 	usernameFromURL     := c.Params("username")
 
 	if usernameFromContext != usernameFromURL{

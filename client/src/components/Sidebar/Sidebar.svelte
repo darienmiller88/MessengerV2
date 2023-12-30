@@ -21,7 +21,7 @@
 
     const Logout = async () => {
         try {
-            const res = await userApi.post("/signout", {username: $usernameStore, isAnonymous: $isAnonymousStore})
+            const res = await userApi.post("/signout")
             console.log("res:", res);
             
             $usernameStore = ""
