@@ -1,6 +1,6 @@
 <script lang="ts">
     import Message from "../Message/Message.svelte";
-    import { messagesStore, usernameStore } from "../../stores";
+    import { messagesStore, persistStoreValue, usernameStore } from "../../stores";
     import { afterUpdate, onMount } from 'svelte';
     import { navigate } from "svelte-routing";
     import pusher from "../../pusher/pusher";
@@ -22,8 +22,8 @@
     onMount(async () => {
         try {
             const res = await messageApi.get("/")
+            $messagesStore = res.data 
             console.log("res:", res.data);
-            
         } catch (error: any) {
             if (error.response.status == 401) {
                 navigate("/", {replace: true})
@@ -52,6 +52,7 @@
     <div class="window-inner" bind:this={messagesRef}>
         {#each $messagesStore as message}
             <Message 
+                messageId={message.id}
                 messageContent={message.message_content} 
                 username={message.username} 
                 time={message.message_date} 

@@ -13,6 +13,7 @@ export interface FilteredUser{
 }
 
 export interface Message{
+    id:              number
     message_content: string
     message_date:    string
     username:        string

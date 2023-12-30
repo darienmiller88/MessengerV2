@@ -9,14 +9,16 @@
     export let username:       string
     export let time:           string
     export let isYourMessage:  boolean
+    export let messageId:      number
 
     let showModal: boolean = false
     const storeMessage = () => {
         $chosenMessageStore = {
+            id:              messageId,
+            username:        username,
+            isSender:        isYourMessage,
+            message_date:    time,
             message_content: messageContent,
-            message_date: time,
-            username: username,
-            isSender: isYourMessage
         }
 
         showModal = true

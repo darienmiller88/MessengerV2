@@ -23,24 +23,11 @@ type UserController struct {
 
 func (u *UserController) Init() {
 	u.db = database.GetDB()
-	u.sessionLen = 5000 //in seconds
+	u.sessionLen = 50000 //in seconds, so about 14 hrs
 }
 
 func (u *UserController) CheckAuth(c *fiber.Ctx) error{
 	return c.Status(http.StatusOK).SendString("You're logged in")
-}
-
-func (u *UserController) Test(c *fiber.Ctx) error {
-	user := models.User{}
-
-	if err := c.BodyParser(&user); err != nil {
-		return c.Status(http.StatusUnprocessableEntity).JSON(err)
-	}
-
-
-	fmt.Println("user:", user)
-
-	return c.SendString("success")
 }
 
 func (u *UserController) Signin(c *fiber.Ctx) error {
@@ -50,8 +37,6 @@ func (u *UserController) Signin(c *fiber.Ctx) error {
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(http.StatusUnprocessableEntity).JSON(err)
 	}
-
-	fmt.Println("user: ", user)
 
 	//Check the database to see if the user was there, and compare their password to the user provided one.
 	usernameErr := u.db.Get(&possibleUser, "SELECT * FROM users WHERE username=$1", user.Username)
@@ -103,7 +88,6 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 	return c.Status(http.StatusCreated).JSON(user)
 }
 
-//Signout accepts a body with a "username" and "is_anonymous" field.
 func (u *UserController) Signout(c *fiber.Ctx) error {
 	isAnonymous, anonymousErr := c.UserContext().Value("token").(jwt.MapClaims)["is_anonymous"].(bool)
 	

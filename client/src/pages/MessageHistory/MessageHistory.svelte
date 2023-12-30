@@ -3,20 +3,29 @@
     import { onMount } from "svelte";
     import { navigate } from "svelte-routing";
     import { messageApi } from "../../api/api";
-    import { isDarkModeStore, usernameStore } from "../../stores"
+    import { isDarkModeStore, usernameStore, usernameStoreKey } from "../../stores"
     import { type Message } from "../../types/type"
 
     let messages: Message[] = []
 
     onMount(async () => {
+        let username: string | null = window.localStorage.getItem(usernameStoreKey)
+
+        if (username) {
+            $usernameStore = (JSON.parse(username) as string)
+        }
+        
        try {
             const res = await messageApi.get(`/message-history/${$usernameStore}`)
-            console.log("res:", res.data);
+            messages = (res.data as Message[])
+            console.log("messages:", messages);
        } catch (error: any) {
             if (error.response.status == 401) {
                 console.log("err unauthroized");
                 navigate("/", {replace: true})
             }
+
+            console.log("err:", error);
        }
     })
 </script>

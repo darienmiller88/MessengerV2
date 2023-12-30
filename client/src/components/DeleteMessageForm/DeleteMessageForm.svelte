@@ -6,9 +6,7 @@
     export let onHide = () => {}
     const deleteMessage = async () => {
         $messagesStore = $messagesStore.filter((message: Message) => {
-            return !(message.username == $chosenMessageStore.username 
-                && message.message_content == $chosenMessageStore.message_content
-                    && message.message_date == $chosenMessageStore.message_date)
+            return message.id != $chosenMessageStore.id
         })
 
         try {

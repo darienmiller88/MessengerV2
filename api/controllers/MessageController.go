@@ -67,13 +67,13 @@ func (m *MessageController) GetMessageByID(c *fiber.Ctx) error{
 
 func (m *MessageController) GetMessageHistory(c *fiber.Ctx) error{
 	username := c.Params("username")
-	message  := models.Message{}
+	messages := []models.Message{}
 
-	if err := m.db.Get(&message, "SELECT * FROM messages WHERE username=$1", username); err != nil{
-		return c.Status(http.StatusNotFound).JSON(fiber.Map{"err": fmt.Sprintf("Username %s does not exist.", username)})
+	if err := m.db.Select(&messages, "SELECT * FROM messages WHERE username=$1", username); err != nil{
+		return c.Status(http.StatusNotFound).SendString(err.Error())
 	}
 
-	return c.Status(http.StatusOK).JSON(message)
+	return c.Status(http.StatusOK).JSON(messages)
 }
 
 func (m *MessageController) GetMessages(c *fiber.Ctx) error{
