@@ -21,7 +21,8 @@
             message_content: isThumbsUp ? "👍" : messageText,
             message_date: new Date().toLocaleString(),
             username: $usernameStore,
-            isSender: true
+            isSender: true,
+            id: 0
         }
 
         isThumbsUp = true
@@ -88,7 +89,8 @@
                     username: message.username,
                     message_date: new Date(message.message_date).toLocaleString(),
                     message_content: message.message_content,
-                    isSender: false
+                    isSender: false,
+                    id: message.id
                 }]
             }
         });

@@ -18,6 +18,8 @@
         } catch (error) {
             console.log("err:", error);
         }
+
+        window.localStorage.clear()
     })
 </script>
 

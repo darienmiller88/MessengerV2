@@ -10,7 +10,7 @@
         })
 
         try {
-            const response = await messageApi.delete(`/${$usernameStore}`, { data: $chosenMessageStore })
+            const response = await messageApi.delete(`/${$chosenMessageStore.id}`)
             console.log("delete res:", response);
         } catch (error) {
             console.log("err:", error)

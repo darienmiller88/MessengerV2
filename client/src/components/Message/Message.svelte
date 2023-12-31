@@ -34,17 +34,20 @@
             <div class="name">{username}</div>
             <div class="time">{time}</div>
         </div>
-        {#if messageContent == "👍"}
-            <div class="thumbs-up-wrapper"><HandThumbsUpFill width={150} height={150} fill={$fillIconColorStore} /></div>
-        {:else}
-            <div class="message">{messageContent}</div>
-        {/if}
-    </div>
-    {#if isYourMessage }
-        <div class={$isDarkModeStore ? "delete-wrapper dark-mode-theme" : "delete-wrapper"} on:click={storeMessage} tabindex="0" role="button" on:keyup={null}>
-            <ThreeDotsVertical />
+        <div class="message-delete-wrapper">
+            {#if messageContent == "👍"}
+                <div class="thumbs-up-wrapper"><HandThumbsUpFill width={150} height={150} fill={$fillIconColorStore} /></div>
+            {:else}
+                <div class="message">{messageContent}</div>
+            {/if}
+    
+            {#if isYourMessage }
+                <div class={$isDarkModeStore ? "delete-wrapper dark-mode-theme" : "delete-wrapper"} on:click={storeMessage} tabindex="0" role="button" on:keyup={null}>
+                    <ThreeDotsVertical />
+                </div>
+            {/if}
         </div>
-    {/if}
+    </div>
 </div>
 
 <Modal 
@@ -56,53 +59,78 @@
 
 <style lang="scss">
     .sender{
-        grid-template-areas: "delete content profile";
+        grid-template-areas: "profile" "content";
         align-self: flex-end;
 
+        .profile-pic-wrapper{
+            display: flex;
+            justify-content: flex-end;
+        }
+
         .message-content-wrapper{
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+
             .data{
                 justify-content: flex-end;
                 align-items: flex-end;
             }
 
-            .message{
+            .message-delete-wrapper{
                 align-self: flex-end;
+                flex-direction: row-reverse;
 
-                background-color: var(--messenger-blue);
-                color: white;
-            }
+                .message{
+                    align-self: flex-end;
+    
+                    background-color: var(--messenger-blue);
+                    color: white;
+                }
 
-            .thumbs-up-wrapper{
-                align-self: flex-end;
+                .thumbs-up-wrapper{
+                    align-self: flex-end;
+                }
             }
         }
     }
 
     .receiver{
-        grid-template-areas: "profile content delete";
+        grid-template-areas:  "profile" "content";
+
+        .profile-pic-wrapper{
+            display: flex;
+            justify-content: flex-start;
+        }
         
         .message-content-wrapper{
-            .message{
-                background-color: var(--light-grey);
+            display: grid;
+            grid-template-areas: "delete" "message";
+
+            .message-delete-wrapper{
+                .message{
+                    grid-area: message;
+                    background-color: var(--light-grey);
+                }
+
+                .delete-wrapper{
+                    grid-area: delete;
+                }
             }
         }
     }
 
     .message-wrapper{
-        display: grid;
-
         width: fit-content;
         max-width: 90%;
 
         margin: 10px;
-        // border: 2px solid red;
 
         @media only screen and (min-width: 768px) {
             max-width: 70%;
         }
 
         .profile-pic-wrapper{
-            grid-area: profile;
             padding: 0px 10px;
 
             img{
@@ -120,11 +148,7 @@
             }
         }
 
-        .message-content-wrapper{
-            grid-area: content;
-            display: flex;
-            flex-direction: column;
-
+        .message-content-wrapper{            
             .data{
                 display: flex;
                 flex-direction: column;
@@ -143,36 +167,39 @@
                 }
             }
 
-            .message{
-                padding: 10px 10px;
-                margin: 5px;
+            .message-delete-wrapper{
+                display: flex;
                 width: fit-content;
-                height: fit-content;
 
-                border-radius: 20px;
-                overflow-wrap: break-word;
-
-                @media only screen and (min-width: 768px) {
-                    font-size: 25px;
+                .message{
+                    padding: 10px 10px;
+                    margin: 5px;
+                    width: fit-content;
+                    height: fit-content;
+                    
+                    border-radius: 20px;
+                    overflow-wrap: break-word;
+    
+                    @media only screen and (min-width: 768px) {
+                        font-size: 25px;
+                    }
+    
+                    @media only screen and (min-width: 992px) {
+                        font-size: 18px;
+                    }
                 }
-
-                @media only screen and (min-width: 992px) {
-                    font-size: 18px;
+    
+                .delete-wrapper{
+                    display: flex;
+                    align-items: center;
+        
+                    transition: 0.3s;
+        
+                    &:hover{
+                        cursor: pointer;
+                        background-color: var(--light-grey);
+                    }
                 }
-            }
-        }
-
-        .delete-wrapper{
-            display: flex;
-            grid-area: delete;
-            // border: 2px solid orange;
-            align-items: center;
-
-            transition: 0.3s;
-
-            &:hover{
-                cursor: pointer;
-                background-color: var(--light-grey);
             }
         }
 

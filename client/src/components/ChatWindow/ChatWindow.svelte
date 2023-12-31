@@ -1,6 +1,6 @@
 <script lang="ts">
     import Message from "../Message/Message.svelte";
-    import { messagesStore, persistStoreValue, usernameStore } from "../../stores";
+    import { messagesStore, persistStoreValue, usernameStore, isDarkModeStore } from "../../stores";
     import { afterUpdate, onMount } from 'svelte';
     import { navigate } from "svelte-routing";
     import pusher from "../../pusher/pusher";
@@ -56,12 +56,12 @@
                 messageContent={message.message_content} 
                 username={message.username} 
                 time={message.message_date} 
-                isYourMessage={message.isSender}
+                isYourMessage={$usernameStore == message.username}
             />
         {/each}
     </div>
 </div>
-<div class="is-typing">
+<div class={$isDarkModeStore ? "is-typing is-typing-dark-mode": "is-typing"}>
     {userTypingText}
 </div>
 
@@ -83,6 +83,9 @@
 
     .is-typing{
         text-align: center;
-        // border: 2px solid red;
+    }
+
+    .is-typing-dark-mode{
+        color: white;
     }
 </style>

@@ -41,16 +41,14 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 	result, _ := m.db.PrepareNamed("INSERT INTO messages (message_content, message_date, created_at, updated_at, username) " +
 	"VALUES(:message_content, :message_date, :created_at, :updated_at, :username) RETURNING id")
 	
-	if err := result.Get(&message.ID, message); err != nil{
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"err": err.Error()})
-	}
-	
-	fmt.Println("message:", message)
-	
 	if err := m.pusherClient.Trigger("public", "public_message", message); err != nil{
 		fmt.Println("err broadcasting messages:", err)
 	}
 
+	if err := result.Get(&message.ID, message); err != nil{
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"err": err.Error()})
+	}
+	
 	return c.Status(http.StatusOK).JSON(message)
 }
 
@@ -97,6 +95,13 @@ func (m *MessageController) DeleteMessage(c *fiber.Ctx) error{
 	fmt.Println("id:", id)
 	if err := m.pusherClient.Trigger("public", "delete_public_message", message); err != nil{
 		fmt.Println("err broadcasting messages:", err)
+	}
+
+	result, _       := m.db.Exec("DELETE FROM messages WHERE id=$1", id)
+	rowsAffected, _ := result.RowsAffected()
+
+	if rowsAffected == 0 {
+		return c.Status(http.StatusInternalServerError).SendString(fmt.Sprintf("No user with id %s found.", id))
 	}
 
 	return c.Status(http.StatusOK).JSON(message)
