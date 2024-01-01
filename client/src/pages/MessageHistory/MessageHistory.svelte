@@ -38,7 +38,7 @@
                 <div class="message-receipt">
                     <div class="date">{message.message_date}</div>
                     <div class="username">{message.username}</div>
-                    <div class="content">{message.message_content}</div>
+                    <div class="content">"{message.message_content}"</div>
                 </div>
             {/each}
         </div>

@@ -74,10 +74,10 @@ func (m *MessageController) GetMessageHistory(c *fiber.Ctx) error{
 	return c.Status(http.StatusOK).JSON(messages)
 }
 
-func (m *MessageController) GetMessages(c *fiber.Ctx) error{
+func (m *MessageController) GetPublicMessages(c *fiber.Ctx) error{
 	messages := []models.Message{}
 
-	if err := m.db.Select(&messages, "SELECT * FROM messages"); err != nil{
+	if err := m.db.Select(&messages, "SELECT * FROM messages WHERE receiver IS NULL AND chat_id IS NULL"); err != nil{
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
 	}
 

@@ -24,8 +24,6 @@
     persistValue
   } from "./stores"
 
-  let users: string[] = ["Vicky", "Kash", "Richard", "Darien", "Dalton", "Steve", "Zira", "Max", "Andre", "Isaac"]
-
   onMount(() => {
     let groupChatName = window.localStorage.getItem(groupChatNameStoreKey)
     let usersString = window.localStorage.getItem(usersStoreKey)
@@ -34,12 +32,16 @@
     let username = window.localStorage.getItem(usernameStoreKey)
     let isDarkModeValue: string | null = window.localStorage.getItem(isDarkModeStoreKey)
       
-    if (!usersString) {
-      $usersStore = users
-      persistStoreValue(usersStore, users, usersStoreKey)
-      console.log("users in app:", $usersStore)
-    }
+    // if (!usersString) {
+    //   $usersStore = users
+    //   persistStoreValue(usersStore, users, usersStoreKey)
+    //   console.log("users in app:", $usersStore)
+    // }
   
+      if (!username) {
+        persistStoreValue(usernameStore, username, usernameStoreKey)
+      }
+
     if (!groupChatName) {
       $groupChatNameStore = "Public"
     }

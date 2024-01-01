@@ -12,7 +12,10 @@
 
 <div class="user-chat-header">
     <div class={$isDarkModeStore ? "title dark-mode-theme" : "title"}>Messages</div>
-    {#if $isAnonymousStore}
+
+    <!-- Only show the icon to add a new chat if the user is NOT anonymous. Anonymous users only have access to
+         the public chat-->
+    {#if !$isAnonymousStore}
         <div class={$isDarkModeStore ? "icon-wrapper dark-mode-theme" : "icon-wrapper"} on:click={() => showModal = true} tabindex="0" role="button" on:keyup={null}>
             <PersonAdd width={28} height={28}/>
         </div>

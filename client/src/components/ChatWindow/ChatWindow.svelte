@@ -20,6 +20,8 @@
     });
 
     onMount(async () => {
+        console.log("username:", $usernameStore);
+        
         try {
             const res = await messageApi.get("/")
             $messagesStore = res.data 
