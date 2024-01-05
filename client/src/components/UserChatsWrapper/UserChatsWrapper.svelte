@@ -8,7 +8,7 @@
             chat.isChatActive = false
         }))
 
-        //Over the current state of the chat store with the new one
+        //Overwrite the current state of the chat store with the new one
         $chatsStore = $chatsStore
         // persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
     }

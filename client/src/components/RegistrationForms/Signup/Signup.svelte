@@ -5,6 +5,19 @@
     import "../styles.scss"
     import { navigate } from "svelte-routing";
     import { Moon, Pulse } from 'svelte-loading-spinners';
+    import publicChatPicture from "../../../assets/plogo.png"
+    import defaultProfilePicture from "../../../assets/default.png"
+    import { 
+        usernameStore, 
+        usernameStoreKey,
+        userProfilePictureStore,
+        userProfilePictureStoreKey,
+        groupChatNameStore,
+        groupChatNameStoreKey,
+        chatPictureStore,
+        chatPictureStoreKey,
+        persistStoreValue
+    } from "../../../stores";
 
     let username:          string = ""
     let password:          string = ""
@@ -14,6 +27,7 @@
     let isPasswordInvalid: boolean = false
     let isLoading:         boolean = false
     export let changeToSignIn = () => {}
+
     const signup = async () => {
         try {
             isLoading = true
@@ -24,6 +38,10 @@
             }
             const res = await userApi.post("/signup", userCredentials)
             console.log("res:", res.data);
+            persistStoreValue(usernameStore, username, usernameStoreKey)
+            persistStoreValue(userProfilePictureStore, defaultProfilePicture, userProfilePictureStoreKey)
+            persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
+            persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
             navigate("/home", {replace: true})
         } catch (error: any) {
             //Check for an error that returns a map with username...

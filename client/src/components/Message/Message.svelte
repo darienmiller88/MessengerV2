@@ -1,9 +1,15 @@
 <script lang="ts">
-    import pic from "../../assets/plogo.png"
-    import { fillIconColorStore, chosenMessageStore, isDarkModeStore } from "../../stores";
+    import { 
+        fillIconColorStore, 
+        chosenMessageStore, 
+        isDarkModeStore, 
+        userProfilePictureStore, 
+        userProfilePictureStoreKey
+    } from "../../stores";
     import { ThreeDotsVertical, HandThumbsUpFill } from "svelte-bootstrap-icons";
     import Modal from "../Modal/Modal.svelte";
     import DeleteMessageForm from "../DeleteMessageForm/DeleteMessageForm.svelte";
+    import { onMount } from "svelte";
 
     export let messageContent: string
     export let username:       string
@@ -23,11 +29,19 @@
 
         showModal = true
     }
+
+    onMount(() => {
+        let profilePictureUrl: string | null = window.localStorage.getItem(userProfilePictureStoreKey)
+
+        if (profilePictureUrl) {
+            $userProfilePictureStore = (JSON.parse(profilePictureUrl) as string)
+        }
+    })
 </script>
 
 <div class={isYourMessage ? "message-wrapper sender" : "message-wrapper receiver"}>
     <div class="profile-pic-wrapper">
-        <img src={pic} alt="pic" />
+        <img src={$userProfilePictureStore} alt="pic" />
     </div>
     <div class="message-content-wrapper">
         <div class="data">

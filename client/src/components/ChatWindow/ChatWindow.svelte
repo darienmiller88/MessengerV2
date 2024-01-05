@@ -1,6 +1,12 @@
 <script lang="ts">
     import Message from "../Message/Message.svelte";
-    import { messagesStore, persistStoreValue, usernameStore, isDarkModeStore } from "../../stores";
+    import { 
+        messagesStore, 
+        persistStoreValue, 
+        usernameStore, 
+        usernameStoreKey, 
+        isDarkModeStore 
+    } from "../../stores";
     import { afterUpdate, onMount } from 'svelte';
     import { navigate } from "svelte-routing";
     import pusher from "../../pusher/pusher";
@@ -20,7 +26,11 @@
     });
 
     onMount(async () => {
-        console.log("username:", $usernameStore);
+        let username: string | null = window.localStorage.getItem(usernameStoreKey)
+
+        if (username) {
+            $usernameStore = (JSON.parse(username) as string)
+        }
         
         try {
             const res = await messageApi.get("/")

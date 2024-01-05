@@ -1,10 +1,22 @@
 <script lang="ts">
-    import defaultPic from "../../assets/default-nobg.png"
+    import { onMount } from "svelte";
+    import {
+        userProfilePictureStore,
+        userProfilePictureStoreKey
+    } from "../../stores"
 
     export let onHide = () => {}
     const saveSettings = () => {
         onHide()
     }
+
+    onMount(() => {
+        let profilePicUrl: string | null = window.localStorage.getItem(userProfilePictureStoreKey)
+
+        if (profilePicUrl) {
+            $userProfilePictureStore = (JSON.parse(profilePicUrl) as string)
+        }        
+    })
 </script>
 
 <div class="profile-form">
@@ -14,7 +26,7 @@
     </div>
     <div class="photo">Photo</div>
     <div class="profile-pic-wrapper">
-        <img src={defaultPic} alt="profile-pic"/>
+        <img src={$userProfilePictureStore} alt="profile-pic"/>
         <button>Change Picture</button>
     </div>
     <div class="save-button-wrapper">

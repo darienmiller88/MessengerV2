@@ -47,7 +47,9 @@ func (u *UserController) Signin(c *fiber.Ctx) error {
 	}
 
 	u.setCookie(c, u.getJwtToken(user), u.sessionLen)
-	return c.Status(http.StatusOK).SendString("You're signed in!")
+
+	//Respond to the front-end with the users profile picture link.
+	return c.Status(http.StatusOK).SendString(user.ProfilePicture.String)
 }
 
 func (u *UserController) Signup(c *fiber.Ctx) error {

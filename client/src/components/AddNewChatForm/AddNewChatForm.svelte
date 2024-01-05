@@ -3,7 +3,7 @@
     import { type FilteredUser, type Chat } from "../../types/type"
     import { usersStoreKey, usersStore, chatsStore, chatsStoreKey, persistStoreValue } from "../../stores"
     import Select from 'svelte-select';
-    import defaultPic from "../../assets/default.jpg"
+    import defaultPic from "../../assets/default.png"
 
     let groupChatName:       string
     let message:             string
@@ -54,12 +54,11 @@
         onHide()
     }
 
-    onMount(() => {
+    onMount(async () => {
         let users: string | null = window.localStorage.getItem(usersStoreKey)
 
         if (users) {
             $usersStore = JSON.parse(users)
-            // console.log("store:", $usersStore)
         }
     })
 </script>

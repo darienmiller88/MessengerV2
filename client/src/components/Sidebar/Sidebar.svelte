@@ -7,14 +7,15 @@
         isDarkModeStore, 
         isDarkModeStoreKey, 
         persistStoreValue, 
-        usernameStore 
+        usernameStore ,
+        userProfilePictureStore,
+        userProfilePictureStoreKey
     } from "../../stores";
     import { onMount } from "svelte";
     import { userApi } from "../../api/api";
     import Modal from "../Modal/Modal.svelte";
     import ProfileForm from "../ProfileForm/ProfileForm.svelte";
     import DarkModeToggle from "../DarkModeToggle/DarkModeToggle.svelte";
-    import pic from "../../assets/profile.png"
     import pusher from "../../pusher/pusher";
 
     const iconSize: number = 28
@@ -55,10 +56,15 @@
     }
 
     onMount(() => {
-        let isDarkModeValue: string | null = window.localStorage.getItem(isDarkModeStoreKey)
+        let isDarkModeValue:   string | null = window.localStorage.getItem(isDarkModeStoreKey)
+        let profilePictureUrl: string | null = window.localStorage.getItem(userProfilePictureStoreKey)
 
         if (isDarkModeValue) {
             $isDarkModeStore = (JSON.parse(isDarkModeValue) as boolean)
+        }
+
+        if (profilePictureUrl) {
+            $userProfilePictureStore = (JSON.parse(profilePictureUrl) as string)
         }
     })
     
@@ -83,7 +89,7 @@
             <BoxArrowInLeft width={iconSize} height={iconSize} class="icon" />
         </div>
         <div class="profile-pic-wrapper" on:click={() => showModal = true} tabindex="0" role="button" on:keyup={null}>
-            <img src={pic} alt="pic" />
+            <img src={$userProfilePictureStore} alt="pic" />
         </div>
     </div>
     <div class="sidebar-desktop-view">
@@ -107,7 +113,7 @@
                 <DarkModeToggle changeColorTheme={changeColorTheme}/>
             </div>
             <div class="profile-pic-wrapper" on:click={() => showModal = true} tabindex="0" role="button" on:keyup={null}>
-                <img src={pic} alt="pic" />
+                <img src={$userProfilePictureStore} alt="pic" />
             </div>
         </div>
     </div>

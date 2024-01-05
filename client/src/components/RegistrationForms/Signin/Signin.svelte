@@ -4,18 +4,21 @@
     import { 
         usernameStore, 
         usernameStoreKey,
-        persistStoreValue, 
+        userProfilePictureStore,
+        userProfilePictureStoreKey,
         chatPictureStore, 
         chatPictureStoreKey, 
         groupChatNameStore,
         groupChatNameStoreKey,
         isAnonymousStore, 
-        isAnonymousStoreKey
+        isAnonymousStoreKey,
+        persistStoreValue
     } from "../../../stores"
     import { navigate } from "svelte-routing";
     import { v4 as uuid } from 'uuid';
     import logo from "../../../assets/bluelogo.png"
     import publicChatPicture from "../../../assets/plogo.png"
+    import defaultProfilePicture from "../../../assets/default.png"
     import { userApi } from "../../../api/api";
     import { type User } from "../../../types/type";
     import "../styles.scss"
@@ -31,6 +34,7 @@
     const signin = async () => {        
         try {
             $usernameStore = username
+            $userProfilePictureStore = defaultProfilePicture
             isSigninLoading = true
 
             const userCredentials = {
@@ -41,10 +45,16 @@
             const res = await userApi.post("/signin", userCredentials)
 
             console.log("res:", res.data);
+
             isSigninError = false
+
+            //The sign in controller on the back end returns the user's profile picture url. If blank, give them
+            //the default picture, but if not, just assign the url of their picture.
+            $userProfilePictureStore = res.data == "" ? defaultProfilePicture : res.data
             persistStoreValue(usernameStore, username, usernameStoreKey)
-            persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
+            persistStoreValue(userProfilePictureStore, defaultProfilePicture, userProfilePictureStoreKey)
             persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
+            persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
             navigate("/home", {replace: true})
         } catch (error: any) {
             if (error.response.status == 404) {
@@ -65,6 +75,7 @@
             isSigninAnoymousLoading = true
             $usernameStore = "User-" + (uuid() as string).substring(0, 8)
             persistStoreValue(usernameStore, $usernameStore, usernameStoreKey)
+            persistStoreValue(userProfilePictureStore, defaultProfilePicture, userProfilePictureStoreKey)
             persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
             persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
             persistStoreValue(isAnonymousStore, true, isAnonymousStoreKey)
