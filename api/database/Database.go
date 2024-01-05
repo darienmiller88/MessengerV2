@@ -27,7 +27,7 @@ func Init(){
 		fmt.Println("Connection established! :)")
 	}
 
-	//_db.MustExec(GetSchema())
+	_db.MustExec(GetSchema())
 	db = _db
 }
 
