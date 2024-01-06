@@ -13,7 +13,7 @@ func Auth(c *fiber.Ctx) error{
 	token, err := retrieveTokenFromCookie(c.Cookies("user"))//Retrieve value from cookie and parse token from it.
 
 	if err != nil {
-		return c.Status(http.StatusUnauthorized).SendString(err.Error())
+		return c.Status(http.StatusUnauthorized).SendString("A valid token is required for entry.")
 	}
 
 	//Parse the token and pull out the username from the token.
