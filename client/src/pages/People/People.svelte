@@ -3,32 +3,56 @@
     import { userApi } from "../../api/api";
     import { onMount } from "svelte";
     import { Moon } from 'svelte-loading-spinners';
+    import { navigate } from "svelte-routing";
+    import { isDarkModeStore } from "../../stores"
+    import pic from "../../assets/profile.png"
 
+    interface user{
+        username:    string,
+        profile_picture: {
+            String: string,
+            Valid:  boolean
+        }
+    }
 
-    let isLoading: boolean = true
+    let users:     user[] = []
+    let isLoading: boolean  = true
 
     onMount(async () => {
         try {
+            const res = await userApi.get("/")
+            users = (res.data as user[])
+            isLoading = false
+            console.log("res:", res.data);
             
-        } catch (error) {
-            
+        } catch (error: any) {
+            if (error.response.status == 401) {
+                console.log("err unauthroized");
+                navigate("/", {replace: true})
+            }
+
+            console.log("err:", error);
         }
     })
 
 </script>
 
-<div class="users">
-    
-    <!-- People -->
+<div class={$isDarkModeStore ? "users dark-mode" : "users"}>
     <div class="header-wrapper">
         <div class="header">Users</div>
         <div class="users-list">
-            <div class="user">
-                <div>
-                    <img src="" alt="">
-                    <div class="username">pixytori28</div>
+            {#if isLoading}
+                <div class="loading-wrapper">
+                    <Moon size="200" color="#1DA1F2" unit="px" duration="1s"/>
                 </div>
-            </div>
+            {:else}
+                {#each users as user}
+                    <div class="user">
+                        <img src={pic} alt="profile-pic" >
+                        <div class="username">{user.username}</div>
+                    </div>
+                {/each}
+            {/if}
         </div>
     </div>
     <div class="sidebar-wrapper">
@@ -66,13 +90,41 @@
                 
             }
 
-            .people-list{
+            .users-list{
+                display: flex;
+                flex-direction: column;
                 overflow-y: scroll;
+
+                .user{
+                    display: flex;
+                    margin: 20px;
+
+                    img{
+                        width: 70px;
+                        height: auto;
+                    }
+
+                    .username{
+                        display: flex;
+                        align-items: center;
+                        margin-left: 20px;
+                        font-size: 25px;
+                    }
+                }
+
+                .loading-wrapper{
+                    margin: auto;
+                    width: fit-content;
+                }
             }
         }
 
         .sidebar-wrapper{
             grid: sidebar;
         }
+    }
+
+    .dark-mode{
+        color: white;
     }
 </style>

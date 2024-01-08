@@ -20,6 +20,7 @@
        try {
             const res = await messageApi.get(`/message-history/${$usernameStore}`)
             messages = (res.data as Message[])
+            isLoading = false
             console.log("messages:", messages);
        } catch (error: any) {
             if (error.response.status == 401) {
@@ -36,13 +37,19 @@
     <div class="header-wrapper">
         <div class={$isDarkModeStore ? "header-dark-mode header" : "header"}>Message History</div>
         <div class="messages">
-            {#each messages as message}
-                <div class="message-receipt">
-                    <div class="date">{message.message_date}</div>
-                    <div class="username">{message.username}</div>
-                    <div class="content">"{message.message_content}"</div>
+            {#if isLoading}
+                <div class="loading-wrapper">
+                    <Moon size="200" color="#1DA1F2" unit="px" duration="1s"/>
                 </div>
-            {/each}
+            {:else}
+                {#each messages as message}
+                    <div class="message-receipt">
+                        <div class="date">{message.message_date}</div>
+                        <div class="username">{message.username}</div>
+                        <div class="content">"{message.message_content}"</div>
+                    </div>
+                {/each}
+            {/if}
         </div>
     </div>
     <div class="sidebar-wrapper">
@@ -105,6 +112,11 @@
                     border-radius: 10px;
                     font-size: 20px;
                     text-align: right;
+                }
+
+                .loading-wrapper{
+                    margin: auto;
+                    width: fit-content;
                 }
             }
         }
