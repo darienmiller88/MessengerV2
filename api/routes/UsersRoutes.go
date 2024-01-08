@@ -21,6 +21,8 @@ func (u *UserRoutes) Init() {
 	u.Router.Post("/signup",  middlewares.ProtectSignin, u.userController.Signup)
 	u.Router.Use(middlewares.Auth).Route("/", func(router fiber.Router) {
 		u.Router.Get("/",                   u.userController.GetUsers)
+		u.Router.Get("/username",           u.userController.GetUsername)
+		u.Router.Get("/isAnonymous",        u.userController.GetUserAnonymousStatus)
 		u.Router.Get("/checkauth",          u.userController.CheckAuth) //Throw away route to check log in status
 		// u.Router.Get("/:id",                u.userController.GetUserByID)
 		// u.Router.Delete("/:id",             u.userController.DeleteUser)

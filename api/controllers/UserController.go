@@ -31,6 +31,26 @@ func (u *UserController) CheckAuth(c *fiber.Ctx) error{
 	return c.Status(http.StatusOK).SendString("You're logged in")
 }
 
+func (u *UserController) GetUsername(c *fiber.Ctx) error {
+	username, usernameErr := c.UserContext().Value("token").(jwt.MapClaims)["username"].(string)
+	
+	if !usernameErr{
+		return c.Status(http.StatusUnprocessableEntity).SendString("Could not parse \"username\" field.")
+	}
+
+	return c.Status(http.StatusOK).JSON(fiber.Map{"username": username})
+}
+
+func (u *UserController) GetUserAnonymousStatus(c *fiber.Ctx) error{
+	isAnonymous, anonymousErr := c.UserContext().Value("token").(jwt.MapClaims)["is_anonymous"].(bool)
+	
+	if !anonymousErr{
+		return c.Status(http.StatusUnprocessableEntity).SendString("Could not parse \"is_anonymous\" field.")
+	}
+
+	return c.Status(http.StatusOK).JSON(fiber.Map{"is_anonymous": isAnonymous})
+}
+
 func (u *UserController) Signin(c *fiber.Ctx) error {
 	user := models.User{DB: u.db}
 	possibleUser := models.User{}
