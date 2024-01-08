@@ -3,6 +3,7 @@ package controllers
 import (
 	"MessengerV2/api/database"
 	"MessengerV2/api/models"
+	"database/sql"
 	"fmt"
 	"net/http"
 	"os"
@@ -10,10 +11,10 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/jmoiron/sqlx"
-	"golang.org/x/crypto/bcrypt"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/jmoiron/sqlx"
 	"github.com/sethvargo/go-password/password"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserController struct {
@@ -115,13 +116,15 @@ func (u *UserController) Signout(c *fiber.Ctx) error {
 }
 
 func (u *UserController) GetUsers(c *fiber.Ctx) error {
-	users := []models.User{}
+ 	users := []struct{
+		Username       string         `json:"username"        db:"username"`
+		ProfilePicture sql.NullString `json:"profile_picture" db:"profile_picture"`
+	}{}
 
-	if err := u.db.Select(&users, "SELECT * FROM users"); err != nil {
+	if err := u.db.Select(&users, "SELECT username, profile_picture FROM users"); err != nil {
 		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 
-	fmt.Println("context:", c.UserContext().Value("username"))
 	return c.Status(http.StatusOK).JSON(users)
 }
 

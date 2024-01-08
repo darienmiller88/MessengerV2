@@ -44,6 +44,10 @@
         navigate("/home", {replace: true})
     }
 
+    const changeToPeople = () => {
+        navigate("/people", {replace: true})
+    }
+
     const changeColorTheme = () => {
         $isDarkModeStore = !$isDarkModeStore
         persistStoreValue(isDarkModeStore, $isDarkModeStore, isDarkModeStoreKey)
@@ -79,7 +83,7 @@
         <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"} on:click={changeToHome} tabindex="0" role="button" on:keyup={null}>
             <ChatDotsFill width={iconSize} height={iconSize}/>
         </div>
-        <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"}>
+        <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"} on:click={changeToPeople} tabindex="0" role="button" on:keyup={null}>
             <PeopleFill width={iconSize} height={iconSize} class="icon"/>
         </div>
         <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"}  on:click={changeToMessageHistory} tabindex="0" role="button" on:keyup={null}>
@@ -97,7 +101,7 @@
             <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"} on:click={changeToHome} tabindex="0" role="button" on:keyup={null} >
                 <ChatDotsFill width={iconSize} height={iconSize} class="icon"/>
             </div>
-            <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"}>
+            <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"} on:click={changeToPeople} tabindex="0" role="button" on:keyup={null}>
                 <PeopleFill width={iconSize} height={iconSize}  class="icon"/>
             </div>
             <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"}  on:click={changeToMessageHistory} tabindex="0" role="button" on:keyup={null}>

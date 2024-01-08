@@ -6,6 +6,7 @@
   import profilepic from "./assets/profile.png"
   import Home from "./pages/Home/Home.svelte";
   import Register from "./pages/Register/Register.svelte";
+  import People from "./pages/People/People.svelte";
 
   import MessageHistory from "./pages/MessageHistory/MessageHistory.svelte";
   import { 
@@ -38,9 +39,9 @@
     //   console.log("users in app:", $usersStore)
     // }
   
-      if (!username) {
-        persistStoreValue(usernameStore, username, usernameStoreKey)
-      }
+    if (!username) {
+      persistStoreValue(usernameStore, username, usernameStoreKey)
+    }
 
     if (!groupChatName) {
       $groupChatNameStore = "Public"
@@ -66,6 +67,7 @@
       <Route path="/"                component={Register} />
       <Route path="/home"            component={Home} />
       <Route path="/message-history" component={MessageHistory} />
+      <Route path="/people"          component={People}/>
   </Router>
 </main>
 

@@ -15,7 +15,6 @@ var db *sqlx.DB
 func Init(){
 	_db, err := sqlx.Connect("postgres", os.Getenv("DATABASE_URL"))
 
-	fmt.Println("db url debug:", os.Getenv("DATABASE_URL"))
 	if err != nil{
 		panic(err)
 	}

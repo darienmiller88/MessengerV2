@@ -5,8 +5,10 @@
     import { messageApi } from "../../api/api";
     import { isDarkModeStore, usernameStore, usernameStoreKey } from "../../stores"
     import { type Message } from "../../types/type"
+    import { Moon } from 'svelte-loading-spinners';
 
-    let messages: Message[] = []
+    let messages:  Message[] = []
+    let isLoading: boolean = true
 
     onMount(async () => {
         let username: string | null = window.localStorage.getItem(usernameStoreKey)
