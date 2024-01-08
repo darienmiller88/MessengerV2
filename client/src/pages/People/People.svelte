@@ -6,6 +6,7 @@
     import { navigate } from "svelte-routing";
     import { isDarkModeStore } from "../../stores"
     import pic from "../../assets/profile.png"
+    import defaultPic from "../../assets/default.png"
 
     interface user{
         username:    string,
@@ -48,7 +49,7 @@
             {:else}
                 {#each users as user}
                     <div class="user">
-                        <img src={pic} alt="profile-pic" >
+                        <img src={user.profile_picture.Valid ? user.profile_picture.String : defaultPic } alt="profile-pic" >
                         <div class="username">{user.username}</div>
                     </div>
                 {/each}
