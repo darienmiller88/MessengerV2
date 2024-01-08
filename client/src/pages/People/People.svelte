@@ -4,7 +4,7 @@
     import { onMount } from "svelte";
     import { Moon } from 'svelte-loading-spinners';
     import { navigate } from "svelte-routing";
-    import { isDarkModeStore } from "../../stores"
+    import { isDarkModeStore, usernameStore, usernameStoreKey } from "../../stores"
     import pic from "../../assets/profile.png"
     import defaultPic from "../../assets/default.png"
 
@@ -20,12 +20,17 @@
     let isLoading: boolean  = true
 
     onMount(async () => {
+        let username = window.localStorage.getItem(usernameStoreKey)
+
+        if (username) {
+            $usernameStore = (JSON.parse(username) as string)
+        }
+
         try {
             const res = await userApi.get("/")
             users = (res.data as user[])
             isLoading = false
             console.log("res:", res.data);
-            
         } catch (error: any) {
             if (error.response.status == 401) {
                 console.log("err unauthroized");
@@ -48,10 +53,12 @@
                 </div>
             {:else}
                 {#each users as user}
-                    <div class="user">
-                        <img src={user.profile_picture.Valid ? user.profile_picture.String : defaultPic } alt="profile-pic" >
-                        <div class="username">{user.username}</div>
-                    </div>
+                    {#if user.username !== $usernameStore}
+                        <div class="user">
+                            <img src={user.profile_picture.Valid ? user.profile_picture.String : defaultPic } alt="profile-pic" >
+                            <div class="username">{user.username}</div>
+                        </div>
+                    {/if}
                 {/each}
             {/if}
         </div>
