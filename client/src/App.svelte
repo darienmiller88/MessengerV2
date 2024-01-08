@@ -66,8 +66,8 @@
   <Router>
       <Route path="/"                component={Register} />
       <Route path="/home"            component={Home} />
-      <Route path="/message-history" component={MessageHistory} />
       <Route path="/people"          component={People}/>
+      <Route path="/message-history" component={MessageHistory} />
   </Router>
 </main>
 

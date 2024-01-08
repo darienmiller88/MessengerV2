@@ -4,6 +4,7 @@
     import { 
         messagesStore, 
         isAnonymousStore,
+        isAnonymousStoreKey,
         isDarkModeStore, 
         isDarkModeStoreKey, 
         persistStoreValue, 
@@ -60,6 +61,7 @@
     }
 
     onMount(() => {
+        let isAnonymous:       string | null = window.localStorage.getItem(isAnonymousStoreKey)
         let isDarkModeValue:   string | null = window.localStorage.getItem(isDarkModeStoreKey)
         let profilePictureUrl: string | null = window.localStorage.getItem(userProfilePictureStoreKey)
 
@@ -69,6 +71,10 @@
 
         if (profilePictureUrl) {
             $userProfilePictureStore = (JSON.parse(profilePictureUrl) as string)
+        }
+
+        if (isAnonymous) {
+            $isAnonymousStore = (JSON.parse(isAnonymous) as boolean)
         }
     })
     
@@ -92,9 +98,11 @@
         <div class={$isDarkModeStore ? "icon-wrapper icon-wrapper-dark-mode" : "icon-wrapper"} on:click={Logout} tabindex="0" role="button" on:keyup={null}>
             <BoxArrowInLeft width={iconSize} height={iconSize} class="icon" />
         </div>
-        <div class="profile-pic-wrapper" on:click={() => showModal = true} tabindex="0" role="button" on:keyup={null}>
-            <img src={$userProfilePictureStore} alt="pic" />
-        </div>
+        {#if !$isAnonymousStore}
+            <div class="profile-pic-wrapper" on:click={() => showModal = true} tabindex="0" role="button" on:keyup={null}>
+                <img src={$userProfilePictureStore} alt="pic" />
+            </div>
+        {/if}
     </div>
     <div class="sidebar-desktop-view">
         <div class="icons-wrapper">
@@ -116,9 +124,11 @@
             <div class="toggle-wrapper">
                 <DarkModeToggle changeColorTheme={changeColorTheme}/>
             </div>
-            <div class="profile-pic-wrapper" on:click={() => showModal = true} tabindex="0" role="button" on:keyup={null}>
-                <img src={$userProfilePictureStore} alt="pic" />
-            </div>
+            {#if !$isAnonymousStore}
+                <div class="profile-pic-wrapper" on:click={() => showModal = true} tabindex="0" role="button" on:keyup={null}>
+                    <img src={$userProfilePictureStore} alt="pic" />
+                </div>
+            {/if}
         </div>
     </div>
 </div>
@@ -142,10 +152,12 @@
         }
 
         .sidebar-mobile-view{
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            display: flex;
+            justify-content: space-between;
+            padding: 0px 10px;
+            // grid-template-columns: repeat(6, 1fr);
             height: 100%;
-
+            
             .toggle-wrapper{
                 display: flex;
                 align-items: center;

@@ -40,7 +40,6 @@
             console.log("err:", error);
         }
     })
-
 </script>
 
 <div class={$isDarkModeStore ? "users dark-mode" : "users"}>
