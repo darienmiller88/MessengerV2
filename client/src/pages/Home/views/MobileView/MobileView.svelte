@@ -3,8 +3,6 @@
     import UserChatsContainer from "../../../../containers/UserChatsContainer/UserChatsContainer.svelte";
     import ChatWindowContainer from "../../../../containers/ChatWindowContainer/ChatWindowContainer.svelte";
     import { isChatWindowActiveStore } from "../../../../stores";
-
-    console.log($isChatWindowActiveStore);
 </script>
 
 <div class="mobile-view">

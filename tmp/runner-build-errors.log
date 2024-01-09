@@ -1,0 +1,2 @@
+# MessengerV2/api/controllers
+api\controllers\UserController.go:41:44: cannot use fiber.Map{…} (value of type fiber.Map) as string value in argument to c.Status(http.StatusOK).SendString

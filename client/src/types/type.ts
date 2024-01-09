@@ -29,3 +29,11 @@ export interface User{
     }
 	is_anonymous:    boolean           
 }
+
+export interface MinifiedUser{
+    username:       string         
+	profile_picture: {
+        String: string,
+        valid: boolean
+    }
+}

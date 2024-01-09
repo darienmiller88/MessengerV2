@@ -38,7 +38,7 @@ func (u *UserController) GetUsername(c *fiber.Ctx) error {
 		return c.Status(http.StatusUnprocessableEntity).SendString("Could not parse \"username\" field.")
 	}
 
-	return c.Status(http.StatusOK).JSON(fiber.Map{"username": username})
+	return c.Status(http.StatusOK).SendString(username)
 }
 
 func (u *UserController) GetUserAnonymousStatus(c *fiber.Ctx) error{

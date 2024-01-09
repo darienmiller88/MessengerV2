@@ -7,9 +7,8 @@
 
     onMount(async () => {
         try {
-            const res = await userApi.get("/checkauth")
-            console.log("res:", res.data);
-
+            //Check to see if the user is logged in, and if not, redirect them to the log in page.
+           await userApi.get("/checkauth")
         } catch (error: any) {
             console.log("err:", error);
             
