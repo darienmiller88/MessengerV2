@@ -4,6 +4,7 @@
     import { ThreeDots, ArrowLeftCircle } from "svelte-bootstrap-icons";
     import Modal from "../Modal/Modal.svelte";
     import DeleteGroupChat from "../DeleteGroupChat/DeleteGroupChat.svelte";
+    import { type Chat } from "../../types/type";
     import { 
         chatPictureStore,
         chatPictureStoreKey,
@@ -12,12 +13,14 @@
         groupChatNameStoreKey, 
         isChatWindowActiveStore, 
         isChatWindowActiveStoreKey,
+        selectedChatStore,
+        selectedChatStoreKey,
         isDarkModeStore,
         persistStoreValue
 
     } from "../../stores";
 
-    // let groupChatName: string | null
+    let groupChatName: string 
     let showModal: boolean = false
 
     const changeToUserChats = () => {
@@ -26,17 +29,28 @@
     }
 
     onMount(() => {
+        let selectedChat:       string | null = window.localStorage.getItem(selectedChatStoreKey)
+        let isChatWindowActive: string | null = window.localStorage.getItem(isChatWindowActiveStoreKey)
+
+        //Extract the value of the current chat the user clicked on from local storage.
+        if (selectedChat) {
+            $selectedChatStore = (JSON.parse(selectedChat) as Chat)
+        }
+
+        //Extract the value of the indicator indicating whether or not the message window is active or not.
+        if (isChatWindowActive) {
+            $isChatWindowActiveStore = (JSON.parse(isChatWindowActive) as boolean)
+        }
+
+        console.log("selected chat:", $selectedChatStore);
+        
         let groupChatName:        string | null = window.localStorage.getItem(groupChatNameStoreKey)
         let chatPictureURL:       string | null = window.localStorage.getItem(chatPictureStoreKey)
-        let isChatWindowActive:   string | null = window.localStorage.getItem(isChatWindowActiveStoreKey)
         
         if (groupChatName) {
             $groupChatNameStore = JSON.parse(groupChatName)
         }
 
-        if (isChatWindowActive) {
-            $isChatWindowActiveStore = JSON.parse(isChatWindowActive)
-        }
 
         if (chatPictureURL) {
             $chatPictureStore = JSON.parse(chatPictureURL)

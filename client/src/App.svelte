@@ -6,7 +6,8 @@
     import People from "./pages/People/People.svelte";
     import MessageHistory from "./pages/MessageHistory/MessageHistory.svelte";
     import { userApi } from "./api/api";
-    import { type MinifiedUser } from "./types/type"
+    import { type User, type Chat } from "./types/type"
+    import publicChatPic from "./assets/plogo.png"
 
     import { 
       usersStore, 
@@ -20,6 +21,8 @@
       chatsStore,
       chatsStoreKey,
       isAnonymousStore,
+      selectedChatStore,
+      selectedChatStoreKey,
       persistStoreValue,
       persistValue
     } from "./stores"
@@ -29,20 +32,21 @@
         let groupChatName = window.localStorage.getItem(groupChatNameStoreKey)
         let chats = window.localStorage.getItem(chatsStoreKey)
         let chatName = window.localStorage.getItem(currentChatName)
-        // let username:        string | null = window.localStorage.getItem(usernameStoreKey)
+        let selectedChat:    string | null = window.localStorage.getItem(selectedChatStoreKey)
         let isDarkModeValue: string | null = window.localStorage.getItem(isDarkModeStoreKey)
 
         try {
-            const usernameRes = await userApi.get("/username")
-            $usernameStore = (usernameRes.data as string)
-
             const isAnonymousRes = await userApi.get("/isAnonymous")
             $isAnonymousStore = (isAnonymousRes.data.is_anonymous as boolean)
             
             const usersRes = await userApi.get("/")
-            usersRes.data.forEach((user: MinifiedUser) => {
-                $usersStore = [...$usersStore, user.username]
-            });         
+            $usersStore = []
+            usersRes.data.forEach((user: User) => {
+                if (!user.is_anonymous) {
+                    $usersStore = [...$usersStore, user.username]
+                }
+            });   
+            persistStoreValue(usersStore, $usersStore, usersStoreKey)      
         } catch (error: any) {
             console.log("err:", error);
             
@@ -50,10 +54,18 @@
                 navigate("/", {replace: true})
             }
         }
-      
-        // if (!username) {
-        //     persistStoreValue(usernameStore, username, usernameStoreKey)
-        // }
+
+        if (!selectedChat) {
+            $selectedChatStore = {
+                chatName: "Public",
+                currentMessage: "N/A",
+                time: "N/A",
+                picture_url: publicChatPic,
+                isChatActive: true
+            }
+            
+            persistStoreValue(selectedChatStore, $selectedChatStore, selectedChatStoreKey)
+        }
 
         if (!groupChatName) {
             $groupChatNameStore = "Public"

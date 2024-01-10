@@ -3,7 +3,6 @@ package controllers
 import (
 	"MessengerV2/api/database"
 	"MessengerV2/api/models"
-	"database/sql"
 	"fmt"
 	"net/http"
 	"os"
@@ -27,24 +26,24 @@ func (u *UserController) Init() {
 	u.sessionLen = 50000 //in seconds, so about 14 hrs
 }
 
-func (u *UserController) CheckAuth(c *fiber.Ctx) error{
+func (u *UserController) CheckAuth(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).SendString("You're logged in")
 }
 
 func (u *UserController) GetUsername(c *fiber.Ctx) error {
 	username, usernameErr := c.UserContext().Value("token").(jwt.MapClaims)["username"].(string)
-	
-	if !usernameErr{
+
+	if !usernameErr {
 		return c.Status(http.StatusUnprocessableEntity).SendString("Could not parse \"username\" field.")
 	}
 
 	return c.Status(http.StatusOK).SendString(username)
 }
 
-func (u *UserController) GetUserAnonymousStatus(c *fiber.Ctx) error{
+func (u *UserController) GetUserAnonymousStatus(c *fiber.Ctx) error {
 	isAnonymous, anonymousErr := c.UserContext().Value("token").(jwt.MapClaims)["is_anonymous"].(bool)
-	
-	if !anonymousErr{
+
+	if !anonymousErr {
 		return c.Status(http.StatusUnprocessableEntity).SendString("Could not parse \"is_anonymous\" field.")
 	}
 
@@ -85,7 +84,7 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 	user.Password = strings.Trim(user.Password, " ")
 
 	//Add password gen for anonymous user to clear password validation
-	if user.IsAnonymous{
+	if user.IsAnonymous {
 		randomPassword, _ := password.Generate(12, 8, 0, false, false)
 		user.Password = randomPassword
 	}
@@ -113,35 +112,32 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 
 func (u *UserController) Signout(c *fiber.Ctx) error {
 	isAnonymous, anonymousErr := c.UserContext().Value("token").(jwt.MapClaims)["is_anonymous"].(bool)
-	
-	if !anonymousErr{
+
+	if !anonymousErr {
 		return c.Status(http.StatusUnprocessableEntity).SendString("Could not parse \"is_anonymous\" field.")
 	}
-	
+
 	username, usernameErr := c.UserContext().Value("token").(jwt.MapClaims)["username"].(string)
 
-	if !usernameErr{
+	if !usernameErr {
 		return c.Status(http.StatusUnprocessableEntity).SendString("Could not parse \"username\" field.")
 	}
 
-	if isAnonymous{
-		result, _       := u.db.Exec("DELETE FROM users WHERE username=$1", username)
+	if isAnonymous {
+		result, _ := u.db.Exec("DELETE FROM users WHERE username=$1", username)
 		rowsAffected, _ := result.RowsAffected()
 
 		fmt.Println("rows:", rowsAffected)
 	}
 
 	u.setCookie(c, "", 0)
- 	return c.Status(http.StatusOK).SendString("signed out")
+	return c.Status(http.StatusOK).SendString("signed out")
 }
 
 func (u *UserController) GetUsers(c *fiber.Ctx) error {
- 	users := []struct{
-		Username       string         `json:"username"        db:"username"`
-		ProfilePicture sql.NullString `json:"profile_picture" db:"profile_picture"`
-	}{}
+	users := []models.User{}
 
-	if err := u.db.Select(&users, "SELECT username, profile_picture FROM users"); err != nil {
+	if err := u.db.Select(&users, "SELECT username, profile_picture, is_anonymous FROM users"); err != nil {
 		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 
@@ -161,7 +157,7 @@ func (u *UserController) GetUserByID(c *fiber.Ctx) error {
 
 func (u *UserController) GetUserByUsername(c *fiber.Ctx) error {
 	username := c.Params("username")
-	user     := models.User{}
+	user := models.User{}
 
 	if err := u.db.Get(&user, "SELECT * FROM users WHERE username=$1", username); err != nil {
 		fmt.Println("err:", err)
@@ -184,10 +180,10 @@ func (u *UserController) DeleteUser(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).SendString(fmt.Sprintf("Deleted user with id \"%s\"", id))
 }
 
-func (u *UserController) getJwtToken(user models.User) string{
+func (u *UserController) getJwtToken(user models.User) string {
 	expiry := time.Now().Add(time.Duration(u.sessionLen) * time.Second)
 	tokenString, _ := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"exp"     :     expiry.Unix(),
+		"exp":          expiry.Unix(),
 		"username":     user.Username,
 		"is_anonymous": user.IsAnonymous,
 	}).SignedString([]byte(os.Getenv("JWT_SECRET")))

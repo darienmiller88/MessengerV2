@@ -1,6 +1,8 @@
 <script lang="ts">
     import { type Chat } from "../../types/type";
     import { 
+        selectedChatStore,
+        selectedChatStoreKey,
         groupChatNameStore, 
         groupChatNameStoreKey, 
         isChatWindowActiveStore, 
@@ -20,9 +22,13 @@
         deselectChats()
         chatInfo.isChatActive = true
 
-        persistValue(chatInfo.chatName, currentChatName)
-        persistStoreValue(chatPictureStore, chatInfo.picture_url, chatPictureStoreKey)
-        persistStoreValue(groupChatNameStore, chatInfo.chatName, groupChatNameStoreKey)
+        persistStoreValue(selectedChatStore, $selectedChatStore, selectedChatStoreKey)
+        // persistValue(chatInfo.chatName, currentChatName)
+        // persistStoreValue(chatPictureStore, chatInfo.picture_url, chatPictureStoreKey)
+        // persistStoreValue(groupChatNameStore, chatInfo.chatName, groupChatNameStoreKey)
+
+        //Boolean indicator for mobile view to swap between message window to see messages, and user chats window to
+        //see all of the current chats the user has.
         persistStoreValue(isChatWindowActiveStore, !$isChatWindowActiveStore, isChatWindowActiveStoreKey)
     }
 

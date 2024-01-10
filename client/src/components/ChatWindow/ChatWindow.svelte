@@ -10,7 +10,7 @@
     import { afterUpdate, onMount } from 'svelte';
     import { navigate } from "svelte-routing";
     import pusher from "../../pusher/pusher";
-    import { messageApi } from "../../api/api";
+    import { messageApi, userApi } from "../../api/api";
 
     let messagesRef: HTMLElement
     let userTypingText: string = ""
@@ -26,16 +26,12 @@
     });
 
     onMount(async () => {
-        let username: string | null = window.localStorage.getItem(usernameStoreKey)
-
-        if (username) {
-            $usernameStore = (JSON.parse(username) as string)
-        }
-        
         try {
-            const res = await messageApi.get("/")
-            $messagesStore = res.data 
-            console.log("res:", res.data);
+            const messagesRes = await messageApi.get("/")
+            $messagesStore = messagesRes.data 
+
+            const usernameRes = await userApi.get("/username")
+            $usernameStore = (usernameRes.data as string)
         } catch (error: any) {
             if (error.response.status == 401) {
                 navigate("/", {replace: true})

@@ -5,7 +5,7 @@
     import { navigate } from "svelte-routing";
     import { userApi } from "../../api/api";
 
-    onMount(async () => {
+    onMount(async () => {        
         try {
             //Check to see if the user is logged in, and if not, redirect them to the log in page.
            await userApi.get("/checkauth")

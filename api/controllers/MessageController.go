@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/jmoiron/sqlx"
 	"github.com/pusher/pusher-http-go/v5"
 
@@ -64,8 +65,12 @@ func (m *MessageController) GetMessageByID(c *fiber.Ctx) error{
 }
 
 func (m *MessageController) GetMessageHistory(c *fiber.Ctx) error{
-	username := c.Params("username")
-	messages := []models.Message{}
+	messages              := []models.Message{}
+	username, usernameErr := c.UserContext().Value("token").(jwt.MapClaims)["username"].(string) 
+
+	if !usernameErr{
+		return c.Status(http.StatusBadRequest).SendString("Could not parse field \"username\" in token.")
+	}
 
 	if err := m.db.Select(&messages, "SELECT * FROM messages WHERE username=$1", username); err != nil{
 		return c.Status(http.StatusNotFound).SendString(err.Error())

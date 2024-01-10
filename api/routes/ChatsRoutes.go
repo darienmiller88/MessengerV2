@@ -3,6 +3,7 @@ package routes
 import(
 	"github.com/gofiber/fiber/v2"
 	"MessengerV2/api/controllers"
+	"MessengerV2/api/middlewares"
 )
 
 type ChatsRoutes struct{
@@ -14,7 +15,9 @@ func (c *ChatsRoutes) Init(){
 	c.Router = fiber.New()
 	c.chatsController.Init()
 
-	c.Router.Get("/", c.chatsController.GetChats)
-	c.Router.Delete("/:chatname", c.chatsController.DeleteChat)
-	c.Router.Post("/", c.chatsController.AddNewChat)
+	c.Router.Use(middlewares.Auth).Route("/", func(router fiber.Router) {
+		router.Get("/",             c.chatsController.GetChats)
+		router.Post("/",            c.chatsController.AddNewChat)
+		router.Delete("/:chatname", c.chatsController.DeleteChat)
+	})
 }

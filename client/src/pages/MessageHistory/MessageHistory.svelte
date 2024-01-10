@@ -11,14 +11,8 @@
     let isLoading: boolean = true
 
     onMount(async () => {
-        let username: string | null = window.localStorage.getItem(usernameStoreKey)
-
-        if (username) {
-            $usernameStore = (JSON.parse(username) as string)
-        }
-        
        try {
-            const res = await messageApi.get(`/message-history/${$usernameStore}`)
+            const res = await messageApi.get(`/message-history`)
             messages = (res.data as Message[])
             isLoading = false
             console.log("messages:", messages);

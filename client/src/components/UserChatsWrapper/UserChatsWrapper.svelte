@@ -2,6 +2,9 @@
     import UserChat from "../UserChat/UserChat.svelte";
     import { chatsStore, chatsStoreKey, persistStoreValue } from "../../stores"
     import { onMount } from "svelte";
+    import { chatsApi } from "../../api/api";
+    import { type Chat } from "../../types/type";
+    import { navigate } from "svelte-routing";
 
     const deselectChats = () => {
         $chatsStore.forEach((chat => {
@@ -10,17 +13,21 @@
 
         //Overwrite the current state of the chat store with the new one
         $chatsStore = $chatsStore
-        // persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
     }
 
-    // onMount(() => {
-    //     let chats: string | null = window.localStorage.getItem(chatsStoreKey)
-
-    //     if (chats) {
-    //         console.log("chats:",JSON.parse(chats))
-    //         // $chatsStore = JSON.parse(chats)
-    //     }
-    // })
+    onMount( async () => {
+        try {
+            const res = await chatsApi.get("/")
+            $chatsStore = [...$chatsStore, ...(res.data as Chat[])]
+            console.log("chats:", $chatsStore);
+        } catch (error: any) {
+            console.log("err:", error);
+            
+            if (error.response.status === 401) {
+                navigate("/", {replace: true})
+            }
+        }
+    })
 
 </script>
 
@@ -29,9 +36,3 @@
         <UserChat chatInfo={chatInfo} deselectChats={deselectChats}/>
     {/each}
 </div>
-
-<style lang="scss">
-    // .user-chats-wrapper{
-
-    // }
-</style>

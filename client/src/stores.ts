@@ -14,6 +14,7 @@ export const chosenMessageStore      = writable<Message>()
 export const usersStore              = writable<string[]>([])
 export const isDarkModeStore         = writable(false)
 export const messagesStore           = writable<Message[]>([])
+export const selectedChatStore       = writable<Chat>()
 export const chatsStore              = writable<Chat[]>([{
     chatName: "Public",
     currentMessage: "N/A",
@@ -23,6 +24,7 @@ export const chatsStore              = writable<Chat[]>([{
 }])
 
 export const usernameStoreKey           = "usernameStoreKey"
+export const selectedChatStoreKey       = "selectedChatStoreKey"
 export const userProfilePictureStoreKey = "userProfilePictureStoreKey"
 export const isAnonymousStoreKey        = "isAnonymousStoreKey"
 export const isChatWindowActiveStoreKey = "isChatActiveStoreKey"

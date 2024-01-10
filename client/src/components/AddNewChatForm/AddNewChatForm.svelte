@@ -1,9 +1,11 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { type FilteredUser, type Chat } from "../../types/type"
+    import { type FilteredUser, type Chat, type User } from "../../types/type"
     import { usersStoreKey, usersStore, chatsStore, chatsStoreKey, persistStoreValue } from "../../stores"
     import Select from 'svelte-select';
     import defaultPic from "../../assets/default.png"
+    import { userApi } from "../../api/api";
+    import { navigate } from "svelte-routing";
 
     let groupChatName:       string
     let message:             string
@@ -32,7 +34,6 @@
         console.log(groupChatName, users)
         groupChatName = ""
         value = null
-
 
         onHide()
     }
