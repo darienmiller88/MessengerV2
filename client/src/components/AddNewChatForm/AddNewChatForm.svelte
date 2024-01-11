@@ -9,6 +9,7 @@
 
     let groupChatName:       string
     let message:             string
+    let users:               string[] 
     let isCreatingGroupChat: boolean  = true
     let value:               any
     let newChat:             Chat = {
@@ -55,13 +56,12 @@
         onHide()
     }
 
-    onMount(async () => {
-        let users:    string | null = window.localStorage.getItem(usersStoreKey)
+    onMount( () => {
+        let usersLocalStorage:    string | null = window.localStorage.getItem(usersStoreKey)
         
-        if (users) {
-            $usersStore = (JSON.parse(users) as string[]).filter(user => {                
-                return user != $usernameStore
-            })
+        if (usersLocalStorage) {
+            $usersStore = (JSON.parse(usersLocalStorage) as string[])
+            console.log("len:", $usersStore.length, $usersStore)
         }
     })
 </script>

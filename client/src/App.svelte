@@ -37,11 +37,14 @@
         try {
             const isAnonymousRes = await userApi.get("/isAnonymous")
             $isAnonymousStore = (isAnonymousRes.data.is_anonymous as boolean)
+
+            const usernameRes = await userApi.get("/username")
+            $usernameStore = (usernameRes.data as string)
             
             const usersRes = await userApi.get("/")
             $usersStore = []
             usersRes.data.forEach((user: User) => {
-                if (!user.is_anonymous) {
+                if (!user.is_anonymous && user.username !== $usernameStore) {
                     $usersStore = [...$usersStore, user.username]
                 }
             });   
