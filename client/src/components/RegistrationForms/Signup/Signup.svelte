@@ -36,8 +36,9 @@
                 username,
                 password
             }
-            const res = await userApi.post("/signup", userCredentials)
-            console.log("res:", res.data);
+
+            await userApi.post("/signup", userCredentials)
+
             persistStoreValue(usernameStore, username, usernameStoreKey)
             persistStoreValue(userProfilePictureStore, defaultProfilePicture, userProfilePictureStoreKey)
             persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)

@@ -31,27 +31,20 @@
     onMount(() => {
         let selectedChat:       string | null = window.localStorage.getItem(selectedChatStoreKey)
         let isChatWindowActive: string | null = window.localStorage.getItem(isChatWindowActiveStoreKey)
-
-        //Extract the value of the current chat the user clicked on from local storage.
-        if (selectedChat) {
-            $selectedChatStore = (JSON.parse(selectedChat) as Chat)
-        }
+        let groupChatName:  string | null = window.localStorage.getItem(groupChatNameStoreKey)
+        let chatPictureURL: string | null = window.localStorage.getItem(chatPictureStoreKey)
 
         //Extract the value of the indicator indicating whether or not the message window is active or not.
         if (isChatWindowActive) {
             $isChatWindowActiveStore = (JSON.parse(isChatWindowActive) as boolean)
         }
-
-        console.log("selected chat:", $selectedChatStore);
         
-        let groupChatName:        string | null = window.localStorage.getItem(groupChatNameStoreKey)
-        let chatPictureURL:       string | null = window.localStorage.getItem(chatPictureStoreKey)
-        
+        //Extract the value of the selected chat name
         if (groupChatName) {
             $groupChatNameStore = JSON.parse(groupChatName)
         }
 
-
+        //Extract the value of the picture url.
         if (chatPictureURL) {
             $chatPictureStore = JSON.parse(chatPictureURL)
         }

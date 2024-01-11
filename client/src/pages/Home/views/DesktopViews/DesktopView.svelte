@@ -19,7 +19,7 @@
 
         @media only screen and (min-width: 992px){
             display: grid;
-            grid-template-columns: 8% 20% auto;
+            grid-template-columns: 6% 22% auto;
             height: 100vh;
         }
     }

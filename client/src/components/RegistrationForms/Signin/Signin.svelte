@@ -51,10 +51,7 @@
             //The sign in controller on the back end returns the user's profile picture url. If blank, give them
             //the default picture, but if not, just assign the url of their picture.
             $userProfilePictureStore = res.data == "" ? defaultProfilePicture : res.data
-            persistStoreValue(usernameStore, username, usernameStoreKey)
-            persistStoreValue(userProfilePictureStore, defaultProfilePicture, userProfilePictureStoreKey)
-            persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
-            persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
+            storeAllValues()
             navigate("/home", {replace: true})
         } catch (error: any) {
             if (error.response.status == 404) {
@@ -74,10 +71,9 @@
         try {
             isSigninAnoymousLoading = true
             $usernameStore = "User-" + (uuid() as string).substring(0, 8)
-            persistStoreValue(usernameStore, $usernameStore, usernameStoreKey)
-            persistStoreValue(userProfilePictureStore, defaultProfilePicture, userProfilePictureStoreKey)
-            persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
-            persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
+
+            //Just as above, store the 
+            storeAllValues()
             persistStoreValue(isAnonymousStore, true, isAnonymousStoreKey)
 
             const user: User = {
@@ -101,6 +97,20 @@
 
         isSigninAnoymousLoading = false
     }   
+
+    const storeAllValues = () => {
+        //Store the username of the user in local storage to be retrieved later.
+        persistStoreValue(usernameStore, $usernameStore, usernameStoreKey)
+
+        //Store the value of the url of the user's profile picture.
+        persistStoreValue(userProfilePictureStore, defaultProfilePicture, userProfilePictureStoreKey)
+
+        //Store the value of the url of the picture for the public chat.
+        persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
+
+        //Finally, store the value of the initial group chat, which is the public chat. 
+        persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
+    }
 </script>
 
 <main>

@@ -22,10 +22,12 @@
         deselectChats()
         chatInfo.isChatActive = true
 
-        persistStoreValue(selectedChatStore, $selectedChatStore, selectedChatStoreKey)
+        // persistStoreValue(selectedChatStore, $selectedChatStore, selectedChatStoreKey)
         // persistValue(chatInfo.chatName, currentChatName)
-        // persistStoreValue(chatPictureStore, chatInfo.picture_url, chatPictureStoreKey)
-        // persistStoreValue(groupChatNameStore, chatInfo.chatName, groupChatNameStoreKey)
+
+        //When a user chat is clicked, persist the name of the group chat clicked, and the picture of the chat
+        persistStoreValue(chatPictureStore, chatInfo.picture_url, chatPictureStoreKey)
+        persistStoreValue(groupChatNameStore, chatInfo.chatName, groupChatNameStoreKey)
 
         //Boolean indicator for mobile view to swap between message window to see messages, and user chats window to
         //see all of the current chats the user has.
@@ -34,7 +36,7 @@
 
     // When the UserChat component is mounted, highlight the user that was clicked.
     onMount(() => {
-        let chatName: string | null = window.localStorage.getItem(currentChatName)
+        let chatName: string | null = window.localStorage.getItem(groupChatNameStoreKey)
         
         if (chatName && JSON.parse(chatName) == chatInfo.chatName) {
             deselectChats()

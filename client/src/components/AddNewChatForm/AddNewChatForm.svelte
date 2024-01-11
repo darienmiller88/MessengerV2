@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { type FilteredUser, type Chat, type User } from "../../types/type"
-    import { usersStoreKey, usersStore, chatsStore, chatsStoreKey, persistStoreValue } from "../../stores"
+    import { usersStoreKey, usersStore, usernameStore, usernameStoreKey, chatsStore, chatsStoreKey, persistStoreValue } from "../../stores"
     import Select from 'svelte-select';
     import defaultPic from "../../assets/default.png"
     import { userApi } from "../../api/api";
@@ -56,10 +56,12 @@
     }
 
     onMount(async () => {
-        let users: string | null = window.localStorage.getItem(usersStoreKey)
-
+        let users:    string | null = window.localStorage.getItem(usersStoreKey)
+        
         if (users) {
-            $usersStore = JSON.parse(users)
+            $usersStore = (JSON.parse(users) as string[]).filter(user => {                
+                return user != $usernameStore
+            })
         }
     })
 </script>
