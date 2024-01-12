@@ -138,7 +138,7 @@
         width: fit-content;
         max-width: 90%;
 
-        margin: 10px;
+        margin: 20px 10px;
 
         @media only screen and (min-width: 768px) {
             max-width: 70%;
