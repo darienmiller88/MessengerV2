@@ -1,6 +1,6 @@
 <script lang="ts">
     import Sidebar from "../../components/Sidebar/Sidebar.svelte";  
-    import { onMount } from "svelte";
+    import { afterUpdate, onMount } from "svelte";
     import { navigate } from "svelte-routing";
     import { messageApi } from "../../api/api";
     import { isDarkModeStore, usernameStore, usernameStoreKey } from "../../stores"
@@ -9,6 +9,18 @@
 
     let messages:  Message[] = []
     let isLoading: boolean = true
+    let messagesRef: HTMLElement
+
+    const scrollTo = async (node: Element) => {
+        node.scrollTo({ top: node.scrollHeight,  behavior: "instant" });
+    }; 
+
+    afterUpdate(() => {        
+		if(messages.length) {
+            scrollTo(messagesRef);
+        }
+    });
+
 
     onMount(async () => {
        try {
@@ -25,12 +37,16 @@
             console.log("err:", error);
        }
     })
+
+    $: if (messages.length && messagesRef) {   
+        scrollTo(messagesRef)       
+    }
 </script>
 
 <div class="message-history">
     <div class="header-wrapper">
         <div class={$isDarkModeStore ? "header-dark-mode header" : "header"}>Message History</div>
-        <div class="messages">
+        <div class="messages" bind:this={messagesRef}>
             {#if isLoading}
                 <div class="loading-wrapper">
                     <Moon size="200" color="#1DA1F2" unit="px" duration="1s"/>
@@ -69,10 +85,13 @@
 
         .header-wrapper{
             display: grid;
-            grid-template-rows: 10% auto;
             grid-area: header;
-            height: 100%;
+            grid-template-rows: auto 80vh;
 
+            // height: 100%;
+            @media screen and (min-width: 992px) {
+                grid-template-rows: auto 90vh;
+            }
             .header{
                 display: flex;
                 align-items: center;

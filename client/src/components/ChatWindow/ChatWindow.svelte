@@ -16,7 +16,7 @@
     let userTypingText: string = ""
 
     const scrollTo = async (node: Element) => {
-        node.scrollTo({ top: node.scrollHeight,  behavior: 'smooth' });
+        node.scrollTo({ top: node.scrollHeight,  behavior: "instant" });
     }; 
 
     afterUpdate(() => {        
