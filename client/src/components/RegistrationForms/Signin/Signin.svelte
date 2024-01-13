@@ -72,7 +72,7 @@
             isSigninAnoymousLoading = true
             $usernameStore = "User-" + (uuid() as string).substring(0, 8)
 
-            //Just as above, store the 
+            //Just as above, store the values in local storage to be referenced later.
             storeAllValues()
             persistStoreValue(isAnonymousStore, true, isAnonymousStoreKey)
 

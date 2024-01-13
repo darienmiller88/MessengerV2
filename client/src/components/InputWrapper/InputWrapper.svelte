@@ -6,6 +6,7 @@
     import { onMount } from "svelte";
     import { messageApi } from "../../api/api";
     import { usernameStore, usernameStoreKey } from "../../stores";
+    import { CldUploadWidget } from "svelte-cloudinary"
     import pusher from "../../pusher/pusher";
 
     let isThumbsUp:  boolean = true
@@ -106,8 +107,11 @@
 </script>
 
 <div class="chat-input-wrapper">
-    <div class="icon-wrapper">
-        <Image width={iconSize} height={iconSize} fill={$fillIconColorStore} />
+    <div class="icon-wrapper image-select">
+        <label for="file-input">
+            <Image width={iconSize} height={iconSize} fill={$fillIconColorStore} />
+        </label>
+        <input id="file-input" type="file" accept="image/*" />
     </div>
     <div class="input-wrapper">
         <textarea placeholder="Aa" 
@@ -170,6 +174,12 @@
                 }
             }
         }
+
+        .image-select{
+            input{
+                display: none;
+            }
+        }
     
         .icon-wrapper{
             display: flex;
@@ -178,7 +188,7 @@
 
             padding: 10px 10px;
             transition: 0.4s;
-            
+
             &:hover{
                 cursor: pointer;
                 background-color: var(--light-grey);

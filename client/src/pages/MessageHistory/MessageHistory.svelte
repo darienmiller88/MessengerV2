@@ -27,7 +27,6 @@
             const res = await messageApi.get(`/message-history`)
             messages = (res.data as Message[])
             isLoading = false
-            console.log("messages:", messages);
        } catch (error: any) {
             if (error.response.status == 401) {
                 console.log("err unauthroized");

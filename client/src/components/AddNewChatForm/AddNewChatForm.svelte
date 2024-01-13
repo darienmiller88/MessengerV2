@@ -61,7 +61,6 @@
         
         if (usersLocalStorage) {
             $usersStore = (JSON.parse(usersLocalStorage) as string[])
-            console.log("len:", $usersStore.length, $usersStore)
         }
     })
 </script>
