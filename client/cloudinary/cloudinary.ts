@@ -1,1 +1,0 @@
-// import { cl} from "svelte-cloudinary"

@@ -7,6 +7,8 @@
     import { messageApi } from "../../api/api";
     import { usernameStore, usernameStoreKey } from "../../stores";
     import { CldUploadWidget } from "svelte-cloudinary"
+    // import cloudinaryLib from 'cloudinary'
+
     import pusher from "../../pusher/pusher";
 
     let isThumbsUp:  boolean = true
@@ -15,6 +17,7 @@
     let canPublish:  boolean = true
     let canType:     boolean = false
     let firstKey:    number  = 0
+    let imageURL:    any     
     const iconSize:  number  = 24
 
     const sendMessage = async () => {
@@ -75,11 +78,27 @@
         }
     }
 
+    const onFileSelected = (e: any)=>{
+        let image = e.target.files[0];
+        let reader = new FileReader();
+        reader.readAsDataURL(image);
+        reader.onload = e => {
+            if (e.target) {
+                imageURL = e.target.result
+            }
+        };
+    }
+
     onMount(() => {
         let username: string | null = window.localStorage.getItem(usernameStoreKey)
 
         if (username) {
             $usernameStore = JSON.parse(username)
+        }
+
+        if (imageURL == null) {
+            console.log("null?");
+            
         }
 
         const channel = pusher.subscribe('public');
@@ -106,97 +125,119 @@
     })
 </script>
 
-<div class="chat-input-wrapper">
-    <div class="icon-wrapper image-select">
-        <label for="file-input">
-            <Image width={iconSize} height={iconSize} fill={$fillIconColorStore} />
-        </label>
-        <input id="file-input" type="file" accept="image/*" />
-    </div>
-    <div class="input-wrapper">
-        <textarea placeholder="Aa" 
-            bind:value={messageText} 
-            on:input={() => isThumbsUp = messageText.trim().length == 0}
-            on:keyup={handleKeyInput}
-            on:keydown={handleKeyDown}
+<form class="chat-input-wrapper" on:submit|preventDefault>
+    <!-- <CldUploadWidget uploadPreset="svelte-cloudinary-unsigned" let:open let:isLoading>
+        <button class="icon-wrapper image-select" on:click={open} disabled={isLoading} >
+        </button>
+    </CldUploadWidget> -->
 
-           disabled={canType}
-        />
-    </div>
-
-    {#if showIcon }
-        <div class="icon-wrapper" on:click={sendMessage} on:keyup={null} tabindex="0" role="button">
-            {#if isThumbsUp }
-                <HandThumbsUpFill width={iconSize} height={iconSize} fill={$fillIconColorStore}/>
-            {:else}            
-                <SendFill width={iconSize} height={iconSize} fill={$fillIconColorStore} />
-            {/if}
+    <img src={imageURL} alt="">
+    <div class="input-icon-wrapper">
+        <div class="icon-wrapper image-select">
+            <label for="file-input">
+                <Image width={iconSize} height={iconSize} fill={$fillIconColorStore} />
+            </label>
+            <input id="file-input" type="file" accept="image/*"  on:change={(e)=>onFileSelected(e)} bind:this={imageURL} />
+        </div>        
+        <div class="input-wrapper">
+            <textarea placeholder="Aa" 
+                bind:value={messageText} 
+                on:input={() => isThumbsUp = messageText.trim().length == 0}
+                on:keyup={handleKeyInput}
+                on:keydown={handleKeyDown}
+    
+               disabled={canType}
+            />
         </div>
-    {/if}
-</div>
+    
+        {#if showIcon }
+            <div class="icon-wrapper" on:click={sendMessage} on:keyup={null} tabindex="0" role="button">
+                {#if isThumbsUp }
+                    <HandThumbsUpFill width={iconSize} height={iconSize} fill={$fillIconColorStore}/>
+                {:else}            
+                    <SendFill width={iconSize} height={iconSize} fill={$fillIconColorStore} />
+                {/if}
+            </div>
+        {/if}
+    </div>
+</form>
 
 <style lang="scss">
     .chat-input-wrapper{
         display: grid;
-        grid-template-columns: 15% auto 15%;
         padding: 5px 0px;
         border-top: 2px var(--lighter-grey) solid;
+        // border: 2px solid black;
 
-        @media only screen and (min-width: 768px){
-            grid-template-columns: 10% auto 10%;
+        img{
+            width: 100px;
+            height: auto;
         }
 
-        @media only screen and (min-width: 992px){
-            grid-template-columns: 5% auto 5%;
-        }
+        .input-icon-wrapper{
+            display: grid;
+            grid-template-columns: 25% auto 15%;
 
-        .input-wrapper{
-            display: flex;
-            
-            textarea{
-                margin: auto;
+            @media only screen and (min-width: 768px){
+                grid-template-columns: 10% auto 10%;
+            }
+
+            @media only screen and (min-width: 992px){
+                grid-template-columns: 5% auto 5%;
+            }
+
+            .input-wrapper{
+                display: flex;
+                flex-direction: column;
+                overflow-y: scroll;
+                
+                textarea{
+                    margin: auto;
+                    padding: 10px 10px;
+                    border-radius: 20px;
+                    font-size: 16px;
+
+                    border: none;
+                    outline: none;
+                    background-color: var(--light-grey);
+
+                    width: 100%;
+
+                    @media only screen and (min-width: 768px){
+                        font-size: 35px;
+                    }
+
+                    @media only screen and (min-width: 992px){
+                        font-size: 20px;
+                    }
+                }
+            }
+
+            .image-select{
+                input{
+                    display: none;
+                }
+            }
+        
+            .icon-wrapper{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
                 padding: 10px 10px;
-                border-radius: 20px;
-                font-size: 16px;
+                transition: 0.4s;
 
-                border: none;
-                outline: none;
-                background-color: var(--light-grey);
-
-                width: 100%;
-
-                @media only screen and (min-width: 768px){
-                    font-size: 35px;
+                &:hover{
+                    cursor: pointer;
+                    background-color: var(--light-grey);
                 }
 
-                @media only screen and (min-width: 992px){
-                    font-size: 20px;
+                &:active{
+                    background-color: var(--darker-grey);
                 }
             }
         }
 
-        .image-select{
-            input{
-                display: none;
-            }
-        }
-    
-        .icon-wrapper{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            padding: 10px 10px;
-            transition: 0.4s;
-
-            &:hover{
-                cursor: pointer;
-                background-color: var(--light-grey);
-            }
-
-            &:active{
-                background-color: var(--darker-grey);
-            }
-        }
+        
     }
 </style>

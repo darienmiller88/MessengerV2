@@ -25,6 +25,18 @@ func (m *MessageController) Init(){
 	m.db           = database.GetDB()
 }
 
+func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error{
+	file, err := c.FormFile("file")
+
+	if err != nil{
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+
+	fmt.Println("file size:", file.Size / 1024, "kb", "and name:", file.Filename)
+
+	return nil
+}
+
 func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 	message := models.Message{DB: m.db}
 
