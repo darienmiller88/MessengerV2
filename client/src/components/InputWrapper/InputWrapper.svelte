@@ -8,6 +8,7 @@
     import { usernameStore, usernameStoreKey } from "../../stores";
     import { CldUploadWidget } from "svelte-cloudinary"
     // import cloudinaryLib from 'cloudinary'
+    import pic from "../../assets/profile.png"
 
     import pusher from "../../pusher/pusher";
 
@@ -17,7 +18,7 @@
     let canPublish:  boolean = true
     let canType:     boolean = false
     let firstKey:    number  = 0
-    let imageURL:    any     
+    let imageURL:    any   
     const iconSize:  number  = 24
 
     const sendMessage = async () => {
@@ -87,6 +88,8 @@
                 imageURL = e.target.result
             }
         };
+
+        console.log("image url:", imageURL);
     }
 
     onMount(() => {
@@ -96,11 +99,7 @@
             $usernameStore = JSON.parse(username)
         }
 
-        if (imageURL == null) {
-            console.log("null?");
-            
-        }
-
+        imageURL = null
         const channel = pusher.subscribe('public');
         
         channel.bind('public_message', (message: Message) => {   
@@ -123,21 +122,28 @@
             })
        })
     })
+
+    // $: console.log("image:", imageURL);
+    
 </script>
 
 <form class="chat-input-wrapper" on:submit|preventDefault>
-    <!-- <CldUploadWidget uploadPreset="svelte-cloudinary-unsigned" let:open let:isLoading>
-        <button class="icon-wrapper image-select" on:click={open} disabled={isLoading} >
-        </button>
-    </CldUploadWidget> -->
-
-    <img src={imageURL} alt="">
+    {#if imageURL}
+        <div class="image-wrapper">
+            <span class="close" on:click={() => imageURL = null} role="button" tabindex="0" on:keyup={null}>
+                &times;
+            </span>
+            <img src={imageURL} alt="">
+        </div>
+    {/if}
+    <!-- <div>{imageURL}</div> -->
+    
     <div class="input-icon-wrapper">
         <div class="icon-wrapper image-select">
             <label for="file-input">
                 <Image width={iconSize} height={iconSize} fill={$fillIconColorStore} />
             </label>
-            <input id="file-input" type="file" accept="image/*"  on:change={(e)=>onFileSelected(e)} bind:this={imageURL} />
+            <input id="file-input" type="file" accept="image/x-png,image/gif,image/jpeg"  on:change={(e)=>onFileSelected(e)} bind:this={imageURL} />
         </div>        
         <div class="input-wrapper">
             <textarea placeholder="Aa" 
@@ -146,13 +152,13 @@
                 on:keyup={handleKeyInput}
                 on:keydown={handleKeyDown}
     
-               disabled={canType}
+               disabled={canType || imageURL}
             />
         </div>
     
         {#if showIcon }
             <div class="icon-wrapper" on:click={sendMessage} on:keyup={null} tabindex="0" role="button">
-                {#if isThumbsUp }
+                {#if isThumbsUp && !imageURL}
                     <HandThumbsUpFill width={iconSize} height={iconSize} fill={$fillIconColorStore}/>
                 {:else}            
                     <SendFill width={iconSize} height={iconSize} fill={$fillIconColorStore} />
@@ -167,16 +173,34 @@
         display: grid;
         padding: 5px 0px;
         border-top: 2px var(--lighter-grey) solid;
-        // border: 2px solid black;
 
-        img{
-            width: 100px;
-            height: auto;
+        .image-wrapper{
+            width: fit-content;
+
+            span{
+                position: absolute;
+                padding: 3px 5px;
+                border-radius: 50%;
+                z-index: 10;
+                transition: 0.3s;
+                cursor: pointer;
+
+                &:hover{
+                    background-color: rgba(200, 200, 200, 0.5);
+                }
+            }
+            
+            img{
+                width: 100px;
+                height: auto;
+                z-index: -10;
+            }
         }
+
 
         .input-icon-wrapper{
             display: grid;
-            grid-template-columns: 25% auto 15%;
+            grid-template-columns: 15% auto 15%;
 
             @media only screen and (min-width: 768px){
                 grid-template-columns: 10% auto 10%;

@@ -2,7 +2,6 @@
     import ChatInputWrapper from "../../components/InputWrapper/InputWrapper.svelte";
     import ChatWindowHeader from "../../components/ChatWindowHeader/ChatWindowHeader.svelte";
     import ChatWindow       from "../../components/ChatWindow/ChatWindow.svelte";
-
 </script>
 
 <!-- The chat window will be seperated into three parts:
@@ -21,7 +20,7 @@
 <style lang="scss">
     .chatwindow-container{
         display: grid;
-        grid-template-rows: 10% 80vh auto;
+        grid-template-rows: 10% minmax(25vh, 80vh) auto;
         height: 100vh;
 
         @media only screen and (min-width: 768px){

@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -124,16 +125,44 @@ func (m *MessageController) DeleteMessage(c *fiber.Ctx) error{
 	return c.Status(http.StatusOK).JSON(message)
 }
 
+//Function to allow clients on the front end to know when someone is typing.
 func (m *MessageController) UserTyping(c *fiber.Ctx) error{
-	data := make(map[string]interface{})
+	data := struct{
+		Username string `json:"username"`
+	}{}
 
 	if err := c.BodyParser(&data); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(err)
 	}
 
-	if err := m.pusherClient.Trigger("public", "user_typing", data["username"]); err != nil{
+	if err := m.pusherClient.Trigger("public", "user_typing", data.Username); err != nil{
 		fmt.Println("err broadcasting messages:", err)
 	}
 
 	return c.Status(http.StatusOK).JSON(data)
+}
+
+//Function to check to see a URL leads to a valid image, with a png or jpg/jpeg extension.
+func (m *MessageController) isValidImage(url string) (bool, error) {
+	// Make a HEAD request to the URL to request header content.
+	resp, err := http.Head(url)
+	
+	if err != nil {
+		return false, err
+	}
+
+	defer resp.Body.Close()
+
+	// Check if the response status code is within the success range
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return false, fmt.Errorf("HTTP request failed with status code: %d", resp.StatusCode)
+	}
+
+	// Check the Content-Type header for image formats
+	contentType := resp.Header.Get("Content-Type")
+	if strings.HasPrefix(contentType, "image/png") || strings.HasPrefix(contentType, "image/jpeg") {
+		return true, nil
+	}
+
+	return false, nil
 }

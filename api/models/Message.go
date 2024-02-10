@@ -33,6 +33,7 @@ func (m *Message) Validate() error{
 	)
 }
 
+//Function to ensure the message sent to the server has a username that is in the database
 func (m *Message) CheckUsername(val interface{}) error{
 	username, success := val.(string)
 	user := User{}
@@ -44,8 +45,6 @@ func (m *Message) CheckUsername(val interface{}) error{
 	if err := m.DB.Get(&user, "SELECT * FROM users WHERE username=$1", username); err != nil{
 		return errors.New(fmt.Sprintf("Username \"%s\" was not found.", username))
 	}
-
-	fmt.Println(username)
 
 	return nil
 }
