@@ -4,6 +4,8 @@
     import { onMount } from "svelte";
     import { navigate } from "svelte-routing";
     import { userApi } from "../../api/api";
+    import MediaQuery from 'svelte-media-queries'
+
 
     onMount(async () => {        
         try {
@@ -20,10 +22,15 @@
 </script>
 
 <div class="home">
-    <DesktopView />
-    <MobileView />
-</div>
+    <MediaQuery query="(max-width: 991px)" let:matches>
+        {#if matches}
+            <MobileView />
+        {/if}
+    </MediaQuery>
 
-<style lang="scss">
-    
-</style>
+    <MediaQuery query="(min-width: 992px)" let:matches>
+        {#if matches}
+            <DesktopView />
+        {/if}
+    </MediaQuery>
+</div>

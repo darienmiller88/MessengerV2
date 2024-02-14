@@ -17,12 +17,6 @@
 <style lang="scss">
     .mobile-view{
         display: grid;
-        // grid-template-rows: 90% auto;
         height: 100vh;
-
-        // Hide the mobile view when the display is greater than or equal to 992px wide.
-        @media only screen and (min-width: 992px){
-            display: none;
-        }
     }
 </style>

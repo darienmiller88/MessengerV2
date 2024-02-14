@@ -15,12 +15,8 @@
     
     // Only show the desktop view when on monitors 992px or wider, and disable it on smaller devices.
     .desktop-view{
-        display: none;
-
-        @media only screen and (min-width: 992px){
-            display: grid;
-            grid-template-columns: 6% 22% auto;
-            height: 100vh;
-        }
+        display: grid;
+        grid-template-columns: 6% 22% auto;
+        height: 100vh;
     }
 </style>

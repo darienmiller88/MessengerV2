@@ -77,7 +77,7 @@
             display: grid;
             grid-template-areas: "sidebar header";
             grid-template-rows: unset;
-            grid-template-columns: auto 92vw;
+            grid-template-columns: auto 95vw;
 
             height: 100vh;
         }

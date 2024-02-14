@@ -136,13 +136,14 @@
             <img src={imageURL} alt="">
         </div>
     {/if}
-    <!-- <div>{imageURL}</div> -->
     
     <div class="input-icon-wrapper">
         <div class="icon-wrapper image-select">
             <label for="file-input">
                 <Image width={iconSize} height={iconSize} fill={$fillIconColorStore} />
             </label>
+            <!-- "id" is the problem here. Since there can only be one id, resuing this component will only
+            be rendered once. -->
             <input id="file-input" type="file" accept="image/x-png,image/gif,image/jpeg"  on:change={(e)=>onFileSelected(e)} bind:this={imageURL} />
         </div>        
         <div class="input-wrapper">
