@@ -20,6 +20,7 @@ type Message struct{
 	MessageContent string         `json:"message_content" db:"message_content"`
 	MessageDate    string         `json:"message_date"    db:"message_date"`
 	Username       string         `json:"username"        db:"username"`
+	ImageURL       string         `json:"image_url"       db:"image_url"`
 
 	//This model will keep a reference to the database to verify usernames.
 	DB             *sqlx.DB		  `json:"-"`

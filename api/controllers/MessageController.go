@@ -14,7 +14,10 @@ import (
 	"MessengerV2/api/database"
 	"MessengerV2/api/models"
 	"MessengerV2/api/pusherclient"
+	"MessengerV2/api/cloudinary"
 )
+
+const MAX_SIZE int64 = 5 * 1024 * 1024 //Max number of bytes, which is 5mb or 5,248,000 bytes
 
 type MessageController struct{
 	pusherClient pusher.Client
@@ -33,9 +36,17 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error{
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
-	fmt.Println("file size:", file.Size / 1024, "kb", "and name:", file.Filename)
+	if file.Size > MAX_SIZE{
+		return c.Status(http.StatusBadRequest).SendString("File too fucking big.")
+	}
 
-	return nil
+	res, err := cloudinary.UploadImage(file)
+	
+	if err != nil{
+		return c.SendString(err.Error())
+	}
+
+	return c.Status(http.StatusOK).SendString(fmt.Sprintf("Image recieved: %s", res.URL))
 }
 
 func (m *MessageController) PostMessage(c *fiber.Ctx) error{

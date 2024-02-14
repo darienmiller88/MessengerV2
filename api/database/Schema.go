@@ -5,6 +5,8 @@ package database
 // DROP TABLE IF EXISTS users;
 // DROP TABLE IF EXISTS chats;
 var schema string = `
+ALTER TABLE messages ADD image_url text;
+
 CREATE TABLE IF NOT EXISTS users (
     id              SERIAL NOT NULL,
     created_at      TIMESTAMP NOT NULL,

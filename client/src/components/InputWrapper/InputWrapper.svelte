@@ -11,6 +11,7 @@
     import pic from "../../assets/profile.png"
 
     import pusher from "../../pusher/pusher";
+    import { formToJSON } from "axios";
 
     let isThumbsUp:  boolean = true
     let messageText: string  = ""
@@ -19,7 +20,27 @@
     let canType:     boolean = false
     let firstKey:    number  = 0
     let imageURL:    any   
+    let imageFile:   any 
     const iconSize:  number  = 24
+
+    const sendImage = async () => {
+        const formData = new FormData();
+        formData.append('file', imageFile);
+        
+        try {
+            const res = await messageApi.post("/upload-image", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            })
+
+            console.log("res:", res);   
+        } catch (error) {
+            console.log("err:", error);
+        }
+
+        imageURL = null
+    }
 
     const sendMessage = async () => {
         let message: Message = {
@@ -80,16 +101,15 @@
     }
 
     const onFileSelected = (e: any)=>{
-        let image = e.target.files[0];
         let reader = new FileReader();
-        reader.readAsDataURL(image);
+
+        imageFile = e.target.files[0];
+        reader.readAsDataURL(imageFile);
         reader.onload = e => {
             if (e.target) {
                 imageURL = e.target.result
             }
         };
-
-        console.log("image url:", imageURL);
     }
 
     onMount(() => {
@@ -121,10 +141,7 @@
                         && message.message_date == messageToDelete.message_date)
             })
        })
-    })
-
-    // $: console.log("image:", imageURL);
-    
+    })    
 </script>
 
 <form class="chat-input-wrapper" on:submit|preventDefault>
@@ -142,8 +159,6 @@
             <label for="file-input">
                 <Image width={iconSize} height={iconSize} fill={$fillIconColorStore} />
             </label>
-            <!-- "id" is the problem here. Since there can only be one id, resuing this component will only
-            be rendered once. -->
             <input id="file-input" type="file" accept="image/x-png,image/gif,image/jpeg"  on:change={(e)=>onFileSelected(e)} bind:this={imageURL} />
         </div>        
         <div class="input-wrapper">
@@ -158,7 +173,7 @@
         </div>
     
         {#if showIcon }
-            <div class="icon-wrapper" on:click={sendMessage} on:keyup={null} tabindex="0" role="button">
+            <div class="icon-wrapper" on:click={imageURL ? sendImage : sendMessage} on:keyup={null} tabindex="0" role="button">
                 {#if isThumbsUp && !imageURL}
                     <HandThumbsUpFill width={iconSize} height={iconSize} fill={$fillIconColorStore}/>
                 {:else}            
@@ -262,7 +277,5 @@
                 }
             }
         }
-
-        
     }
 </style>

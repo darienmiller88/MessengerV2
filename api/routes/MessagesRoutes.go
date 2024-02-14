@@ -18,8 +18,9 @@ func (m *MessagesRoutes) Init(){
 
 	m.Router.Use(middlewares.Auth).Route("/", func(router fiber.Router) {
 		router.Post("/userTyping",     m.messageController.UserTyping)
+		router.Post("/upload-image",   m.messageController.UploadImageAsMessage)
 		router.Post("/",               m.messageController.PostMessage)
-		router.Get("/message-history",  m.messageController.GetMessageHistory)
+		router.Get("/message-history", m.messageController.GetMessageHistory)
 		router.Get("/",                m.messageController.GetPublicMessages)
 		router.Get("/:id",             m.messageController.GetMessageByID)
 		router.Delete("/:id",          m.messageController.DeleteMessage)
