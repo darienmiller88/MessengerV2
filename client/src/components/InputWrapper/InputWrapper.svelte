@@ -205,7 +205,7 @@
         {#if showIcon }
             <div class="icon-wrapper" on:click={imageURL ? sendImage : sendMessage} on:keyup={null} tabindex="0" role="button">
                 {#if isLoading}
-                    <LoadingWrapper size={10}/>
+                    <LoadingWrapper size={15}/>
                 {:else if isThumbsUp && !imageURL}
                     <HandThumbsUpFill width={iconSize} height={iconSize} fill={$fillIconColorStore}/>
                 {:else}            
