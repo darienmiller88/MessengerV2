@@ -16,8 +16,13 @@ export interface Message{
     id:              number
     message_content: string
     message_date:    string
+    image_url:        {
+        String: string,
+        Valid: boolean
+    }
     username:        string
     isSender:        boolean
+    isImage:         boolean
 }
 
 export interface User{

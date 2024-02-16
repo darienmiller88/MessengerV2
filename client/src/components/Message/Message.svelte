@@ -16,6 +16,8 @@
     export let time:           string
     export let isYourMessage:  boolean
     export let messageId:      number
+    export let imageURL:       string
+    export let isImage:        boolean
 
     let showModal: boolean = false
     const storeMessage = () => {
@@ -25,6 +27,11 @@
             isSender:        isYourMessage,
             message_date:    time,
             message_content: messageContent,
+            isImage:         isImage,
+            image_url:        {
+                String: imageURL,
+                Valid: true
+            }
         }
 
         showModal = true
@@ -51,6 +58,15 @@
         <div class="message-delete-wrapper">
             {#if messageContent == "👍"}
                 <div class="thumbs-up-wrapper"><HandThumbsUpFill width={150} height={150} fill={$fillIconColorStore} /></div>
+            {:else if isImage && messageContent === ""}
+                <img src={imageURL} alt="message_image" class="message-image">
+            {:else if isImage}
+                <div class="message">
+                    {messageContent}
+                    <div class="message-image-wrapper">
+                        <img src={imageURL} alt="message_image" class="message-image">
+                    </div>
+                </div>
             {:else}
                 <div class="message">{messageContent}</div>
             {/if}
@@ -193,6 +209,10 @@
                     
                     border-radius: 20px;
                     overflow-wrap: break-word;
+
+                    .message-image-wrapper{
+                        text-align: right;
+                    }
     
                     @media only screen and (min-width: 768px) {
                         font-size: 25px;
@@ -200,6 +220,16 @@
     
                     @media only screen and (min-width: 992px) {
                         font-size: 18px;
+                    }
+                }
+
+                .message-image{
+                    width: 250px;
+                    height: auto;
+                    border-radius: 10px;
+
+                    @media screen and (min-width: 768px) {
+                        width: 500px;
                     }
                 }
     

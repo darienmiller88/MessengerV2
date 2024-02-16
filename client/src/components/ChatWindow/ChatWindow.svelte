@@ -65,6 +65,8 @@
                 username={message.username} 
                 time={message.message_date} 
                 isYourMessage={$usernameStore == message.username}
+                isImage={message.image_url.Valid}
+                imageURL={message.image_url.String}
             />
         {/each}
     </div>

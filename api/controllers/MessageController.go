@@ -37,7 +37,7 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error{
 	}
 
 	if file.Size > MAX_SIZE{
-		return c.Status(http.StatusBadRequest).SendString("File too fucking big.")
+		return c.Status(http.StatusBadRequest).SendString("File too big.")
 	}
 
 	res, err := cloudinary.UploadImage(file)
@@ -46,7 +46,25 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error{
 		return c.SendString(err.Error())
 	}
 
-	return c.Status(http.StatusOK).SendString(fmt.Sprintf("Image recieved: %s", res.URL))
+	message := models.Message{DB: m.db}
+
+	message.InitCreatedAt()
+	message.Username        = c.FormValue("username")
+	message.MessageContent  = c.FormValue("message_content")
+	message.MessageDate     = time.Now().Format("2006-01-02 3:4:5 pm")
+	message.ImageURL.Valid  = true
+	message.ImageURL.String = res.URL
+
+	result, _ := m.db.PrepareNamed("INSERT INTO messages (message_content, message_date, created_at, updated_at, username, image_url) " +
+	"VALUES(:message_content, :message_date, :created_at, :updated_at, :username, :image_url) RETURNING id")
+
+	if err := result.Get(&message.ID, message); err != nil {
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
+	}
+
+	fmt.Println("message:", message)
+
+	return c.Status(http.StatusOK).JSON(message)
 }
 
 func (m *MessageController) PostMessage(c *fiber.Ctx) error{

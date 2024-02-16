@@ -6,18 +6,16 @@
     import { onMount } from "svelte";
     import { messageApi } from "../../api/api";
     import { usernameStore, usernameStoreKey } from "../../stores";
-    import { CldUploadWidget } from "svelte-cloudinary"
-    // import cloudinaryLib from 'cloudinary'
-    import pic from "../../assets/profile.png"
+    // import pic from "../../assets/profile.png"
 
     import pusher from "../../pusher/pusher";
-    import { formToJSON } from "axios";
 
-    let isThumbsUp:  boolean = true
     let messageText: string  = ""
+    let isThumbsUp:  boolean = true
     let showIcon:    boolean = true
     let canPublish:  boolean = true
     let canType:     boolean = false
+    let isLoading:   boolean = false
     let firstKey:    number  = 0
     let imageURL:    any   
     let imageFile:   any 
@@ -26,6 +24,8 @@
     const sendImage = async () => {
         const formData = new FormData();
         formData.append('file', imageFile);
+        formData.append("username", $usernameStore)
+        formData.append("message_content", messageText)
         
         try {
             const res = await messageApi.post("/upload-image", formData, {
@@ -33,6 +33,11 @@
                     "Content-Type": "multipart/form-data"
                 }
             })
+
+            const message = (res.data as Message)
+       
+            $messagesStore = [...$messagesStore, message]
+            messageText = ""
 
             console.log("res:", res);   
         } catch (error) {
@@ -47,6 +52,11 @@
             message_content: isThumbsUp ? "👍" : messageText,
             message_date: new Date().toLocaleString(),
             username: $usernameStore,
+            image_url: {
+                String: "",
+                Valid: false
+            },
+            isImage: false,
             isSender: true,
             id: 0
         }
@@ -73,8 +83,10 @@
         //if the first key the user clicked down was shift, and the next key they clicked was enter, add a new line.
         if (firstKey === 16 && e.keyCode == 13) {
             messageText += "\n"
-        }else if (e.keyCode === 13 && messageText.trim().length > 0) {
+        }else if (e.keyCode === 13 && messageText.trim().length > 0 && !imageURL) {
             sendMessage()
+        }else if(e.keyCode === 13 && messageText.trim().length > 0){
+            sendImage()
         }
 
         if (canPublish) {
@@ -128,7 +140,9 @@
                     username: message.username,
                     message_date: new Date(message.message_date).toLocaleString(),
                     message_content: message.message_content,
+                    image_url: message.image_url,
                     isSender: false,
+                    isImage: message.image_url.String !== "",
                     id: message.id
                 }]
             }
@@ -168,7 +182,7 @@
                 on:keyup={handleKeyInput}
                 on:keydown={handleKeyDown}
     
-               disabled={canType || imageURL}
+               disabled={canType}
             />
         </div>
     

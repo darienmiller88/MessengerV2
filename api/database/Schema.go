@@ -4,8 +4,8 @@ package database
 // DROP TABLE IF EXISTS user_chats;
 // DROP TABLE IF EXISTS users;
 // DROP TABLE IF EXISTS chats;
+// ALTER TABLE messages ADD image_url text;
 var schema string = `
-ALTER TABLE messages ADD image_url text;
 
 CREATE TABLE IF NOT EXISTS users (
     id              SERIAL NOT NULL,
@@ -31,9 +31,10 @@ CREATE TABLE IF NOT EXISTS messages (
     created_at      TIMESTAMP NOT NULL,
     updated_at      TIMESTAMP NOT NULL, 
     receiver        VARCHAR(20),
-    message_content TEXT,
-    message_date    TEXT,
     username        VARCHAR(20) NOT NULL,
+    message_content TEXT,
+    image_url       TEXT,
+    message_date    TEXT,
     chat_id         INT,
     PRIMARY KEY (id),
     FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE,

@@ -4,7 +4,6 @@
     import Home from "./pages/Home/Home.svelte";
     import Register from "./pages/Register/Register.svelte";
     import People from "./pages/People/People.svelte";
-    import Test from "./pages/Test/Test.svelte";
     import MessageHistory from "./pages/MessageHistory/MessageHistory.svelte";
     import { userApi } from "./api/api";
     import { type User, type Chat } from "./types/type"
@@ -94,7 +93,6 @@
   <Router>
       <Route path="/"                component={Register} />
       <Route path="/home"            component={Home} />
-      <Route path="/test"            component={Test}/>
       <Route path="/people"          component={People}/>
       <Route path="/message-history" component={MessageHistory} />
   </Router>
