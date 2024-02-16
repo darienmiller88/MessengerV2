@@ -6,9 +6,9 @@
     import { onMount } from "svelte";
     import { messageApi } from "../../api/api";
     import { usernameStore, usernameStoreKey } from "../../stores";
-    // import pic from "../../assets/profile.png"
-
     import pusher from "../../pusher/pusher";
+    import LoadingWrapper from "../LoadingWrapper/LoadingWrapper.svelte";
+    // import pic from "../../assets/profile.png"
 
     let messageText: string  = ""
     let isThumbsUp:  boolean = true
@@ -28,6 +28,16 @@
         formData.append("message_content", messageText)
         
         try {
+            //Set thumbs up to true since it's the default for messenger apps.
+            isThumbsUp = true
+
+            //Set canType to its inverse (true in this case) to prevent the user from typing another message
+            //While prpccessing the one they just sent.
+            canType = true
+
+            //Set is loading to true since uploading images take a while to process completely.
+            isLoading = true
+
             const res = await messageApi.post("/upload-image", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
@@ -35,16 +45,22 @@
             })
 
             const message = (res.data as Message)
-       
+            
             $messagesStore = [...$messagesStore, message]
             messageText = ""
+            showIcon = false
 
-            console.log("res:", res);   
+            //Allow the user to type in another message after 1 second has passed.
+            setTimeout(() => {
+                showIcon = true
+                canType = false
+            }, 1000);
         } catch (error) {
             console.log("err:", error);
         }
 
         imageURL = null
+        isLoading = false
     }
 
     const sendMessage = async () => {
@@ -61,7 +77,7 @@
             id: 0
         }
 
-        isThumbsUp = true
+        // isThumbsUp = true
         canType = !canType
         $messagesStore = [...$messagesStore, message]
         messageText = ""
@@ -142,7 +158,7 @@
                     message_content: message.message_content,
                     image_url: message.image_url,
                     isSender: false,
-                    isImage: message.image_url.String !== "",
+                    isImage: message.image_url.Valid,
                     id: message.id
                 }]
             }
@@ -188,7 +204,9 @@
     
         {#if showIcon }
             <div class="icon-wrapper" on:click={imageURL ? sendImage : sendMessage} on:keyup={null} tabindex="0" role="button">
-                {#if isThumbsUp && !imageURL}
+                {#if isLoading}
+                    <LoadingWrapper size={10}/>
+                {:else if isThumbsUp && !imageURL}
                     <HandThumbsUpFill width={iconSize} height={iconSize} fill={$fillIconColorStore}/>
                 {:else}            
                     <SendFill width={iconSize} height={iconSize} fill={$fillIconColorStore} />

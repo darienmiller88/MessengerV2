@@ -37,6 +37,10 @@
         showModal = true
     }
 
+    const enlargeImage = () => {
+
+    }
+
     onMount(() => {
         let profilePictureUrl: string | null = window.localStorage.getItem(userProfilePictureStoreKey)
 
@@ -59,12 +63,14 @@
             {#if messageContent == "👍"}
                 <div class="thumbs-up-wrapper"><HandThumbsUpFill width={150} height={150} fill={$fillIconColorStore} /></div>
             {:else if isImage && messageContent === ""}
-                <img src={imageURL} alt="message_image" class="message-image">
+                <div class="message-image-wrapper" on:click={enlargeImage} on:keyup={null} tabindex="0" role="button">
+                    <img src={imageURL} alt="message_image" class="message-image" >
+                </div>
             {:else if isImage}
                 <div class="message">
                     {messageContent}
-                    <div class="message-image-wrapper">
-                        <img src={imageURL} alt="message_image" class="message-image">
+                    <div class="message-image-wrapper" on:keyup={null} tabindex="0" role="button" on:click={enlargeImage}>
+                        <img src={imageURL} alt="message_image" class="message-image" >
                     </div>
                 </div>
             {:else}
@@ -221,6 +227,10 @@
                     @media only screen and (min-width: 992px) {
                         font-size: 18px;
                     }
+                }
+
+                .message-image-wrapper{
+                    cursor: pointer;
                 }
 
                 .message-image{
