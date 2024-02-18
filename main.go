@@ -18,14 +18,10 @@ import (
 )
 
 func main(){
-	err := godotenv.Load()
+	godotenv.Load()
 	app := fiber.New()
 	index := routes.Index{}
 	
-	if err != nil {
-		fmt.Println("err", err)
-	}
-
 	database.Init()
 	pusherclient.Init()
 	cloudinary.Init()

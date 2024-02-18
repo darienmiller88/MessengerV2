@@ -60,7 +60,7 @@
         }
     }
 
-    onMount(() => {
+    onMount(async () => {
         let isAnonymous:       string | null = window.localStorage.getItem(isAnonymousStoreKey)
         let isDarkModeValue:   string | null = window.localStorage.getItem(isDarkModeStoreKey)
         let profilePictureUrl: string | null = window.localStorage.getItem(userProfilePictureStoreKey)
@@ -73,9 +73,16 @@
             $userProfilePictureStore = (JSON.parse(profilePictureUrl) as string)
         }
 
-        if (isAnonymous) {
-            $isAnonymousStore = (JSON.parse(isAnonymous) as boolean)
+        try {
+            const res = await userApi.get("/isAnonymous")
+            $isAnonymousStore = (res.data.is_anonymous as boolean)            
+        } catch (error) {
+            console.log("err:", error);
         }
+
+        // if (isAnonymous) {
+        //     $isAnonymousStore = (JSON.parse(isAnonymous) as boolean)
+        // }
     })
     
     let showModal: boolean = false

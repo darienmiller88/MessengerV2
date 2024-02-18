@@ -1,7 +1,7 @@
 package database
 
 import (
-	// "MessengerV2/api/models"
+	"MessengerV2/api/models"
 	"fmt"
 	"os"
 	// "time"
@@ -29,6 +29,25 @@ func Init(){
 
 	_db.MustExec(GetSchema())
 	db = _db
+}
+
+func GetMessages(){
+
+}
+
+func InsertMessage(message models.Message) (models.Message, error){
+	result, err := db.PrepareNamed("INSERT INTO messages (message_content, message_date, created_at, updated_at, username, image_url) " +
+	"VALUES(:message_content, :message_date, :created_at, :updated_at, :username, :image_url) RETURNING id")
+
+	if err != nil{
+		return models.Message{}, err
+	}
+
+	if err := result.Get(&message.ID, message); err != nil{
+		return models.Message{}, err
+	}
+
+	return message, nil
 }
 
 func GetDB() *sqlx.DB{

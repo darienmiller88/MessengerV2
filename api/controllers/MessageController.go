@@ -55,15 +55,12 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error{
 	message.ImageURL.Valid  = true
 	message.ImageURL.String = res.URL
 
-	result, _ := m.db.PrepareNamed("INSERT INTO messages (message_content, message_date, created_at, updated_at, username, image_url) " +
-	"VALUES(:message_content, :message_date, :created_at, :updated_at, :username, :image_url) RETURNING id")
-
-	if err := result.Get(&message.ID, message); err != nil {
-		return c.Status(http.StatusInternalServerError).SendString(err.Error())
+	if err := message.Validate(); err != nil{
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
-	fmt.Println("message:", message)
-
+	message, _ = database.InsertMessage(message)
+	
 	return c.Status(http.StatusOK).JSON(message)
 }
 
@@ -81,16 +78,11 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 	message.InitCreatedAt()
 	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
 	
-	result, _ := m.db.PrepareNamed("INSERT INTO messages (message_content, message_date, created_at, updated_at, username) " +
-	"VALUES(:message_content, :message_date, :created_at, :updated_at, :username) RETURNING id")
-	
 	if err := m.pusherClient.Trigger("public", "public_message", message); err != nil{
 		fmt.Println("err broadcasting messages:", err)
 	}
 
-	if err := result.Get(&message.ID, message); err != nil{
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"err": err.Error()})
-	}
+	message, _ = database.InsertMessage(message)
 	
 	return c.Status(http.StatusOK).JSON(message)
 }

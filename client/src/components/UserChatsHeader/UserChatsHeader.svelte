@@ -4,14 +4,16 @@
     import Modal from "../Modal/Modal.svelte";
     import AddNewChatForm from "../../components/AddNewChatForm/AddNewChatForm.svelte"
     import { onMount } from "svelte";
+    import { userApi } from "../../api/api";
 
     let showModal: boolean = false
 
-    onMount(() => {
-        let isAnonymous = window.localStorage.getItem(isAnonymousStoreKey)
-
-        if (isAnonymous) {
-            $isAnonymousStore = (JSON.parse(isAnonymous) as boolean)
+    onMount(async () => {
+        try {
+            const res = await userApi.get("/isAnonymous")
+            $isAnonymousStore = (res.data.is_anonymous as boolean)            
+        } catch (error) {
+            console.log("err:", error);
         }
     })
 </script>
