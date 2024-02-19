@@ -10,6 +10,7 @@
     import Modal from "../Modal/Modal.svelte";
     import DeleteMessageForm from "../DeleteMessageForm/DeleteMessageForm.svelte";
     import { onMount } from "svelte";
+    import ModalTemplate from "../ModalTemplate/ModalTemplate.svelte";
 
     export let messageContent: string
     export let username:       string
@@ -18,8 +19,8 @@
     export let messageId:      number
     export let imageURL:       string
     export let isImage:        boolean
+    export let openModal:      () => {}
 
-    let showModal: boolean = false
     const storeMessage = () => {
         $chosenMessageStore = {
             id:              messageId,
@@ -34,11 +35,11 @@
             }
         }
 
-        showModal = true
+        openModal()
     }
 
     const enlargeImage = () => {
-
+        console.log("image clicked")
     }
 
     onMount(() => {
@@ -77,7 +78,7 @@
                 <div class="message">{messageContent}</div>
             {/if}
     
-            {#if isYourMessage }
+            {#if isYourMessage}
                 <div class={$isDarkModeStore ? "delete-wrapper dark-mode-theme" : "delete-wrapper"} on:click={storeMessage} tabindex="0" role="button" on:keyup={null}>
                     <ThreeDotsVertical />
                 </div>
@@ -85,13 +86,6 @@
         </div>
     </div>
 </div>
-
-<Modal 
-    show={showModal}
-    modalHeader={"Delete Message"}
-    modalContent={DeleteMessageForm}
-    onHide={() => showModal = false}
-/>
 
 <style lang="scss">
     .sender{

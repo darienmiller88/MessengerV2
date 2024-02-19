@@ -11,9 +11,13 @@
     import { navigate } from "svelte-routing";
     import pusher from "../../pusher/pusher";
     import { messageApi, userApi } from "../../api/api";
+    import ModalTemplate from "../ModalTemplate/ModalTemplate.svelte";
+    import Modal from "../Modal/Modal.svelte";
+    import DeleteMessageForm from "../DeleteMessageForm/DeleteMessageForm.svelte";
 
     let messagesRef: HTMLElement
     let userTypingText: string = ""
+    let showModal: boolean = false
 
     const scrollTo = async (node: Element) => {
         node.scrollTo({ top: node.scrollHeight,  behavior: "instant" });
@@ -67,6 +71,7 @@
                 isYourMessage={$usernameStore == message.username}
                 isImage={message.image_url.Valid}
                 imageURL={message.image_url.String}
+                openModal={() => showModal = true}
             />
         {/each}
     </div>
@@ -74,6 +79,13 @@
 <div class={$isDarkModeStore ? "is-typing is-typing-dark-mode": "is-typing"}>
     {userTypingText}
 </div>
+
+<Modal 
+    show={showModal}
+    modalHeader={"Delete Message"}
+    modalContent={DeleteMessageForm}
+    onHide={() => showModal = false}
+/>
 
 <style lang="scss">
     .window{
