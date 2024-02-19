@@ -12,24 +12,35 @@
     import pusher from "../../pusher/pusher";
     import { messageApi, userApi } from "../../api/api";
     import ModalTemplate from "../ModalTemplate/ModalTemplate.svelte";
+    import PictureModal from "../PictureModal/PictureModal.svelte";
     import Modal from "../Modal/Modal.svelte";
     import DeleteMessageForm from "../DeleteMessageForm/DeleteMessageForm.svelte";
 
-    let messagesRef: HTMLElement
-    let userTypingText: string = ""
-    let showModal: boolean = false
+    let imageURL:         string
+    let showModal:        boolean = false
+    let messagesRef:      HTMLElement
+    let userTypingText:   string = ""
+    let showPictureModal: boolean = false
 
     const scrollTo = async (node: Element) => {
         node.scrollTo({ top: node.scrollHeight,  behavior: "instant" });
     }; 
 
-    afterUpdate(() => {        
-		if($messagesStore.length) {
+    afterUpdate(() => {  
+        // imageURL = ""  
+        // messagesRef.scrollTop = messagesRef.scrollHeight  
+    
+		if($messagesStore.length && imageURL) {
             scrollTo(messagesRef);
         }
     });
 
     onMount(async () => {
+        if (messagesRef) {
+            messagesRef.scrollTop = messagesRef.scrollHeight  
+        }
+        // scrollTo(messagesRef)
+
         try {
             const messagesRes = await messageApi.get("/")
             $messagesStore = messagesRes.data 
@@ -55,8 +66,12 @@
         })
     })
 
-    $: if ($messagesStore.length && messagesRef) {   
-        scrollTo(messagesRef)       
+    $: {
+        if ($messagesStore.length && messagesRef) { 
+            // messagesRef.scrollTo({ top: messagesRef.scrollHeight,  behavior: "instant" });
+            // scrollTo(messagesRef)       
+            messagesRef.scrollTop = messagesRef.scrollHeight  
+        }
     }
 </script>
 
@@ -72,20 +87,28 @@
                 isImage={message.image_url.Valid}
                 imageURL={message.image_url.String}
                 openModal={() => showModal = true}
+                openPictureModal={() => showPictureModal = true}
+                storeImageURL={(url) => imageURL = url}
             />
         {/each}
     </div>
+    <Modal 
+        show={showModal}
+        modalHeader={"Delete Message"}
+        modalContent={DeleteMessageForm}
+        onHide={() => showModal = false}
+    />
+    <PictureModal 
+        show={showPictureModal}
+        onHide={() => showPictureModal = false}
+        imageURL={imageURL}
+    />
 </div>
 <div class={$isDarkModeStore ? "is-typing is-typing-dark-mode": "is-typing"}>
     {userTypingText}
 </div>
 
-<Modal 
-    show={showModal}
-    modalHeader={"Delete Message"}
-    modalContent={DeleteMessageForm}
-    onHide={() => showModal = false}
-/>
+
 
 <style lang="scss">
     .window{

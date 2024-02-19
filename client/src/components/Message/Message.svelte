@@ -19,7 +19,9 @@
     export let messageId:      number
     export let imageURL:       string
     export let isImage:        boolean
-    export let openModal:      () => {}
+    export let openModal:        () => {}
+    export let storeImageURL:    (url: string) => {}
+    export let openPictureModal: () => {}
 
     const storeMessage = () => {
         $chosenMessageStore = {
@@ -40,6 +42,8 @@
 
     const enlargeImage = () => {
         console.log("image clicked")
+        openPictureModal()
+        storeImageURL(imageURL)
     }
 
     onMount(() => {

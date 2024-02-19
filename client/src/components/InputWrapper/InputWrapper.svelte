@@ -77,7 +77,7 @@
             id: 0
         }
 
-        // isThumbsUp = true
+        isThumbsUp = true
         canType = !canType
         $messagesStore = [...$messagesStore, message]
         messageText = ""

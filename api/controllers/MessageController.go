@@ -69,10 +69,12 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 	message := models.Message{DB: m.db}
 
 	if err := c.BodyParser(&message); err != nil{
-		return c.Status(http.StatusInternalServerError).JSON(err)
+		fmt.Println("err parsing message:", err)
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 
 	if err := message.Validate(); err != nil{
+		fmt.Println("err validating message:", err)
 		return c.Status(http.StatusBadRequest).JSON(err)
 	}
 	
@@ -83,7 +85,12 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 		fmt.Println("err broadcasting messages:", err)
 	}
 
-	message, _ = database.InsertMessage(message)
+	message, err := database.InsertMessage(message)
+
+	if err != nil{
+		fmt.Println("err inserting message:", err)
+		return c.SendString(err.Error())
+	}
 	
 	return c.Status(http.StatusOK).JSON(message)
 }

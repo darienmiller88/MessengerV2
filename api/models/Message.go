@@ -33,7 +33,7 @@ func (m *Message) Validate() error {
 		m,
 		validation.Field(&m.MessageContent, validation.Required),
 		validation.Field(&m.Username, validation.Required, validation.By(m.CheckUsername)),
-		validation.Field(&m.ImageURL.String, validation.By(m.isValidImage)),
+		validation.Field(&m.ImageURL, validation.By(m.isValidImage)),
 	)
 }
 
@@ -54,14 +54,18 @@ func (m *Message) CheckUsername(val interface{}) error {
 }
 
 func (m *Message) isValidImage(val interface{}) error {
-	url, success := val.(string)
+	url, success := val.(sql.NullString)
 
 	if !success {
 		return errors.New("Error parsing value, expected string.")
 	}
 
+	if url.String == ""{
+		return nil
+	}
+
 	// Make a HEAD request to the URL to request header content.
-	resp, err := http.Head(url)
+	resp, err := http.Head(url.String)
 
 	if err != nil {
 		return err
@@ -80,7 +84,7 @@ func (m *Message) isValidImage(val interface{}) error {
 		return nil
 	}
 
-	return fmt.Errorf("%s is not a valid image url.", url)
+	return fmt.Errorf("%s is not a valid image url.", url.String)
 }
 
 func (m *Message) InitCreatedAt() {

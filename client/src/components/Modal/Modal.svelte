@@ -1,5 +1,7 @@
 <script lang="ts">
-    export let show:         Boolean
+    import { onMount } from "svelte";
+
+    export let show:         boolean
     export let onHide:       () => {}
     export let modalHeader:  string
     export let modalContent: any
