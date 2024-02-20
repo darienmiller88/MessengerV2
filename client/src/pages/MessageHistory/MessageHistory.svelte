@@ -15,30 +15,37 @@
         node.scrollTo({ top: node.scrollHeight,  behavior: "instant" });
     }; 
 
-    afterUpdate(() => {        
-		if(messages.length) {
-            scrollTo(messagesRef);
-        }
+    afterUpdate(() => {
+        messagesRef.scrollTop = messagesRef.scrollHeight;
+        
+		// if(messages.length) {
+        //     scrollTo(messagesRef);
+        // }
     });
 
 
     onMount(async () => {
+
        try {
             const res = await messageApi.get(`/message-history`)
             messages = (res.data as Message[])
             isLoading = false
-       } catch (error: any) {
+        } catch (error: any) {
             if (error.response.status == 401) {
                 console.log("err unauthroized");
                 navigate("/", {replace: true})
             }
-
+            
             console.log("err:", error);
-       }
+        }
+        
+        
+        messagesRef.scrollTop = messagesRef.scrollHeight;
     })
 
     $: if (messages.length && messagesRef) {   
-        scrollTo(messagesRef)       
+        messagesRef.scrollTop = messagesRef.scrollHeight;
+        // scrollTo(messagesRef)       
     }
 </script>
 
@@ -80,6 +87,7 @@
             grid-template-columns: auto 95vw;
 
             height: 100vh;
+            width: 100vw;
         }
 
         .header-wrapper{

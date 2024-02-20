@@ -6,6 +6,7 @@
 
     const closeModal = (e: Event) => {
         if(e.target == modalRef){
+            // imageURL = ""
             onHide()
         }
     }

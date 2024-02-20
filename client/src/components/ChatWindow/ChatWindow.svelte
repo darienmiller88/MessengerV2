@@ -16,11 +16,12 @@
     import Modal from "../Modal/Modal.svelte";
     import DeleteMessageForm from "../DeleteMessageForm/DeleteMessageForm.svelte";
 
-    let imageURL:         string
-    let showModal:        boolean = false
-    let messagesRef:      HTMLElement
-    let userTypingText:   string = ""
-    let showPictureModal: boolean = false
+    let imageURL:          string
+    let showModal:         boolean = false
+    let messagesRef:       HTMLElement
+    let userTypingText:    string = ""
+    let showPictureModal:  boolean = false
+    let scrollAfterUpdate: boolean = false
 
     const scrollTo = async (node: Element) => {
         node.scrollTo({ top: node.scrollHeight,  behavior: "instant" });
@@ -31,16 +32,11 @@
         // messagesRef.scrollTop = messagesRef.scrollHeight  
     
 		if($messagesStore.length && imageURL) {
-            scrollTo(messagesRef);
+            // scrollTo(messagesRef);
         }
     });
 
     onMount(async () => {
-        if (messagesRef) {
-            messagesRef.scrollTop = messagesRef.scrollHeight  
-        }
-        // scrollTo(messagesRef)
-
         try {
             const messagesRes = await messageApi.get("/")
             $messagesStore = messagesRes.data 
@@ -64,12 +60,16 @@
                 }, 950)
             }
         })
+
+        if (messagesRef) {
+            messagesRef.scrollTop = messagesRef.scrollHeight  
+        }
     })
 
+    //Reactive statement to scroll to the bottom after the user enters a new message.
     $: {
         if ($messagesStore.length && messagesRef) { 
             // messagesRef.scrollTo({ top: messagesRef.scrollHeight,  behavior: "instant" });
-            // scrollTo(messagesRef)       
             messagesRef.scrollTop = messagesRef.scrollHeight  
         }
     }
