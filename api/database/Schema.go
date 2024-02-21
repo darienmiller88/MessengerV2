@@ -5,12 +5,14 @@ package database
 // DROP TABLE IF EXISTS user_chats;
 // DROP TABLE IF EXISTS users;
 // DROP TABLE IF EXISTS chats;
+// ALTER TABLE users ADD display_name VARCHAR(20);
 var schema string = `
 CREATE TABLE IF NOT EXISTS users (
     id              SERIAL NOT NULL,
     created_at      TIMESTAMP NOT NULL,
     updated_at      TIMESTAMP NOT NULL,    
     username        VARCHAR(20) UNIQUE,
+    display_name    VARCHAR(20),
     password        VARCHAR(200),
     is_anonymous    BOOLEAN,
     profile_picture text,

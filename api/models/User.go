@@ -16,6 +16,7 @@ type User struct{
 	CreatedAt      time.Time      `json:"created_at"      db:"created_at"`
 	UpdatedAt      time.Time      `json:"updated_at"      db:"updated_at"`
 	Username       string         `json:"username"        db:"username"`
+	DisplayName    string         `json:"display_name"    db:"display_name"`
 	Password       string         `json:"password"        db:"password"`
 	ProfilePicture sql.NullString `json:"profile_picture" db:"profile_picture"`
 	IsAnonymous    bool           `json:"is_anonymous"    db:"is_anonymous"`
@@ -33,6 +34,11 @@ func (u *User) Validate() error{
 			validation.Match(regexp.MustCompile("[0-9]")).Error("Username must contain at least one number"),
 			validation.Match(regexp.MustCompile("[a-z]|[A-Z]")).Error("Username must contain at least one letter."),
 			validation.By(u.CheckUsername),
+		),
+		validation.Field(&u.DisplayName, 
+			validation.Length(4, 15), 
+			validation.Match(regexp.MustCompile("[0-9]")).Error("Username must contain at least one number"),
+			validation.Match(regexp.MustCompile("[a-z]|[A-Z]")).Error("Username must contain at least one letter."),
 		),
 		validation.Field(&u.Password, 
 			validation.Required,

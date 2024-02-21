@@ -27,5 +27,6 @@ func (u *UserRoutes) Init() {
 		// u.Router.Get("/:id",                u.userController.GetUserByID)
 		// u.Router.Delete("/:id",             u.userController.DeleteUser)
 		router.Get("/username/:username", middlewares.ProtectUser, u.userController.GetUserByUsername)
+		router.Post("/upload-profile-pic", u.userController.ChangeUserProfilePicture)
 	})
 }

@@ -4,6 +4,8 @@
     import { 
         usernameStore, 
         usernameStoreKey,
+        displayNameStore,
+        displayNameStoreKey,
         userProfilePictureStore,
         userProfilePictureStoreKey,
         chatPictureStore, 
@@ -41,17 +43,24 @@
                 username,
                 password
             }   
+
+            type MinifiedUser = {
+                display_name:    string
+                profile_picture: string
+            }
             
             const res = await userApi.post("/signin", userCredentials)
+            let minifiedUser: MinifiedUser = (res.data as MinifiedUser)
 
-            console.log("res:", res.data);
+            console.log("user:", minifiedUser);
 
             isSigninError = false
 
             //The sign in controller on the back end returns the user's profile picture url. If blank, give them
             //the default picture, but if not, just assign the url of their picture.
-            $userProfilePictureStore = res.data == "" ? defaultProfilePicture : res.data
-            storeAllValues()
+            $userProfilePictureStore = minifiedUser.profile_picture == "" ? defaultProfilePicture : minifiedUser.profile_picture
+            $displayNameStore = minifiedUser.display_name
+            storeAllValues($userProfilePictureStore)
             navigate("/home", {replace: true})
         } catch (error: any) {
             if (error.response.status == 404) {
@@ -73,7 +82,7 @@
             $usernameStore = "User-" + (uuid() as string).substring(0, 8)
 
             //Just as above, store the values in local storage to be referenced later.
-            storeAllValues()
+            storeAllValues(defaultProfilePicture)
             persistStoreValue(isAnonymousStore, true, isAnonymousStoreKey)
 
             const user: User = {
@@ -98,12 +107,15 @@
         isSigninAnoymousLoading = false
     }   
 
-    const storeAllValues = () => {
+    const storeAllValues = (profilePicture: string) => {
         //Store the username of the user in local storage to be retrieved later.
         persistStoreValue(usernameStore, $usernameStore, usernameStoreKey)
 
+        //Store the name of the user's display name.
+        persistStoreValue(displayNameStore, $displayNameStore, displayNameStoreKey)
+
         //Store the value of the url of the user's profile picture.
-        persistStoreValue(userProfilePictureStore, defaultProfilePicture, userProfilePictureStoreKey)
+        persistStoreValue(userProfilePictureStore, profilePicture, userProfilePictureStoreKey)
 
         //Store the value of the url of the picture for the public chat.
         persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)

@@ -1,7 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { Image, SendFill, HandThumbsUpFill } from "svelte-bootstrap-icons";
-    import { fillIconColorStore } from "../../stores";
+    import { userApi } from "../../api/api";
     import {
         userProfilePictureStore,
         userProfilePictureStoreKey
@@ -16,7 +15,11 @@
         formData.append('file', imageFile);
 
         try {
-            
+            const res = await userApi.post("/upload-profile-pic", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            })
         } catch (error) {
             
         }

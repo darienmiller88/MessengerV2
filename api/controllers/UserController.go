@@ -14,6 +14,8 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/sethvargo/go-password/password"
 	"golang.org/x/crypto/bcrypt"
+
+	"MessengerV2/api/cloudinary"
 )
 
 type UserController struct {
@@ -28,6 +30,24 @@ func (u *UserController) Init() {
 
 func (u *UserController) CheckAuth(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).SendString("You're logged in")
+}
+
+func (u *UserController) ChangeUserProfilePicture(c *fiber.Ctx) error {
+	file, err := c.FormFile("file")
+
+	if err != nil{
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+
+	if file.Size > MAX_SIZE{
+		return c.Status(http.StatusBadRequest).SendString("File too big.")
+	}
+
+	res, err := cloudinary.UploadImage(file)
+
+	fmt.Println("res url:", res.URL)
+
+	return nil
 }
 
 func (u *UserController) GetUsername(c *fiber.Ctx) error {
@@ -66,10 +86,17 @@ func (u *UserController) Signin(c *fiber.Ctx) error {
 		return c.Status(http.StatusNotFound).SendString("Username or Password incorrect. Please try again.")
 	}
 
+	user.DisplayName = user.Username
+	minifiedUser := struct{
+		DisplayName    string `json:"display_name"`
+		ProfilePicture string `json:"profile_picture"`
+	}{
+		DisplayName: user.Username,
+		ProfilePicture: user.ProfilePicture.String,
+	}
 	u.setCookie(c, u.getJwtToken(user), u.sessionLen)
 
-	//Respond to the front-end with the users profile picture link.
-	return c.Status(http.StatusOK).SendString(user.ProfilePicture.String)
+	return c.Status(http.StatusOK).JSON(minifiedUser)
 }
 
 func (u *UserController) Signup(c *fiber.Ctx) error {
@@ -82,6 +109,7 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 	//Before validating, trim the password and username for spaces to get the "real" length.
 	user.Username = strings.Trim(user.Username, " ")
 	user.Password = strings.Trim(user.Password, " ")
+	user.DisplayName = user.Username
 
 	//Add password gen for anonymous user to clear password validation
 	if user.IsAnonymous {
