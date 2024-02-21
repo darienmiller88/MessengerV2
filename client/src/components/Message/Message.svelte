@@ -14,6 +14,7 @@
 
     export let messageContent: string
     export let username:       string
+    export let display_name:   string
     export let time:           string
     export let isYourMessage:  boolean
     export let messageId:      number
@@ -27,6 +28,7 @@
         $chosenMessageStore = {
             id:              messageId,
             username:        username,
+            display_name:    display_name,
             isSender:        isYourMessage,
             message_date:    time,
             message_content: messageContent,
@@ -61,7 +63,7 @@
     </div>
     <div class="message-content-wrapper">
         <div class="data">
-            <div class="name">{username}</div>
+            <div class="name">{display_name}</div>
             <div class="time">{time}</div>
         </div>
         <div class="message-delete-wrapper">

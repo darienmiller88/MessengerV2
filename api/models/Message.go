@@ -23,6 +23,7 @@ type Message struct {
 	MessageContent string         `json:"message_content" db:"message_content"`
 	MessageDate    string         `json:"message_date"    db:"message_date"`
 	Username       string         `json:"username"        db:"username"`
+	DisplayName    string         `json:"display_name"    db:"display_name"`
 
 	//This model will keep a reference to the database to verify usernames.
 	DB *sqlx.DB `json:"-"`
@@ -34,6 +35,7 @@ func (m *Message) Validate() error {
 		validation.Field(&m.MessageContent, validation.Required),
 		validation.Field(&m.Username, validation.Required, validation.By(m.CheckUsername)),
 		validation.Field(&m.ImageURL, validation.By(m.isValidImage)),
+		validation.Field(&m.DisplayName, validation.By(m.CheckDisplayname)),
 	)
 }
 
@@ -52,6 +54,27 @@ func (m *Message) CheckUsername(val interface{}) error {
 
 	return nil
 }
+
+// Function to ensure the message sent to the server has a username that is in the database
+func (m *Message) CheckDisplayname(val interface{}) error {
+	displayName, success := val.(string)
+	user := User{}
+
+	if !success {
+		return errors.New("Error parsing value, expected string.")
+	}
+
+	if displayName == ""{
+		return nil
+	}
+
+	if err := m.DB.Get(&user, "SELECT * FROM users WHERE display_name=$1", displayName); err != nil {
+		return errors.New(fmt.Sprintf("Display name \"%s\" was not found.", displayName))
+	}
+
+	return nil
+}
+
 
 func (m *Message) isValidImage(val interface{}) error {
 	url, success := val.(sql.NullString)

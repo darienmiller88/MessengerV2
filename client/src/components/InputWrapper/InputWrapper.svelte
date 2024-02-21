@@ -5,7 +5,7 @@
     import { type Message } from "../../types/type"
     import { onMount } from "svelte";
     import { messageApi } from "../../api/api";
-    import { usernameStore, usernameStoreKey } from "../../stores";
+    import { usernameStore, usernameStoreKey, displayNameStore, displayNameStoreKey } from "../../stores";
     import pusher from "../../pusher/pusher";
     import LoadingWrapper from "../LoadingWrapper/LoadingWrapper.svelte";
     // import pic from "../../assets/profile.png"
@@ -25,6 +25,7 @@
         const formData = new FormData();
         formData.append('file', imageFile);
         formData.append("username", $usernameStore)
+        formData.append("display_name", $displayNameStore)
         formData.append("message_content", messageText)
         
         try {
@@ -68,6 +69,7 @@
             message_content: isThumbsUp ? "👍" : messageText,
             message_date: new Date().toLocaleString(),
             username: $usernameStore,
+            display_name: $displayNameStore,
             image_url: {
                 String: "",
                 Valid: false
@@ -141,10 +143,15 @@
     }
 
     onMount(() => {
-        let username: string | null = window.localStorage.getItem(usernameStoreKey)
+        let username:     string | null = window.localStorage.getItem(usernameStoreKey)
+        let display_name: string | null = window.localStorage.getItem(displayNameStoreKey)
 
         if (username) {
             $usernameStore = JSON.parse(username)
+        }
+
+        if (display_name) {
+            $displayNameStore = JSON.parse(display_name)
         }
 
         imageURL = null
@@ -154,6 +161,7 @@
             if ($usernameStore != message.username) {
                 $messagesStore = [...$messagesStore, {
                     username: message.username,
+                    display_name: message.display_name,
                     message_date: new Date(message.message_date).toLocaleString(),
                     message_content: message.message_content,
                     image_url: message.image_url,

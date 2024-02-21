@@ -36,8 +36,8 @@ func GetMessages(){
 }
 
 func InsertMessage(message models.Message) (models.Message, error){
-	result, err := db.PrepareNamed("INSERT INTO messages (message_content, message_date, created_at, updated_at, username, image_url) " +
-	"VALUES(:message_content, :message_date, :created_at, :updated_at, :username, :image_url) RETURNING id")
+	result, err := db.PrepareNamed("INSERT INTO messages (message_content, message_date, created_at, updated_at, username, image_url, display_name) " +
+	"VALUES(:message_content, :message_date, :created_at, :updated_at, :username, :image_url, :display_name) RETURNING id")
 
 	if err != nil{
 		return models.Message{}, err

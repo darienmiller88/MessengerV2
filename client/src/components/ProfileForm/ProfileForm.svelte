@@ -9,10 +9,12 @@
     export let onHide = () => {}
     let imageURL:    any 
     let imageFile:   any 
+    let displayName: string = ""
 
     const saveSettings = async () => {
         const formData = new FormData();
         formData.append('file', imageFile);
+        formData.append("display_name", displayName.trim())
 
         try {
             const res = await userApi.post("/upload-profile-pic", formData, {
@@ -53,7 +55,7 @@
 <div class="profile-form">
     <div class="input-wrapper">
         <label for="name">Name</label><br />
-        <input />
+        <input bind:value={displayName} />
     </div>
     <div class="photo">Photo</div>
     <div class="profile-pic-wrapper">

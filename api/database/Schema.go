@@ -1,18 +1,17 @@
 package database
 
-
-// DROP TABLE IF EXISTS messages;
-// DROP TABLE IF EXISTS user_chats;
-// DROP TABLE IF EXISTS users;
-// DROP TABLE IF EXISTS chats;
-// ALTER TABLE users ADD display_name VARCHAR(20);
+// ALTER TABLE users ADD CONSTRAINT users_display_name_key UNIQUE (display_name);
 var schema string = `
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS user_chats;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS chats;
 CREATE TABLE IF NOT EXISTS users (
     id              SERIAL NOT NULL,
     created_at      TIMESTAMP NOT NULL,
     updated_at      TIMESTAMP NOT NULL,    
     username        VARCHAR(20) UNIQUE,
-    display_name    VARCHAR(20),
+    display_name    VARCHAR(20) UNIQUE,
     password        VARCHAR(200),
     is_anonymous    BOOLEAN,
     profile_picture text,
@@ -33,14 +32,16 @@ CREATE TABLE IF NOT EXISTS messages (
     updated_at      TIMESTAMP NOT NULL, 
     receiver        VARCHAR(20),
     username        VARCHAR(20) NOT NULL,
+    display_name    VARCHAR(20) NOT NULL,
     message_content TEXT,
     image_url       TEXT,
     message_date    TEXT,
     chat_id         INT,
     PRIMARY KEY (id),
-    FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE,
-    FOREIGN KEY(receiver) REFERENCES users(username) ON DELETE CASCADE,
-    FOREIGN KEY(chat_id)  REFERENCES chats(id)       ON DELETE CASCADE
+    FOREIGN KEY(chat_id)      REFERENCES chats(id)       ON DELETE CASCADE,
+    FOREIGN KEY(receiver)     REFERENCES users(username) ON DELETE CASCADE,
+    FOREIGN KEY(username)     REFERENCES users(username) ON DELETE CASCADE,
+    FOREIGN KEY(display_name) REFERENCES users(display_name) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS user_chats(
@@ -54,6 +55,7 @@ CREATE TABLE IF NOT EXISTS user_chats(
     FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE
 );
 `
-func GetSchema() string{
+
+func GetSchema() string {
 	return schema
 }

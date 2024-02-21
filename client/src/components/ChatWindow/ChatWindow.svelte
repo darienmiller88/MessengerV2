@@ -82,6 +82,7 @@
                 messageId={message.id}
                 messageContent={message.message_content} 
                 username={message.username} 
+                display_name={message.display_name}
                 time={message.message_date} 
                 isYourMessage={$usernameStore == message.username}
                 isImage={message.image_url.Valid}

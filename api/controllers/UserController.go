@@ -47,7 +47,7 @@ func (u *UserController) ChangeUserProfilePicture(c *fiber.Ctx) error {
 
 	fmt.Println("res url:", res.URL)
 
-	return nil
+	return c.Status(http.StatusOK).SendString("Success!")
 }
 
 func (u *UserController) GetUsername(c *fiber.Ctx) error {
@@ -86,7 +86,7 @@ func (u *UserController) Signin(c *fiber.Ctx) error {
 		return c.Status(http.StatusNotFound).SendString("Username or Password incorrect. Please try again.")
 	}
 
-	user.DisplayName = user.Username
+	//create a "MinifiedUser" struct to choose exactly what information about the user I what to send to the frontend.
 	minifiedUser := struct{
 		DisplayName    string `json:"display_name"`
 		ProfilePicture string `json:"profile_picture"`

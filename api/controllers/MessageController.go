@@ -49,6 +49,7 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error{
 
 	message.InitCreatedAt()
 	message.Username        = c.FormValue("username")
+	message.DisplayName     = c.FormValue("display_name")
 	message.MessageContent  = c.FormValue("message_content")
 	message.MessageDate     = time.Now().Format("2006-01-02 3:4:5 pm")
 	message.ImageURL.Valid  = res.URL != ""

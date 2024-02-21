@@ -21,6 +21,7 @@ export interface Message{
         Valid: boolean
     }
     username:        string
+    display_name:    string
     isSender:        boolean
     isImage:         boolean
 }
