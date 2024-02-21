@@ -6,7 +6,6 @@
 
     const closeModal = (e: Event) => {
         if(e.target == modalRef){
-            // imageURL = ""
             onHide()
         }
     }
@@ -47,6 +46,7 @@
                 font-size: 25px;
                 padding: 0px 10px;
                 transition: 0.3s;
+                color: rgba(0, 0, 0, 0.4);
                 // border: 2px solid red;
 
                 @media screen and (min-width: 992px) {

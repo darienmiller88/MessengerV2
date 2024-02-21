@@ -31,9 +31,9 @@
         // imageURL = ""  
         // messagesRef.scrollTop = messagesRef.scrollHeight  
     
-		if($messagesStore.length && imageURL) {
-            // scrollTo(messagesRef);
-        }
+		// if($messagesStore.length && imageURL) {
+        //     scrollTo(messagesRef);
+        // }
     });
 
     onMount(async () => {

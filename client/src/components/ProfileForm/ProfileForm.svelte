@@ -1,13 +1,39 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import { Image, SendFill, HandThumbsUpFill } from "svelte-bootstrap-icons";
+    import { fillIconColorStore } from "../../stores";
     import {
         userProfilePictureStore,
         userProfilePictureStoreKey
     } from "../../stores"
 
     export let onHide = () => {}
-    const saveSettings = () => {
+    let imageURL:    any 
+    let imageFile:   any 
+
+    const saveSettings = async () => {
+        const formData = new FormData();
+        formData.append('file', imageFile);
+
+        try {
+            
+        } catch (error) {
+            
+        }
+
         onHide()
+    }
+
+    const onFileSelected = (e: any)=>{
+        let reader = new FileReader();
+
+        imageFile = e.target.files[0];
+        reader.readAsDataURL(imageFile);
+        reader.onload = e => {
+            if (e.target) {
+                imageURL = e.target.result
+            }
+        };
     }
 
     onMount(() => {
@@ -16,6 +42,8 @@
         if (profilePicUrl) {
             $userProfilePictureStore = (JSON.parse(profilePicUrl) as string)
         }        
+
+        imageURL = null
     })
 </script>
 
@@ -26,8 +54,11 @@
     </div>
     <div class="photo">Photo</div>
     <div class="profile-pic-wrapper">
-        <img src={$userProfilePictureStore} alt="profile-pic"/>
-        <button>Change Picture</button>
+        <img src={imageURL ? imageURL : $userProfilePictureStore} alt="profile-pic"/>
+        <label for="profile-pic-upload">
+            Change Picture
+        </label>
+        <input id="profile-pic-upload" type="file" accept="image/x-png,image/gif,image/jpeg"  on:change={(e)=>onFileSelected(e)} bind:this={imageURL} hidden/>
     </div>
     <div class="save-button-wrapper">
         <button on:click={saveSettings}>Save</button>
@@ -58,10 +89,6 @@
                 &:focus{
                     border: 2px solid var(--messenger-blue);
                 }
-
-                @media screen and (min-width: 992px) {
-                    // width: 90%;
-                }
             }
         }
 
@@ -80,11 +107,12 @@
             }
 
             img{
-                width: 45px;
-                height: auto;
+                width: 55px;
+                height: 55px;
+                border-radius: 50%;
             }
 
-            button{
+            label{
                 border: none;
                 color: black;
                 background-color: white;
@@ -93,6 +121,7 @@
                 padding: 10px 20px;
                 margin-left: 15px;
                 transition: 0.2s;
+                border: 2px solid transparent;
 
                 &:hover{
                     cursor: pointer;
