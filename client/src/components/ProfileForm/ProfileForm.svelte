@@ -1,20 +1,34 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { userApi } from "../../api/api";
+    import { Moon } from 'svelte-loading-spinners';
     import {
+        displayNameStore,
+        displayNameStoreKey,
         userProfilePictureStore,
-        userProfilePictureStoreKey
+        userProfilePictureStoreKey,
+        usernameStore, 
+        usernameStoreKey,
+        persistStoreValue
     } from "../../stores"
 
     export let onHide = () => {}
-    let imageURL:    any 
-    let imageFile:   any 
-    let displayName: string = ""
+    let imageURL:           any 
+    let imageFile:          any 
+    let isLoading:          boolean = false
+    let displayName:        string  = ""
+    let errorNoImage:       string  = ""
+    let isErrorNoImage:     boolean = false
+    let errorInvalidName:   string  = ""
+    let isErrorInvalidName: boolean = false
 
     const saveSettings = async () => {
         const formData = new FormData();
+        displayName = displayName.trim() == "" ? $displayNameStore : displayName
         formData.append('file', imageFile);
-        formData.append("display_name", displayName.trim())
+        formData.append("display_name", displayName.trim() == "" ? $displayNameStore : displayName)
+        formData.append("username", $usernameStore)
+        isLoading = true
 
         try {
             const res = await userApi.post("/upload-profile-pic", formData, {
@@ -22,11 +36,23 @@
                     "Content-Type": "multipart/form-data"
                 }
             })
-        } catch (error) {
-            
+
+            persistStoreValue(displayNameStore, displayName, displayNameStoreKey)
+            persistStoreValue(userProfilePictureStore, res.data, userProfilePictureStoreKey)
+            onHide()
+        } catch (error: any) {
+            // errorMessage = error
+            if (error.response.data.errNoImage) {
+                console.log("errNoImage:", error.response.data.errNoImage);
+            }else if(error.response.data.errInvalidName){
+                console.log("errInvalidName:", error.response.data.errInvalidName);
+                
+            }
         }
 
-        onHide()
+        imageURL = null
+        displayName = ""
+        isLoading = false
     }
 
     const onFileSelected = (e: any)=>{
@@ -43,32 +69,49 @@
 
     onMount(() => {
         let profilePicUrl: string | null = window.localStorage.getItem(userProfilePictureStoreKey)
+        let username:      string | null = window.localStorage.getItem(usernameStoreKey)        
 
         if (profilePicUrl) {
             $userProfilePictureStore = (JSON.parse(profilePicUrl) as string)
         }        
 
+        if (username) {
+            $usernameStore = username
+        }
+
         imageURL = null
     })
 </script>
 
-<div class="profile-form">
+<form class="profile-form" on:submit|preventDefault={saveSettings}>
     <div class="input-wrapper">
         <label for="name">Name</label><br />
-        <input bind:value={displayName} />
+        <input bind:value={displayName} minlength="4" maxlength="15"/>
+        {#if isErrorInvalidName}
+            <h3 class="error">{errorInvalidName}</h3>
+        {/if}
     </div>
     <div class="photo">Photo</div>
     <div class="profile-pic-wrapper">
         <img src={imageURL ? imageURL : $userProfilePictureStore} alt="profile-pic"/>
-        <label for="profile-pic-upload">
+        <label for="profile-pic-upload" >
             Change Picture
         </label>
+        {#if isErrorNoImage}
+            <h3 class="error">{errorNoImage}</h3>
+        {/if}
         <input id="profile-pic-upload" type="file" accept="image/x-png,image/gif,image/jpeg"  on:change={(e)=>onFileSelected(e)} bind:this={imageURL} hidden/>
     </div>
     <div class="save-button-wrapper">
-        <button on:click={saveSettings}>Save</button>
+        <button>
+            {#if isLoading}
+                <Moon />
+            {:else}
+                Save
+            {/if}
+        </button>
     </div>
-</div>
+</form>
 
 <style lang="scss">
     .profile-form{

@@ -35,6 +35,22 @@ func GetMessages(){
 
 }
 
+func CreateUser(user models.User) (models.User, error){
+	result, err := db.PrepareNamed("INSERT INTO users (created_at, updated_at, username, password, is_anonymous) " +
+		"VALUES (:created_at, :updated_at, :username, :password, :is_anonymous) RETURNING id")
+
+	if err != nil {
+		return models.User{}, err
+	}
+
+	//Execute the prepared statement. This will allow the id of the created user to be returned.
+	if err := result.Get(&user.ID, user); err != nil {
+		return models.User{}, err
+	}
+
+	return user, nil
+}
+
 func InsertMessage(message models.Message) (models.Message, error){
 	result, err := db.PrepareNamed("INSERT INTO messages (message_content, message_date, created_at, updated_at, username, image_url, display_name) " +
 	"VALUES(:message_content, :message_date, :created_at, :updated_at, :username, :image_url, :display_name) RETURNING id")

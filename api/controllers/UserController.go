@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
+	"github.com/go-ozzo/ozzo-validation"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jmoiron/sqlx"
@@ -33,21 +35,40 @@ func (u *UserController) CheckAuth(c *fiber.Ctx) error {
 }
 
 func (u *UserController) ChangeUserProfilePicture(c *fiber.Ctx) error {
-	file, err := c.FormFile("file")
+	file, _ := c.FormFile("file")
 
-	if err != nil{
-		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	if file == nil{
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"errNoImage": "Please enter a valid image."})
 	}
 
 	if file.Size > MAX_SIZE{
-		return c.Status(http.StatusBadRequest).SendString("File too big.")
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"errFileTooBig": "File size too big."})
+	}
+
+	fmt.Println("header", file.Header["Content-Type"] )
+	
+	username := c.FormValue("username")
+	displayName := c.FormValue("display_name")
+	err := validation.Validate(displayName, 
+		validation.Length(4, 15),
+		validation.Match(regexp.MustCompile("[0-9]")).Error("Disply name must contain at least one number"),
+		validation.Match(regexp.MustCompile("[a-z]|[A-Z]")).Error("Display name must contain at least one letter."),
+	)
+
+	if err != nil{
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"errInvalidName": err})
 	}
 
 	res, err := cloudinary.UploadImage(file)
 
-	fmt.Println("res url:", res.URL)
+	if err != nil {
+		return err
+	}
 
-	return c.Status(http.StatusOK).SendString("Success!")
+	result := u.db.MustExec("UPDATE users SET display_name=$1, profile_picture=$2 WHERE username=$3", displayName, res.URL, username)
+
+	fmt.Println("Result:", result)
+	return c.Status(http.StatusOK).SendString(res.URL)
 }
 
 func (u *UserController) GetUsername(c *fiber.Ctx) error {
@@ -86,7 +107,8 @@ func (u *UserController) Signin(c *fiber.Ctx) error {
 		return c.Status(http.StatusNotFound).SendString("Username or Password incorrect. Please try again.")
 	}
 
-	//create a "MinifiedUser" struct to choose exactly what information about the user I what to send to the frontend.
+	//create a "MinifiedUser" struct to choose exactly what information about the user I what to send to the 
+	//frontend after the user signed in.
 	minifiedUser := struct{
 		DisplayName    string `json:"display_name"`
 		ProfilePicture string `json:"profile_picture"`
@@ -126,11 +148,9 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 
 	user.InitCreatedAt()
 	user.Password = string(hashedPassword)
-	result, _ := u.db.PrepareNamed("INSERT INTO users (created_at, updated_at, username, password, is_anonymous) " +
-		"VALUES (:created_at, :updated_at, :username, :password, :is_anonymous) RETURNING id")
-
-	//Execute the prepared statement. This will allow the id of the created user to be returned.
-	if err := result.Get(&user.ID, user); err != nil {
+	user, err := database.CreateUser(user)
+	
+	if err != nil{
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 

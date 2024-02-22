@@ -1,0 +1,2 @@
+# MessengerV2/api/controllers
+api\controllers\UserController.go:59:75: syntax error: unexpected }, expected expression
