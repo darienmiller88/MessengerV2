@@ -17,8 +17,6 @@
     let imageFile:          any 
     let isLoading:          boolean = false
     let displayName:        string  = ""
-    let errorNoImage:       string  = ""
-    let isErrorNoImage:     boolean = false
     let errorFileTooBig:    string  = ""
     let isErrorFileTooBig:  boolean = false
     let errorInvalidName:   string  = ""
@@ -43,16 +41,11 @@
             persistStoreValue(userProfilePictureStore, res.data == "" ? $userProfilePictureStore : res.data, userProfilePictureStoreKey)
             isErrorFileTooBig = false
             isErrorInvalidName = false
-            isErrorNoImage = false
             onHide()
         } catch (error: any) {
             resetErrors()
 
-            if (error.response.data.errNoImage) {
-                isErrorNoImage = true
-                errorNoImage = error.response.data.errNoImage
-                console.log("errNoImage:", error.response.data.errNoImage)
-            }else if(error.response.data.errInvalidName){
+            if(error.response.data.errInvalidName){
                 isErrorInvalidName = true
                 errorInvalidName = error.response.data.errInvalidName
                 console.log("errInvalidName:", error.response.data.errInvalidName)
@@ -75,7 +68,6 @@
     const resetErrors = () => {
         isErrorFileTooBig = false
         isErrorInvalidName = false
-        isErrorNoImage = false
     }
 
     const onFileSelected = (e: any)=>{
@@ -122,9 +114,7 @@
         </label>
         <input id="profile-pic-upload" type="file" accept="image/x-png,image/gif,image/jpeg"  on:change={(e)=>onFileSelected(e)} bind:this={imageURL} hidden/>
     </div>
-    {#if isErrorNoImage}
-        <h3 class="error">{errorNoImage}</h3>
-    {:else if isErrorFileTooBig}
+    {#if isErrorFileTooBig}
         <h3 class="error">{errorFileTooBig}</h3>
     {/if}
     <div class="save-button-wrapper">

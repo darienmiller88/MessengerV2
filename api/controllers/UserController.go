@@ -37,10 +37,6 @@ func (u *UserController) CheckAuth(c *fiber.Ctx) error {
 func (u *UserController) ChangeUserProfilePicture(c *fiber.Ctx) error {
 	file, _ := c.FormFile("file")
 
-	// if  err != nil{
-	// 	return c.Status(http.StatusBadRequest).JSON(fiber.Map{"errNoImage": err.Error()})
-	// }
-
 	if file != nil && file.Size > MAX_SIZE{
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"errFileTooBig": "File size too big."})
 	}

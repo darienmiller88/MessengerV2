@@ -1,11 +1,10 @@
 package database
 
-// ALTER TABLE users ADD CONSTRAINT users_display_name_key UNIQUE (display_name);
+// DROP TABLE IF EXISTS messages;
+// DROP TABLE IF EXISTS user_chats;
+// DROP TABLE IF EXISTS users;
+// DROP TABLE IF EXISTS chats;
 var schema string = `
-DROP TABLE IF EXISTS messages;
-DROP TABLE IF EXISTS user_chats;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS chats;
 CREATE TABLE IF NOT EXISTS users (
     id              SERIAL NOT NULL,
     created_at      TIMESTAMP NOT NULL,
