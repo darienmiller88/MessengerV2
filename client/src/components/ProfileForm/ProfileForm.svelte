@@ -19,6 +19,8 @@
     let displayName:        string  = ""
     let errorNoImage:       string  = ""
     let isErrorNoImage:     boolean = false
+    let errorFileTooBig:    string  = ""
+    let isErrorFileTooBig:  boolean = false
     let errorInvalidName:   string  = ""
     let isErrorInvalidName: boolean = false
 
@@ -26,33 +28,54 @@
         const formData = new FormData();
         displayName = displayName.trim() == "" ? $displayNameStore : displayName
         formData.append('file', imageFile);
-        formData.append("display_name", displayName.trim() == "" ? $displayNameStore : displayName)
+        formData.append("display_name", displayName)
         formData.append("username", $usernameStore)
         isLoading = true
 
         try {
-            const res = await userApi.post("/upload-profile-pic", formData, {
+            const res = await userApi.put("/upload-profile-pic", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
             })
 
             persistStoreValue(displayNameStore, displayName, displayNameStoreKey)
-            persistStoreValue(userProfilePictureStore, res.data, userProfilePictureStoreKey)
+            persistStoreValue(userProfilePictureStore, res.data == "" ? $userProfilePictureStore : res.data, userProfilePictureStoreKey)
+            isErrorFileTooBig = false
+            isErrorInvalidName = false
+            isErrorNoImage = false
             onHide()
         } catch (error: any) {
-            // errorMessage = error
+            resetErrors()
+
             if (error.response.data.errNoImage) {
-                console.log("errNoImage:", error.response.data.errNoImage);
+                isErrorNoImage = true
+                errorNoImage = error.response.data.errNoImage
+                console.log("errNoImage:", error.response.data.errNoImage)
             }else if(error.response.data.errInvalidName){
-                console.log("errInvalidName:", error.response.data.errInvalidName);
-                
+                isErrorInvalidName = true
+                errorInvalidName = error.response.data.errInvalidName
+                console.log("errInvalidName:", error.response.data.errInvalidName)
+            }else if(error.response.data.errorFileTooBig){
+                isErrorFileTooBig = true
+                errorFileTooBig = error.response.data.errorFileTooBig
+                console.log("errorFileTooBig:", error.response.data.errorFileTooBig)
             }
+
+            setTimeout(() => {
+                resetErrors()
+            }, 3000);
         }
 
         imageURL = null
         displayName = ""
         isLoading = false
+    }
+
+    const resetErrors = () => {
+        isErrorFileTooBig = false
+        isErrorInvalidName = false
+        isErrorNoImage = false
     }
 
     const onFileSelected = (e: any)=>{
@@ -97,11 +120,13 @@
         <label for="profile-pic-upload" >
             Change Picture
         </label>
-        {#if isErrorNoImage}
-            <h3 class="error">{errorNoImage}</h3>
-        {/if}
         <input id="profile-pic-upload" type="file" accept="image/x-png,image/gif,image/jpeg"  on:change={(e)=>onFileSelected(e)} bind:this={imageURL} hidden/>
     </div>
+    {#if isErrorNoImage}
+        <h3 class="error">{errorNoImage}</h3>
+    {:else if isErrorFileTooBig}
+        <h3 class="error">{errorFileTooBig}</h3>
+    {/if}
     <div class="save-button-wrapper">
         <button>
             {#if isLoading}
@@ -116,6 +141,11 @@
 <style lang="scss">
     .profile-form{
         $val: 30px;
+
+        .error{
+            color: red;
+            text-align: center;
+        }
 
         .input-wrapper{
             // border: 2px solid saddlebrown;

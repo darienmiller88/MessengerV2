@@ -52,8 +52,8 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error{
 	message.DisplayName     = c.FormValue("display_name")
 	message.MessageContent  = c.FormValue("message_content")
 	message.MessageDate     = time.Now().Format("2006-01-02 3:4:5 pm")
-	message.ImageURL.Valid  = res.URL != ""
-	message.ImageURL.String = res.URL
+	message.ImageURL.Valid  = res != ""
+	message.ImageURL.String = res
 
 	if err := message.Validate(); err != nil{
 		return c.Status(http.StatusBadRequest).SendString(err.Error())

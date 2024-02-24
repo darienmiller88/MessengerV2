@@ -215,8 +215,9 @@
 
         img{
             margin: auto;
-            width: 32px;
-            height: auto;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
         }
     }
 

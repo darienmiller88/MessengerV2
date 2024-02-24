@@ -21,7 +21,7 @@ func Init(){
 	cloudinaryClient = cld
 }
 
-func UploadImage(file *multipart.FileHeader) (*uploader.UploadResult, error) {
+func UploadImage(file *multipart.FileHeader) (string, error) {
 	res, err := cloudinaryClient.Upload.Upload(
 		context.Background(), 
 		file, 
@@ -29,8 +29,8 @@ func UploadImage(file *multipart.FileHeader) (*uploader.UploadResult, error) {
 	)
 
 	if err != nil{
-		return nil, err
+		return "", err
 	}
 
-	return res, nil
+	return res.URL, nil
 }

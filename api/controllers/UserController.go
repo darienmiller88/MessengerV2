@@ -37,17 +37,15 @@ func (u *UserController) CheckAuth(c *fiber.Ctx) error {
 func (u *UserController) ChangeUserProfilePicture(c *fiber.Ctx) error {
 	file, _ := c.FormFile("file")
 
-	if file == nil{
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"errNoImage": "Please enter a valid image."})
-	}
+	// if  err != nil{
+	// 	return c.Status(http.StatusBadRequest).JSON(fiber.Map{"errNoImage": err.Error()})
+	// }
 
-	if file.Size > MAX_SIZE{
+	if file != nil && file.Size > MAX_SIZE{
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"errFileTooBig": "File size too big."})
 	}
-
-	fmt.Println("header", file.Header["Content-Type"] )
 	
-	username := c.FormValue("username")
+	username    := c.FormValue("username")
 	displayName := c.FormValue("display_name")
 	err := validation.Validate(displayName, 
 		validation.Length(4, 15),
@@ -56,19 +54,25 @@ func (u *UserController) ChangeUserProfilePicture(c *fiber.Ctx) error {
 	)
 
 	if err != nil{
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"errInvalidName": err})
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"errInvalidName": err.Error()})
 	}
 
-	res, err := cloudinary.UploadImage(file)
+	var res string
 
-	if err != nil {
-		return err
+	//Upload a file to cloudinary only if the user provided a file. If not, do not upload, and simply update the display name.
+	if file != nil {
+		res, err = cloudinary.UploadImage(file)
+	
+		if err != nil {
+			return err
+		}
+
+		u.db.MustExec("UPDATE users SET display_name=$1, profile_picture=$2 WHERE username=$3", displayName, res, username)
+	}else{
+		u.db.MustExec("UPDATE users SET display_name=$1 WHERE username=$2", displayName, username)
 	}
 
-	result := u.db.MustExec("UPDATE users SET display_name=$1, profile_picture=$2 WHERE username=$3", displayName, res.URL, username)
-
-	fmt.Println("Result:", result)
-	return c.Status(http.StatusOK).SendString(res.URL)
+	return c.Status(http.StatusOK).SendString(res)
 }
 
 func (u *UserController) GetUsername(c *fiber.Ctx) error {
@@ -113,8 +117,8 @@ func (u *UserController) Signin(c *fiber.Ctx) error {
 		DisplayName    string `json:"display_name"`
 		ProfilePicture string `json:"profile_picture"`
 	}{
-		DisplayName: user.Username,
-		ProfilePicture: user.ProfilePicture.String,
+		DisplayName: possibleUser.Username,
+		ProfilePicture: possibleUser.ProfilePicture.String,
 	}
 	u.setCookie(c, u.getJwtToken(user), u.sessionLen)
 

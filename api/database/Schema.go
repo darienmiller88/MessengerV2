@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY(chat_id)      REFERENCES chats(id)       ON DELETE CASCADE,
     FOREIGN KEY(receiver)     REFERENCES users(username) ON DELETE CASCADE,
     FOREIGN KEY(username)     REFERENCES users(username) ON DELETE CASCADE,
-    FOREIGN KEY(display_name) REFERENCES users(display_name) ON DELETE CASCADE
+    FOREIGN KEY(display_name) REFERENCES users(display_name) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS user_chats(

@@ -7,10 +7,7 @@
         userProfilePictureStoreKey
     } from "../../stores";
     import { ThreeDotsVertical, HandThumbsUpFill } from "svelte-bootstrap-icons";
-    import Modal from "../Modal/Modal.svelte";
-    import DeleteMessageForm from "../DeleteMessageForm/DeleteMessageForm.svelte";
     import { onMount } from "svelte";
-    import ModalTemplate from "../ModalTemplate/ModalTemplate.svelte";
 
     export let messageContent: string
     export let username:       string
@@ -59,7 +56,7 @@
 
 <div class={isYourMessage ? "message-wrapper sender" : "message-wrapper receiver"}>
     <div class="profile-pic-wrapper">
-        <img src={$userProfilePictureStore} alt="pic" />
+        <img src={isYourMessage ? $userProfilePictureStore : null} alt="pic" />
     </div>
     <div class="message-content-wrapper">
         <div class="data">
@@ -171,7 +168,7 @@
 
             img{
                 width: 45px;
-                height: auto;
+                height: 45px;
                 border-radius: 50%;
 
                 @media only screen and (min-width: 768px) {
