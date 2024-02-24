@@ -65,7 +65,7 @@
                 height: auto;
 
                 @media screen and (min-width: 992px) {
-                    height: 90vh;
+                    height: 80vh;
                     width: auto;
                 }
             }
