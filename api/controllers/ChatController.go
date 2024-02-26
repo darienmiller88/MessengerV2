@@ -28,6 +28,7 @@ func (c *ChatController) GetChats(fc *fiber.Ctx) error{
 }
 
 func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
+	
 	return nil
 }
 
