@@ -27,7 +27,7 @@
 
         //When a user chat is clicked, persist the name of the group chat clicked, and the picture of the chat
         persistStoreValue(chatPictureStore, chatInfo.picture_url, chatPictureStoreKey)
-        persistStoreValue(groupChatNameStore, chatInfo.chatName, groupChatNameStoreKey)
+        persistStoreValue(groupChatNameStore, chatInfo.chat_name, groupChatNameStoreKey)
 
         //Boolean indicator for mobile view to swap between message window to see messages, and user chats window to
         //see all of the current chats the user has.
@@ -38,7 +38,7 @@
     onMount(() => {
         let chatName: string | null = window.localStorage.getItem(groupChatNameStoreKey)
         
-        if (chatName && JSON.parse(chatName) == chatInfo.chatName) {
+        if (chatName && JSON.parse(chatName) == chatInfo.chat_name) {
             deselectChats()
             chatInfo.isChatActive = true
         }
@@ -53,7 +53,7 @@
     </div>
     <div class="chat-info">
         <div class="name-time-wrapper">
-            <div class={$isDarkModeStore ? "name dark-mode-theme" : "name"}>{chatInfo.chatName}</div>
+            <div class={$isDarkModeStore ? "name dark-mode-theme" : "name"}>{chatInfo.chat_name}</div>
             <div class="time">{chatInfo.time}</div>
         </div>
         <div class="current-message">{chatInfo.currentMessage}</div>

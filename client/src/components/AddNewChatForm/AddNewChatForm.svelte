@@ -13,7 +13,7 @@
     let isCreatingGroupChat: boolean  = true
     let value:               any
     let newChat:             Chat = {
-        chatName: "",
+        chat_name: "",
         currentMessage: "",
         time: "",
         picture_url: "",
@@ -24,7 +24,7 @@
     const createNewChat = () => {
         let users = (value as FilteredUser[])
 
-        newChat.chatName = groupChatName
+        newChat.chat_name = groupChatName
         newChat.picture_url = defaultPic
         newChat.currentMessage = "N/A"
         newChat.time = "N/A"
@@ -42,7 +42,7 @@
     const messageNewUser = () => {
         let user = (value as FilteredUser)
 
-        newChat.chatName = user.value
+        newChat.chat_name = user.value
         newChat.currentMessage = message
         newChat.time = "N/A"
         newChat.picture_url = defaultPic
