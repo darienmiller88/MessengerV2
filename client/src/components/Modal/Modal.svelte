@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-
     export let show:         boolean
     export let onHide:       () => {}
     export let modalHeader:  string

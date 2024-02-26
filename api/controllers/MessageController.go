@@ -125,6 +125,7 @@ func (m *MessageController) GetMessageHistory(c *fiber.Ctx) error{
 func (m *MessageController) GetPublicMessages(c *fiber.Ctx) error{
 	messages := []models.Message{}
 
+	// SELECT messages.*, users.profile_picture FROM messages JOIN users ON messages.username = users.username;
 	if err := m.db.Select(&messages, "SELECT * FROM messages WHERE receiver IS NULL AND chat_id IS NULL ORDER BY id ASC"); err != nil{
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
 	}

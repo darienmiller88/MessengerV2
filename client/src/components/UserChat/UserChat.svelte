@@ -90,6 +90,7 @@
 
         .image-wrapper{
             display: grid;
+            height: 100%;
 
             img{
                 margin: auto;
@@ -109,9 +110,7 @@
         }
 
         .chat-info{
-            display: flex;
-            flex-direction: column;
-            justify-content: space-evenly;
+            display: grid;
             margin-left: 6px;
 
             .name-time-wrapper{
@@ -138,7 +137,7 @@
                         font-size: 20px;
                     }
 
-                    @media only screen and (min-width: 768px){
+                    @media only screen and (min-width: 992px){
                         font-size: 14px;
                     }
                 }
@@ -153,6 +152,9 @@
             .current-message{
                 font-size: 13px;
                 color: rgb(60, 60, 60);
+                overflow-x: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
 
                 @media only screen and (min-width: 768px){
                     font-size: 20px;

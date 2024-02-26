@@ -8,6 +8,7 @@
     } from "../../stores";
     import { ThreeDotsVertical, HandThumbsUpFill } from "svelte-bootstrap-icons";
     import { onMount } from "svelte";
+    import defaultPic from "../../assets/default.png"
 
     export let messageContent: string
     export let username:       string
@@ -56,7 +57,7 @@
 
 <div class={isYourMessage ? "message-wrapper sender" : "message-wrapper receiver"}>
     <div class="profile-pic-wrapper">
-        <img src={isYourMessage ? $userProfilePictureStore : null} alt="pic" />
+        <img src={isYourMessage ? $userProfilePictureStore : defaultPic} alt="pic" />
     </div>
     <div class="message-content-wrapper">
         <div class="data">

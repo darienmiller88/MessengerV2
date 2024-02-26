@@ -2,16 +2,19 @@
     import Message from "../Message/Message.svelte";
     import { 
         messagesStore, 
+        chatsStore,
+        chatsStoreKey,
         persistStoreValue, 
         usernameStore, 
         usernameStoreKey, 
-        isDarkModeStore 
+        isDarkModeStore, 
+        chatPictureStore
+
     } from "../../stores";
     import { afterUpdate, onMount } from 'svelte';
     import { navigate } from "svelte-routing";
     import pusher from "../../pusher/pusher";
     import { messageApi, userApi } from "../../api/api";
-    import ModalTemplate from "../ModalTemplate/ModalTemplate.svelte";
     import PictureModal from "../PictureModal/PictureModal.svelte";
     import Modal from "../Modal/Modal.svelte";
     import DeleteMessageForm from "../DeleteMessageForm/DeleteMessageForm.svelte";
@@ -21,7 +24,6 @@
     let messagesRef:       HTMLElement
     let userTypingText:    string = ""
     let showPictureModal:  boolean = false
-    let scrollAfterUpdate: boolean = false
 
     const scrollTo = async (node: Element) => {
         node.scrollTo({ top: node.scrollHeight,  behavior: "instant" });
@@ -40,6 +42,10 @@
         try {
             const messagesRes = await messageApi.get("/")
             $messagesStore = messagesRes.data 
+
+            console.log("last message:", $messagesStore[$messagesStore.length - 1]);
+            $chatsStore[0].currentMessage = $messagesStore[$messagesStore.length - 1].message_content + $messagesStore[$messagesStore.length - 1].message_content
+            $chatsStore[0].time = new Date($messagesStore[$messagesStore.length - 1].message_date).toLocaleTimeString()
 
             const usernameRes = await userApi.get("/username")
             $usernameStore = (usernameRes.data as string)
