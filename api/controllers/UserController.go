@@ -26,8 +26,8 @@ type UserController struct {
 }
 
 func (u *UserController) Init() {
-	u.db = database.GetDB()
-	u.sessionLen = 50000 //in seconds, so about 14 hrs
+	u.db         = database.GetDB()
+	u.sessionLen = 500000 //in seconds, so about 138 hrs, or 5.75 days.
 }
 
 func (u *UserController) CheckAuth(c *fiber.Ctx) error {
@@ -43,7 +43,7 @@ func (u *UserController) ChangeUserProfilePicture(c *fiber.Ctx) error {
 	
 	username    := c.FormValue("username")
 	displayName := c.FormValue("display_name")
-	err := validation.Validate(displayName, 
+	err         := validation.Validate(displayName, 
 		validation.Length(4, 15),
 		validation.Match(regexp.MustCompile("[0-9]")).Error("Disply name must contain at least one number"),
 		validation.Match(regexp.MustCompile("[a-z]|[A-Z]")).Error("Display name must contain at least one letter."),

@@ -42,7 +42,6 @@
             const messagesRes = await messageApi.get("/")
             $messagesStore = messagesRes.data 
 
-            console.log("last message:", $messagesStore[$messagesStore.length - 1]);
             $chatsStore[0].currentMessage = $messagesStore[$messagesStore.length - 1].message_content 
             $chatsStore[0].time = new Date($messagesStore[$messagesStore.length - 1].message_date).toLocaleTimeString()
 
@@ -74,6 +73,8 @@
     //Reactive statement to scroll to the bottom after the user enters a new message.
     $: {
         if ($messagesStore.length && messagesRef) { 
+            // console.log("new message:", $messagesStore[$messagesStore.length - 1]);
+            
             // messagesRef.scrollTo({ top: messagesRef.scrollHeight,  behavior: "instant" });
             messagesRef.scrollTop = messagesRef.scrollHeight  
         }
