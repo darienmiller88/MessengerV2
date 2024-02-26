@@ -5,7 +5,14 @@
     import { type Message } from "../../types/type"
     import { onMount } from "svelte";
     import { messageApi } from "../../api/api";
-    import { usernameStore, usernameStoreKey, displayNameStore, displayNameStoreKey } from "../../stores";
+    import { 
+        usernameStore, 
+        usernameStoreKey, 
+        displayNameStore, 
+        displayNameStoreKey,
+        chatsStore,
+        chatsStoreKey
+     } from "../../stores";
     import pusher from "../../pusher/pusher";
     import LoadingWrapper from "../LoadingWrapper/LoadingWrapper.svelte";
     // import pic from "../../assets/profile.png"
@@ -47,6 +54,7 @@
 
             const message = (res.data as Message)
             
+            updateChat(message)
             $messagesStore = [...$messagesStore, message]
             messageText = ""
             showIcon = false
@@ -79,6 +87,8 @@
             id: 0
         }
 
+        updateChat(message)
+
         isThumbsUp = true
         canType = !canType
         $messagesStore = [...$messagesStore, message]
@@ -95,6 +105,11 @@
         } catch (error) {
             console.log("err:", error);
         }
+    }
+
+    const updateChat = (message: Message) => {
+        $chatsStore[0].currentMessage = message.message_content
+        $chatsStore[0].time = new Date(message.message_date).toLocaleTimeString()
     }
 
     const handleKeyInput = async (e: any) => {        

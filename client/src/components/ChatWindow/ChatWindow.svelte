@@ -3,7 +3,6 @@
     import { 
         messagesStore, 
         chatsStore,
-        chatsStoreKey,
         persistStoreValue, 
         usernameStore, 
         usernameStoreKey, 
@@ -44,7 +43,7 @@
             $messagesStore = messagesRes.data 
 
             console.log("last message:", $messagesStore[$messagesStore.length - 1]);
-            $chatsStore[0].currentMessage = $messagesStore[$messagesStore.length - 1].message_content + $messagesStore[$messagesStore.length - 1].message_content
+            $chatsStore[0].currentMessage = $messagesStore[$messagesStore.length - 1].message_content 
             $chatsStore[0].time = new Date($messagesStore[$messagesStore.length - 1].message_date).toLocaleTimeString()
 
             const usernameRes = await userApi.get("/username")

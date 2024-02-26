@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { messagesStore, chosenMessageStore, usernameStore, usernameStoreKey } from "../../stores";
+    import { messagesStore, chosenMessageStore, chatsStore } from "../../stores";
     import { type Message} from "../../types/type"
     import { messageApi } from "../../api/api";
 
@@ -9,6 +9,9 @@
             return message.id != $chosenMessageStore.id
         })
 
+        $chatsStore[0].currentMessage = $messagesStore[$messagesStore.length - 1].message_content
+        $chatsStore[0].time = new Date($messagesStore[$messagesStore.length - 1].message_date).toLocaleTimeString()
+        
         try {
             const response = await messageApi.delete(`/${$chosenMessageStore.id}`)
             console.log("delete res:", response);
