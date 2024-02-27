@@ -56,7 +56,9 @@
             <div class={$isDarkModeStore ? "name dark-mode-theme" : "name"}>{chatInfo.chat_name}</div>
             <div class="time">{chatInfo.time}</div>
         </div>
-        <div class="current-message">{chatInfo.currentMessage}</div>
+        <div class={$isDarkModeStore ? "current-message dark-mode-theme" : "light-mode-theme current-message"}>
+            {chatInfo.currentMessage}
+        </div>
     </div>
 </div>
 
@@ -141,17 +143,12 @@
                         font-size: 14px;
                     }
                 }
-
-                .dark-mode-theme{
-                    color: white;
-                }
                 
                 margin-bottom: 5px;
             }
 
             .current-message{
                 font-size: 13px;
-                color: rgb(60, 60, 60);
                 overflow-x: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
@@ -165,6 +162,14 @@
                 }
             }
         }
+    }
+
+    .dark-mode-theme{
+        color: white;
+    }
+
+    .light-mode-theme{
+        color: rgb(60, 60, 60);
     }
 
     .selected{
