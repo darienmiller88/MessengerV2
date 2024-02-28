@@ -22,14 +22,14 @@
 
             //Assign to the chatsStore a filtered array that does not include to chat to be deleted.
             $chatsStore = $chatsStore.filter((chat: Chat, i: number) => {
-                if(chat.chatName == parsedChatName){
+                if(chat.chat_name == parsedChatName){
                     chatIndex = i
                 }
 
-                return chat.chatName != parsedChatName
+                return chat.chat_name != parsedChatName
             })
 
-            $groupChatNameStore = (chatIndex == $chatsStore.length) ? $chatsStore[chatIndex - 1].chatName : $chatsStore[chatIndex].chatName
+            $groupChatNameStore = (chatIndex == $chatsStore.length) ? $chatsStore[chatIndex - 1].chat_name : $chatsStore[chatIndex].chat_name
             persistStoreValue(groupChatNameStore, $groupChatNameStore, groupChatNameStoreKey)
 
             $chatPictureStore = (chatIndex == $chatsStore.length) ? $chatsStore[chatIndex - 1].picture_url : $chatsStore[chatIndex].picture_url

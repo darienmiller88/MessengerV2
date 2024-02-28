@@ -4,7 +4,7 @@
     import { usersStoreKey, usersStore, usernameStore, usernameStoreKey, chatsStore, chatsStoreKey, persistStoreValue } from "../../stores"
     import Select from 'svelte-select';
     import defaultPic from "../../assets/default.png"
-    import { userApi } from "../../api/api";
+    import { chatsApi } from "../../api/api";
     import { navigate } from "svelte-routing";
 
     let groupChatName:       string
@@ -22,15 +22,14 @@
     export let onHide = () => {}
     
     const createNewChat = () => {
-        let users = (value as FilteredUser[])
+        let users: string[] = (value as FilteredUser[]).map((filteredUser: FilteredUser) => {
+            return filteredUser.value
+        })
 
         newChat.chat_name = groupChatName
         newChat.picture_url = defaultPic
         newChat.currentMessage = "N/A"
-        newChat.time = "N/A"
-
-        $chatsStore = [...$chatsStore, newChat]
-        persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
+        newChat.time = new Date().toLocaleTimeString()
 
         console.log(groupChatName, users)
         groupChatName = ""
@@ -44,7 +43,7 @@
 
         newChat.chat_name = user.value
         newChat.currentMessage = message
-        newChat.time = "N/A"
+        newChat.time = new Date().toLocaleTimeString()
         newChat.picture_url = defaultPic
 
         $chatsStore = [...$chatsStore, newChat]
@@ -56,7 +55,7 @@
         onHide()
     }
 
-    onMount( () => {
+    onMount(() => {
         let usersLocalStorage:    string | null = window.localStorage.getItem(usersStoreKey)
         
         if (usersLocalStorage) {
@@ -90,7 +89,7 @@
             </div>
             <div class="group-chat-input form-input">
                 <label for="groupchat">Group Chat Name</label><br />
-                <input bind:value={groupChatName} required/>
+                <input bind:value={groupChatName} required minlength="2" maxlength="10"/>
             </div>
             <div class="submit">
                 <button>Submit</button>
@@ -146,17 +145,15 @@
                 margin: auto;
                 width: 90%;
                 margin-top: 10px;
-                // border: 2px yellow solid;
 
-                label{
-                    margin-bottom: 20px;
-                }
-        
                 input{
                     width: 99%;
                     font-size: 20px;
                     border: 2px solid var(--light-grey);
                     transition: 0.3s;
+                    border-radius: 10px;
+                    margin: 10px 0px;
+                    padding: 0px 5px;
         
                     &:hover{
                         border: 2px solid var(--messenger-blue);
@@ -187,6 +184,7 @@
         
             .submit{
                 text-align: center;
+                margin-top: 10px;
         
                 button{
                     margin: auto;

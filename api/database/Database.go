@@ -35,6 +35,21 @@ func GetMessages(){
 
 }
 
+func CreateNewChat(chat models.Chat) (models.Chat, error){
+	result, err := db.PrepareNamed("INSERT INTO chat (created_at, updated_at, chat_name) " +
+	"VALUES(:created_at, :updated_at, :chat_name) RETURNING id")
+
+	if err != nil{
+		return models.Chat{}, err
+	}
+
+	if err := result.Get(&chat.ID, chat); err != nil{
+		return models.Chat{}, err
+	}
+
+	return chat, nil
+}
+
 func CreateUser(user models.User) (models.User, error){
 	result, err := db.PrepareNamed("INSERT INTO users (created_at, updated_at, username, password, is_anonymous) " +
 		"VALUES (:created_at, :updated_at, :username, :password, :is_anonymous) RETURNING id")
