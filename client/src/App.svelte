@@ -59,7 +59,7 @@
 
         if (!selectedChat) {
             $selectedChatStore = {
-                chatName: "Public",
+                chat_name: "Public",
                 currentMessage: "N/A",
                 time: "N/A",
                 picture_url: publicChatPic,

@@ -5,6 +5,7 @@
     import { chatsApi } from "../../api/api";
     import { type Chat } from "../../types/type";
     import { navigate } from "svelte-routing";
+    import defaultPic from "../../assets/default.png"
 
     const deselectChats = () => {
         $chatsStore.forEach((chat => {
@@ -18,7 +19,21 @@
     onMount( async () => {
         try {
             const res = await chatsApi.get("/")
-            $chatsStore = [...$chatsStore, ...(res.data as Chat[])]
+            let chats: Chat[] = []
+
+            res.data.forEach((chat: Chat) => {
+                let newChat: Chat = {
+                    chat_name: chat.chat_name,
+                    time: "N/A",
+                    picture_url: defaultPic,
+                    currentMessage: "",
+                    isChatActive: false
+                }
+
+                chats.push(newChat)
+            })
+          
+            $chatsStore = [...$chatsStore, ...chats]
             console.log("chats:", $chatsStore);
         } catch (error: any) {
             console.log("err:", error);

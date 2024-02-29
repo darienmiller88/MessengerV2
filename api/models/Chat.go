@@ -8,3 +8,8 @@ type Chat struct {
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 	ChatName  string    `json:"chat_name"  db:"chat_name"`
 }
+
+func (c *Chat) InitCreatedAt(){
+	c.CreatedAt = time.Now()
+	c.UpdatedAt = time.Now()
+}

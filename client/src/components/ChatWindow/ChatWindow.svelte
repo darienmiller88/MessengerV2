@@ -45,6 +45,8 @@
             $chatsStore[0].currentMessage = $messagesStore[$messagesStore.length - 1].message_content 
             $chatsStore[0].time = new Date($messagesStore[$messagesStore.length - 1].message_date).toLocaleTimeString()
 
+            console.log("last message:",messagesRes.data[messagesRes.data.length - 1]);
+            
             const usernameRes = await userApi.get("/username")
             $usernameStore = (usernameRes.data as string)
         } catch (error: any) {

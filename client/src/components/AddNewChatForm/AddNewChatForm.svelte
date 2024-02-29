@@ -5,11 +5,11 @@
     import Select from 'svelte-select';
     import defaultPic from "../../assets/default.png"
     import { chatsApi } from "../../api/api";
-    import { navigate } from "svelte-routing";
+    import LoadingWrapper from "../LoadingWrapper/LoadingWrapper.svelte"
 
     let groupChatName:       string
     let message:             string
-    let users:               string[] 
+    let isLoading:           boolean = false
     let isCreatingGroupChat: boolean  = true
     let value:               any
     let newChat:             Chat = {
@@ -21,7 +21,7 @@
     }
     export let onHide = () => {}
     
-    const createNewChat = () => {
+    const createNewChat = async () => {
         let users: string[] = (value as FilteredUser[]).map((filteredUser: FilteredUser) => {
             return filteredUser.value
         })
@@ -31,11 +31,29 @@
         newChat.currentMessage = "N/A"
         newChat.time = new Date().toLocaleTimeString()
 
+        let chatInfo = {
+            users, 
+            chat_name: groupChatName
+        }
+
+        try {
+            isLoading = true
+            const res = await chatsApi.post("/", chatInfo)
+            
+            console.log("res:", res)
+            $chatsStore = [...$chatsStore, newChat]
+            persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
+            
+            onHide()
+        } catch (error) {
+            console.log("err:", error);
+        }
+
+
         console.log(groupChatName, users)
         groupChatName = ""
         value = null
-
-        onHide()
+        isLoading = false
     }
 
     const messageNewUser = () => {
@@ -91,8 +109,15 @@
                 <label for="groupchat">Group Chat Name</label><br />
                 <input bind:value={groupChatName} required minlength="2" maxlength="10"/>
             </div>
+            
             <div class="submit">
-                <button>Submit</button>
+                <button disabled={isLoading}>
+                    {#if isLoading}
+                        <LoadingWrapper size={30}/>
+                    {:else}
+                        Submit
+                    {/if}
+                </button>
             </div>
         </form>
     {:else}
@@ -111,7 +136,13 @@
                 <textarea rows="4" bind:value={message} required/>
             </div>
             <div class="submit">
-                <button>Submit</button>
+                <button disabled={isLoading}>
+                    {#if isLoading}
+                        <LoadingWrapper size={30}/>
+                    {:else}
+                        Submit
+                    {/if}
+                </button>
             </div>
         </form>
     {/if}

@@ -18,6 +18,6 @@ func (c *ChatsRoutes) Init(){
 	c.Router.Use(middlewares.Auth).Route("/", func(router fiber.Router) {
 		router.Get("/",             c.chatsController.GetChats)
 		router.Post("/",            c.chatsController.AddNewChat)
-		router.Delete("/:chatname", c.chatsController.DeleteChat)
+		router.Delete("/:chatid", c.chatsController.DeleteChat)
 	})
 }

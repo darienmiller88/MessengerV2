@@ -29,20 +29,28 @@ func (c *ChatController) GetChats(fc *fiber.Ctx) error{
 }
 
 func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
-	// chat          := models.Chat{}
+	chat          := models.Chat{}
 	// userChat      := models.UserChat{}
 	chatWithUsers := struct{
 		ChatName string   `json:"chat_name"`
 		Users    []string `json:"users"`
 	}{}
 
-	if err := fc.BodyParser(chatWithUsers); err != nil{
+	if err := fc.BodyParser(&chatWithUsers); err != nil{
 		return fc.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
-	fmt.Println("new chat:", chatWithUsers)
+	chat.InitCreatedAt()
+	chat.ChatName = chatWithUsers.ChatName
+	// chat, err := database.CreateNewChat(chat)
 
-	return fc.Status(http.StatusOK).SendString("Success!")
+	// if err != nil {
+	// 	return fc.Status(http.StatusInternalServerError).SendString(err.Error())
+	// }
+
+	fmt.Println("new chat:", chat)
+
+	return fc.Status(http.StatusOK).JSON(chat)
 }
 
 func (c *ChatController) DeleteChat(fc *fiber.Ctx) error{

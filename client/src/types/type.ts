@@ -1,9 +1,9 @@
 export interface Chat{
-    chat_name:       string
-    currentMessage: string
     time:           string
-    picture_url:    string
+    chat_name:      string
+    picture_url:    string 
     isChatActive:   boolean
+    currentMessage: string
 }
 
 export interface FilteredUser{
