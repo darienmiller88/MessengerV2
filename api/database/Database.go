@@ -52,8 +52,8 @@ func CreateUserChat(userChat models.UserChat) (models.UserChat, error){
 
 
 func CreateNewChat(chat models.Chat) (models.Chat, error){
-	result, err := db.PrepareNamed("INSERT INTO chats (created_at, updated_at, chat_name) " +
-	"VALUES(:created_at, :updated_at, :chat_name) RETURNING id")
+	result, err := db.PrepareNamed("INSERT INTO chats (created_at, updated_at, chat_name, picture_url) " +
+	"VALUES(:created_at, :updated_at, :chat_name, :picture_url) RETURNING id")
 
 	if err != nil{
 		return models.Chat{}, err

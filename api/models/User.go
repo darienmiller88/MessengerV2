@@ -55,11 +55,11 @@ func (u *User) CheckUsername(val interface{}) error{
 	user := User{}
 
 	if !success {
-		return errors.New("Error parsing value, expected string.")
+		return errors.New("error parsing value, expected string")
 	}
 
 	if err := u.DB.Get(&user, "SELECT * FROM users WHERE username=$1", username); err == nil{
-		return errors.New(fmt.Sprintf("Username \"%s\" is taken.", username))
+		return fmt.Errorf("username \"%s\" is taken", username)
 	}
 
 	fmt.Println(username)

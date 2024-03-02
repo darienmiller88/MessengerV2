@@ -30,26 +30,39 @@ func (c *ChatController) GetChats(fc *fiber.Ctx) error{
 
 func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
 	chat          := models.Chat{}
-	// userChat      := models.UserChat{}
 	chatWithUsers := struct{
-		ChatName string   `json:"chat_name"`
+		ChatName   string `json:"chat_name"`
+		PictureUrl string `json:"picture_url"` 
 		Users    []string `json:"users"`
 	}{}
 
 	if err := fc.BodyParser(&chatWithUsers); err != nil{
 		return fc.Status(http.StatusBadRequest).SendString(err.Error())
 	}
-
+	
+	//Add the necessary data to the new chat the user will create.
 	chat.InitCreatedAt()
 	chat.ChatName = chatWithUsers.ChatName
-	// chat, err := database.CreateNewChat(chat)
-
-	// if err != nil {
-	// 	return fc.Status(http.StatusInternalServerError).SendString(err.Error())
-	// }
-
+	chat.PictureUrl = chatWithUsers.PictureUrl
+	chat, err    := database.CreateNewChat(chat)
+	
+	
+	if err != nil {
+		return fc.Status(http.StatusInternalServerError).SendString(err.Error())
+	}
+	
 	fmt.Println("new chat:", chat)
+	
+	userChat := models.UserChat{
+		ChatID: chat.ID,
+	}
 
+	userChat.InitCreatedAt()
+	for _, user := range chatWithUsers.Users {
+		userChat.Username = user
+		userChat, _ = database.CreateUserChat(userChat)
+	}
+	
 	return fc.Status(http.StatusOK).JSON(chat)
 }
 

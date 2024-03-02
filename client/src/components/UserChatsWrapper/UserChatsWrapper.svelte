@@ -23,6 +23,7 @@
 
             res.data.forEach((chat: Chat) => {
                 let newChat: Chat = {
+                    id: chat.id,
                     chat_name: chat.chat_name,
                     time: "N/A",
                     picture_url: defaultPic,

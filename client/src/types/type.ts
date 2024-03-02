@@ -1,4 +1,5 @@
 export interface Chat{
+    id:             number
     time:           string
     chat_name:      string
     picture_url:    string 

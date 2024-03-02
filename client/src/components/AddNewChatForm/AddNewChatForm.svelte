@@ -13,6 +13,7 @@
     let isCreatingGroupChat: boolean  = true
     let value:               any
     let newChat:             Chat = {
+        id: 0,
         chat_name: "",
         currentMessage: "",
         time: "",
@@ -26,14 +27,16 @@
             return filteredUser.value
         })
 
+        users.push($usernameStore)
         newChat.chat_name = groupChatName
         newChat.picture_url = defaultPic
         newChat.currentMessage = "N/A"
-        newChat.time = new Date().toLocaleTimeString()
+        newChat.time = "N/A"
 
         let chatInfo = {
             users, 
-            chat_name: groupChatName
+            chat_name: groupChatName,
+            picture_url: newChat.picture_url
         }
 
         try {
@@ -48,7 +51,6 @@
         } catch (error) {
             console.log("err:", error);
         }
-
 
         console.log(groupChatName, users)
         groupChatName = ""

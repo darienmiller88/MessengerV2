@@ -15,11 +15,11 @@
 
     const deleteChat = () => {
         let groupChatName = window.localStorage.getItem(groupChatNameStoreKey)
-        let chatIndex = 0
-
+        
         if (groupChatName) {
             let parsedChatName = (JSON.parse(groupChatName) as string)
-
+            let chatIndex = 0
+            
             //Assign to the chatsStore a filtered array that does not include to chat to be deleted.
             $chatsStore = $chatsStore.filter((chat: Chat, i: number) => {
                 if(chat.chat_name == parsedChatName){

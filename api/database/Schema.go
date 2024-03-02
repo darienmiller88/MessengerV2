@@ -1,10 +1,10 @@
 package database
 
-// DROP TABLE IF EXISTS messages;
-// DROP TABLE IF EXISTS user_chats;
-// DROP TABLE IF EXISTS users;
-// DROP TABLE IF EXISTS chats;
 var schema string = `
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS user_chats;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS chats;
 CREATE TABLE IF NOT EXISTS users (
     id              SERIAL NOT NULL,
     created_at      TIMESTAMP NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     display_name    VARCHAR(20) UNIQUE,
     password        VARCHAR(200),
     is_anonymous    BOOLEAN,
-    profile_picture text,
+    profile_picture TEXT,
     PRIMARY KEY (id)
 );
 
@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS chats(
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL, 
     chat_name  VARCHAR(50) NOT NULL,
+    picture_url TEXT NOT NULL,
     PRIMARY KEY (id)
 );
 

@@ -45,11 +45,11 @@ func (m *Message) CheckUsername(val interface{}) error {
 	user := User{}
 
 	if !success {
-		return errors.New("Error parsing value, expected string.")
+		return errors.New("error parsing value, expected string")
 	}
 
 	if err := m.DB.Get(&user, "SELECT * FROM users WHERE username=$1", username); err != nil {
-		return errors.New(fmt.Sprintf("Username \"%s\" was not found.", username))
+		return fmt.Errorf("username \"%s\" was not found", username)
 	}
 
 	return nil
@@ -61,7 +61,7 @@ func (m *Message) CheckDisplayname(val interface{}) error {
 	user := User{}
 
 	if !success {
-		return errors.New("Error parsing value, expected string.")
+		return errors.New("error parsing value, expected string")
 	}
 
 	if displayName == ""{
@@ -69,7 +69,7 @@ func (m *Message) CheckDisplayname(val interface{}) error {
 	}
 
 	if err := m.DB.Get(&user, "SELECT * FROM users WHERE display_name=$1", displayName); err != nil {
-		return errors.New(fmt.Sprintf("Display name \"%s\" was not found.", displayName))
+		return fmt.Errorf("display name \"%s\" was not found", displayName)
 	}
 
 	return nil
@@ -80,7 +80,7 @@ func (m *Message) isValidImage(val interface{}) error {
 	url, success := val.(sql.NullString)
 
 	if !success {
-		return errors.New("Error parsing value, expected string.")
+		return errors.New("error parsing value, expected string")
 	}
 
 	if url.String == ""{
@@ -107,7 +107,7 @@ func (m *Message) isValidImage(val interface{}) error {
 		return nil
 	}
 
-	return fmt.Errorf("%s is not a valid image url.", url.String)
+	return fmt.Errorf("%s is not a valid image url", url.String)
 }
 
 func (m *Message) InitCreatedAt() {
