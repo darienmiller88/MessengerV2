@@ -1,49 +1,83 @@
 <script lang="ts">
     import { type Chat } from "../../types/type";
+    import { chatsApi } from "../../api/api";
     import { 
         chatPictureStore,
         chatPictureStoreKey,
         groupChatNameStore, 
         groupChatNameStoreKey, 
+        selectedChatStore,
+        selectedChatStoreKey,
         chatsStore, 
         persistStoreValue, 
         persistValue
 
     } from "../../stores"
+    import { onMount } from "svelte";
+    import { Moon } from "svelte-loading-spinners";
+
     
     export let onHide = () => {}
+    let chatInfo: Chat
+    let isLoading: boolean = false
 
-    const deleteChat = () => {
-        let groupChatName = window.localStorage.getItem(groupChatNameStoreKey)
-        
-        if (groupChatName) {
-            let parsedChatName = (JSON.parse(groupChatName) as string)
-            let chatIndex = 0
+    const deleteChat = async () => {  
+        try {
+            isLoading = true
+            const res = await chatsApi.delete(`/${chatInfo.id}`)
+
+            console.log("Res:", res.data);
             
-            //Assign to the chatsStore a filtered array that does not include to chat to be deleted.
-            $chatsStore = $chatsStore.filter((chat: Chat, i: number) => {
-                if(chat.chat_name == parsedChatName){
-                    chatIndex = i
-                }
-
-                return chat.chat_name != parsedChatName
-            })
-
-            $groupChatNameStore = (chatIndex == $chatsStore.length) ? $chatsStore[chatIndex - 1].chat_name : $chatsStore[chatIndex].chat_name
-            persistStoreValue(groupChatNameStore, $groupChatNameStore, groupChatNameStoreKey)
-
-            $chatPictureStore = (chatIndex == $chatsStore.length) ? $chatsStore[chatIndex - 1].picture_url : $chatsStore[chatIndex].picture_url
-            persistStoreValue(chatPictureStore, $chatPictureStore, chatPictureStoreKey)
+            let groupChatName = window.localStorage.getItem(groupChatNameStoreKey)
+    
+            if (groupChatName) {
+                let parsedChatName = (JSON.parse(groupChatName) as string)
+                let chatIndex = 0
+                
+                //Assign to the chatsStore a filtered array that does not include to chat to be deleted.
+                $chatsStore = $chatsStore.filter((chat: Chat, i: number) => {
+                    if(chat.chat_name == parsedChatName){
+                        chatIndex = i
+                    }
+    
+                    return chat.chat_name != parsedChatName
+                })
+    
+                $groupChatNameStore = (chatIndex == $chatsStore.length) ? $chatsStore[chatIndex - 1].chat_name : $chatsStore[chatIndex].chat_name
+                persistStoreValue(groupChatNameStore, $groupChatNameStore, groupChatNameStoreKey)
+    
+                $chatPictureStore = (chatIndex == $chatsStore.length) ? $chatsStore[chatIndex - 1].picture_url : $chatsStore[chatIndex].picture_url
+                persistStoreValue(chatPictureStore, $chatPictureStore, chatPictureStoreKey)
+            }
+            onHide()
+        } catch (error) {
+            console.log("err:", error);
         }
 
-        onHide()
+        isLoading = false
     }
+
+    onMount(() => {
+        let currentChat: string | null = window.localStorage.getItem(selectedChatStoreKey)
+
+        if (currentChat) {
+            chatInfo = (JSON.parse(currentChat) as Chat)
+
+            console.log("chat:", chatInfo)
+        }
+    })
 </script>
 
 <div class="wrapper">
     <div class="warning">Are you sure you want to delete "{$groupChatNameStore}"? This action cannot be undone!</div>
     <div class="button-wrapper">
-        <button on:click={deleteChat}>Delete Chat</button>
+        <button on:click={deleteChat} disabled={isLoading}>
+            {#if isLoading}
+                <Moon color="rgb(0, 0, 0)" size={30}/>
+            {:else}
+                Delete Chat
+            {/if}
+        </button>
     </div>
 </div>
 

@@ -5,7 +5,7 @@
     import Select from 'svelte-select';
     import defaultPic from "../../assets/default.png"
     import { chatsApi } from "../../api/api";
-    import LoadingWrapper from "../LoadingWrapper/LoadingWrapper.svelte"
+    import { Moon } from "svelte-loading-spinners";
 
     let groupChatName:       string
     let message:             string
@@ -115,7 +115,7 @@
             <div class="submit">
                 <button disabled={isLoading}>
                     {#if isLoading}
-                        <LoadingWrapper size={30}/>
+                        <Moon color="rgb(0, 0, 0)" size={30}/>
                     {:else}
                         Submit
                     {/if}
@@ -140,7 +140,7 @@
             <div class="submit">
                 <button disabled={isLoading}>
                     {#if isLoading}
-                        <LoadingWrapper size={30}/>
+                        <Moon size={30} color="rgb(0, 0, 0)"/>
                     {:else}
                         Submit
                     {/if}

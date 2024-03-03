@@ -46,13 +46,10 @@ func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
 	chat.PictureUrl = chatWithUsers.PictureUrl
 	chat, err    := database.CreateNewChat(chat)
 	
-	
 	if err != nil {
 		return fc.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
-	
-	fmt.Println("new chat:", chat)
-	
+		
 	userChat := models.UserChat{
 		ChatID: chat.ID,
 	}
@@ -67,5 +64,14 @@ func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
 }
 
 func (c *ChatController) DeleteChat(fc *fiber.Ctx) error{
-	return nil
+	id := fc.Params("id")
+
+	result, _       := c.db.Exec("DELETE FROM chats WHERE id=$1", id)
+	rowsAffected, _ := result.RowsAffected()
+
+	if rowsAffected == 0 {
+		return fc.Status(http.StatusInternalServerError).SendString(fmt.Sprintf("No chat with id %s found.", id))
+	}
+
+	return fc.Status(http.StatusOK).SendString("id: " + id)
 }

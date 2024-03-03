@@ -27,10 +27,10 @@
                     chat_name: chat.chat_name,
                     time: "N/A",
                     picture_url: defaultPic,
-                    currentMessage: "",
+                    currentMessage: "N/A",
                     isChatActive: false
                 }
-
+                
                 chats.push(newChat)
             })
           

@@ -17,6 +17,7 @@ export const messagesStore           = writable<Message[]>([])
 export const selectedChatStore       = writable<Chat>()
 export const displayNameStore        = writable<string>()
 export const chatsStore              = writable<Chat[]>([{
+    id: 0,
     chat_name: "Public",
     currentMessage: "N/A",
     time: "N/A",
