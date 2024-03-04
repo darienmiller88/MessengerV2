@@ -1,7 +1,16 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { type FilteredUser, type Chat, type User } from "../../types/type"
-    import { usersStoreKey, usersStore, usernameStore, usernameStoreKey, chatsStore, chatsStoreKey, persistStoreValue } from "../../stores"
+    import {
+        usersStoreKey, 
+        usersStore, 
+        usernameStore, 
+        chatsStore, 
+        chatsStoreKey, 
+        selectedChatStore,
+        selectedChatStoreKey,
+        persistStoreValue 
+    } from "../../stores"
     import Select from 'svelte-select';
     import defaultPic from "../../assets/default.png"
     import { chatsApi } from "../../api/api";
@@ -33,6 +42,7 @@
         newChat.currentMessage = "N/A"
         newChat.time = "N/A"
 
+        //Create object to send to server with all of the info needed to create a new chat.
         let chatInfo = {
             users, 
             chat_name: groupChatName,
@@ -42,10 +52,11 @@
         try {
             isLoading = true
             const res = await chatsApi.post("/", chatInfo)
+            newChat.id = (res.data as Chat).id
             
-            console.log("res:", res)
             $chatsStore = [...$chatsStore, newChat]
             persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
+            persistStoreValue(selectedChatStore, newChat, selectedChatStoreKey)
             
             onHide()
         } catch (error) {

@@ -72,7 +72,7 @@ func (c *ChatController) DeleteChat(fc *fiber.Ctx) error{
 	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 0 {
-		return fc.Status(http.StatusInternalServerError).SendString(fmt.Sprintf("No chat with id %s found.", id))
+		return fc.Status(http.StatusNotFound).SendString(fmt.Sprintf("No chat with id %s found.", id))
 	}
 
 	return fc.Status(http.StatusOK).SendString("id: " + id)
