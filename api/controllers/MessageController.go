@@ -141,7 +141,6 @@ func (m *MessageController) DeleteMessage(c *fiber.Ctx) error{
 		c.Status(http.StatusInternalServerError).JSON(err)
 	}
 
-	fmt.Println("id:", id)
 	if err := m.pusherClient.Trigger("public", "delete_public_message", message); err != nil{
 		fmt.Println("err broadcasting messages:", err)
 	}

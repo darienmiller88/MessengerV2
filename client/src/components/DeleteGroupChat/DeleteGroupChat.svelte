@@ -42,13 +42,18 @@
     
                     return chat.chat_name != parsedChatName
                 })
-    
-                $groupChatNameStore = (chatIndex == $chatsStore.length) ? $chatsStore[chatIndex - 1].chat_name : $chatsStore[chatIndex].chat_name
-                persistStoreValue(groupChatNameStore, $groupChatNameStore, groupChatNameStoreKey)
-    
-                $chatPictureStore = (chatIndex == $chatsStore.length) ? $chatsStore[chatIndex - 1].picture_url : $chatsStore[chatIndex].picture_url
-                persistStoreValue(chatPictureStore, $chatPictureStore, chatPictureStoreKey)
+                                
+                if (chatIndex == $chatsStore.length) {
+                    $chatsStore[chatIndex - 1].isChatActive = true
+                    $groupChatNameStore = $chatsStore[chatIndex - 1].chat_name
+                    $chatPictureStore = $chatsStore[chatIndex - 1].picture_url
+                } else {
+                    $chatsStore[chatIndex].isChatActive = true
+                    $groupChatNameStore = $chatsStore[chatIndex].chat_name
+                    $chatPictureStore = $chatsStore[chatIndex].picture_url
+                }
             }
+            
             onHide()
         } catch (error) {
             console.log("err:", error);
@@ -62,8 +67,6 @@
 
         if (currentChat) {
             chatInfo = (JSON.parse(currentChat) as Chat)
-
-            console.log("chat:", chatInfo)
         }
     })
 </script>

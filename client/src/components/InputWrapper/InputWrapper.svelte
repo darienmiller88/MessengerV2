@@ -15,6 +15,7 @@
      } from "../../stores";
     import pusher from "../../pusher/pusher";
     import LoadingWrapper from "../LoadingWrapper/LoadingWrapper.svelte";
+    import { Moon } from "svelte-loading-spinners";
     // import pic from "../../assets/profile.png"
 
     let messageText: string  = ""
@@ -228,7 +229,7 @@
         {#if showIcon }
             <div class="icon-wrapper" on:click={imageURL ? sendImage : sendMessage} on:keyup={null} tabindex="0" role="button">
                 {#if isLoading}
-                    <LoadingWrapper size={15}/>
+                    <Moon size={15} color="rgb(0, 0, 0)"/>
                 {:else if isThumbsUp && !imageURL}
                     <HandThumbsUpFill width={iconSize} height={iconSize} fill={$fillIconColorStore}/>
                 {:else}            

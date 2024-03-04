@@ -50,6 +50,8 @@ func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
 		return fc.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 		
+	//Since Users and Chats has a many to many relationship, inserting a new group is a two step process, by first
+	//retrieving the id of the newly created Chat, and creating new rows in the join table with the users.
 	userChat := models.UserChat{
 		ChatID: chat.ID,
 	}
