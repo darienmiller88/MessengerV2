@@ -63,9 +63,9 @@ func (u *UserController) ChangeUserProfilePicture(c *fiber.Ctx) error {
 			return err
 		}
 
-		u.db.MustExec("UPDATE users SET display_name=$1, profile_picture=$2 WHERE username=$3", displayName, res, username)
+		u.db.MustExec("UPDATE users SET display_name=$1, profile_picture=$2, updated_at=$3 WHERE username=$4", displayName, res, time.Now(), username)
 	}else{
-		u.db.MustExec("UPDATE users SET display_name=$1 WHERE username=$2", displayName, username)
+		u.db.MustExec("UPDATE users SET display_name=$1, updated_at=$2 WHERE username=$3", displayName, time.Now(), username)
 	}
 
 	return c.Status(http.StatusOK).SendString(res)

@@ -63,7 +63,11 @@ func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
 	userChat.InitCreatedAt()
 	for _, user := range chatWithUsers.Users {
 		userChat.Username = user
-		userChat, _ = database.CreateUserChat(userChat)
+		userChat, err = database.CreateUserChat(userChat)
+
+		if err != nil{
+			return fc.Status(http.StatusNotFound).SendString(err.Error())
+		}
 	}
 	
 	return fc.Status(http.StatusOK).JSON(chat)
