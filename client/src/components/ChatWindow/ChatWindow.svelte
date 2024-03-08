@@ -122,25 +122,31 @@
     }
 </script>
 
-<div class="window">
-    <div class="window-inner" bind:this={messagesRef}>
-        {#each $messagesStore as message}
-            <MessageComponent 
-                messageId={message.id}
-                messageContent={message.message_content} 
-                username={message.username} 
-                display_name={message.display_name}
-                time={message.message_date} 
-                isYourMessage={$usernameStore == message.username}
-                isImage={message.image_url.Valid}
-                imageURL={message.image_url.String}
-                openModal={() => showModal = true}
-                openPictureModal={() => showPictureModal = true}
-                storeImageURL={(url) => imageURL = url}
-            />
-        {/each}
+{#if $messagesStore.length}
+    <div class="window">
+        <div class="window-inner" bind:this={messagesRef}>
+            {#each $messagesStore as message}
+                <MessageComponent 
+                    messageId={message.id}
+                    messageContent={message.message_content} 
+                    username={message.username} 
+                    display_name={message.display_name}
+                    time={message.message_date} 
+                    isYourMessage={$usernameStore == message.username}
+                    isImage={message.image_url.Valid}
+                    imageURL={message.image_url.String}
+                    openModal={() => showModal = true}
+                    openPictureModal={() => showPictureModal = true}
+                    storeImageURL={(url) => imageURL = url}
+                />
+            {/each}
+        </div>
     </div>
-</div>
+{:else}
+    <h1>There's nothing here!</h1>
+{/if}
+
+
 <Modal 
     show={showModal}
     modalHeader={"Delete Message"}

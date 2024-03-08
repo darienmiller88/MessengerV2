@@ -40,18 +40,13 @@
 
     const loadChatMessages = async () => {        
         try {
-
             if (chatInfo.chat_name === PublicChat && $groupChatNameStore != PublicChat) {
                 const res = await messageApi.get("/")
                 $messagesStore = res.data
-                // console.log("messages:", res);
             } else if ($groupChatNameStore != chatInfo.chat_name) {
                 const res = await messageApi.get(`/chat-messages/${chatInfo.id}`)
                 $messagesStore = res.data
-                // console.log("messages:", res);
             }
-
-            
         } catch (error) {
             console.log("err:", error)
         }
