@@ -4,7 +4,7 @@
     import { ThreeDots, ArrowLeftCircle } from "svelte-bootstrap-icons";
     import Modal from "../Modal/Modal.svelte";
     import DeleteGroupChat from "../DeleteGroupChat/DeleteGroupChat.svelte";
-    import { type Chat } from "../../types/type";
+    import { PublicChat } from "../constants/constant";
     import { 
         chatPictureStore,
         chatPictureStoreKey,
@@ -13,14 +13,11 @@
         groupChatNameStoreKey, 
         isChatWindowActiveStore, 
         isChatWindowActiveStoreKey,
-        selectedChatStore,
         selectedChatStoreKey,
         isDarkModeStore,
         persistStoreValue
-
     } from "../../stores";
 
-    let groupChatName: string 
     let showModal: boolean = false
 
     const changeToUserChats = () => {
@@ -29,10 +26,9 @@
     }
 
     onMount(() => {
-        let selectedChat:       string | null = window.localStorage.getItem(selectedChatStoreKey)
+        let groupChatName:      string | null = window.localStorage.getItem(groupChatNameStoreKey)
+        let chatPictureURL:     string | null = window.localStorage.getItem(chatPictureStoreKey)
         let isChatWindowActive: string | null = window.localStorage.getItem(isChatWindowActiveStoreKey)
-        let groupChatName:  string | null = window.localStorage.getItem(groupChatNameStoreKey)
-        let chatPictureURL: string | null = window.localStorage.getItem(chatPictureStoreKey)
 
         //Extract the value of the indicator indicating whether or not the message window is active or not.
         if (isChatWindowActive) {
@@ -41,7 +37,7 @@
         
         //Extract the value of the selected chat name
         if (groupChatName) {
-            $groupChatNameStore = JSON.parse(groupChatName)
+            $groupChatNameStore = (JSON.parse(groupChatName) as string)            
         }
 
         //Extract the value of the picture url.
@@ -62,7 +58,7 @@
             <div class="online-status">Online</div>
         </div>
     </div>
-    {#if $groupChatNameStore != "Public"}
+    {#if $groupChatNameStore != PublicChat}
         <button class="icon-wrapper" on:click={() => showModal = true} >
             <ThreeDots width={24} height={24} fill={$fillIconColorStore}/>
         </button>

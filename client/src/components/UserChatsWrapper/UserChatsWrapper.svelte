@@ -1,6 +1,6 @@
 <script lang="ts">
     import UserChat from "../UserChat/UserChat.svelte";
-    import { chatsStore, chatsStoreKey, persistStoreValue } from "../../stores"
+    import { chatsStore, usernameStore, usernameStoreKey, chatsStoreKey, persistStoreValue } from "../../stores"
     import { onMount } from "svelte";
     import { chatsApi } from "../../api/api";
     import { type Chat } from "../../types/type";
@@ -17,32 +17,30 @@
     }
 
     onMount( async () => {
-        try {
-            const res = await chatsApi.get("/")
-            let chats: Chat[] = []
+        let username: string | null = window.localStorage.getItem(usernameStoreKey)
 
-            res.data.forEach((chat: Chat) => {
-                let newChat: Chat = {
-                    id: chat.id,
-                    chat_name: chat.chat_name,
-                    time: "N/A",
-                    picture_url: defaultPic,
-                    currentMessage: "N/A",
-                    isChatActive: false
-                }
-                
-                chats.push(newChat)
-            })
-          
-            $chatsStore = [...$chatsStore, ...chats]
-            console.log("chats:", $chatsStore);
-        } catch (error: any) {
-            console.log("err:", error);
-            
-            if (error.response.status === 401) {
-                navigate("/", {replace: true})
-            }
+        if (username) {
+            $usernameStore = JSON.parse(username)
         }
+        
+        const res = await chatsApi.get(`/private-chats/${$usernameStore}`)
+        let chats: Chat[] = []
+
+        res.data.forEach((chat: Chat) => {
+            let newChat: Chat = {
+                id: chat.id,
+                chat_name: chat.chat_name,
+                time: "N/A",
+                picture_url: defaultPic,
+                currentMessage: "N/A",
+                isChatActive: false
+            }
+            
+            chats.push(newChat)
+        })
+                
+        $chatsStore = [$chatsStore[0], ...chats]
+        // persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
     })
 
 </script>

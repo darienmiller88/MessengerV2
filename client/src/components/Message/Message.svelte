@@ -41,7 +41,6 @@
     }
 
     const enlargeImage = () => {
-        console.log("image clicked")
         openPictureModal()
         storeImageURL(imageURL)
     }

@@ -5,9 +5,10 @@
     import Register from "./pages/Register/Register.svelte";
     import People from "./pages/People/People.svelte";
     import MessageHistory from "./pages/MessageHistory/MessageHistory.svelte";
-    import { userApi } from "./api/api";
+    import { userApi, chatsApi } from "./api/api";
     import { type User, type Chat } from "./types/type"
     import publicChatPic from "./assets/plogo.png"
+    import defaultPic from "./assets/default.png"
 
     import { 
       usersStore, 
@@ -47,7 +48,8 @@
                 if (!user.is_anonymous && user.username !== $usernameStore) {
                     $usersStore = [...$usersStore, user.username]
                 }
-            });   
+            });               
+
             persistStoreValue(usersStore, $usersStore, usersStoreKey)      
         } catch (error: any) {
             console.log("err:", error);
@@ -59,6 +61,7 @@
 
         if (!selectedChat) {
             $selectedChatStore = {
+                id: 0,
                 chat_name: "Public",
                 currentMessage: "N/A",
                 time: "N/A",

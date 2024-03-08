@@ -8,28 +8,53 @@
         isChatWindowActiveStore, 
         isChatWindowActiveStoreKey, 
         persistStoreValue, 
-        persistValue,
-        currentChatName,
         chatPictureStore,
         chatPictureStoreKey,
+        messagesStore,
         isDarkModeStore
     } from "../../stores";
     import { onMount } from "svelte";
+    import { messageApi } from "../../api/api";
+    import { PublicChat } from "../constants/constant";
 
     export let chatInfo: Chat
     export let deselectChats = () => {}
+
     const changeToChatWindow = () => {
         deselectChats()
+        
+        //Load the messages for the chat when it is clicked.
+        loadChatMessages()
+
         chatInfo.isChatActive = true
 
         //When a user chat is clicked, persist the name of the group chat clicked, and the picture of the chat
+        persistStoreValue(chatPictureStore,   chatInfo.picture_url, chatPictureStoreKey)
         persistStoreValue(selectedChatStore,  chatInfo,             selectedChatStoreKey)
         persistStoreValue(groupChatNameStore, chatInfo.chat_name,   groupChatNameStoreKey)
-        persistStoreValue(chatPictureStore,   chatInfo.picture_url, chatPictureStoreKey)
 
         //Boolean indicator for mobile view to swap between message window to see messages, and user chats window to
         //see all of the current chats the user has.
         persistStoreValue(isChatWindowActiveStore, !$isChatWindowActiveStore, isChatWindowActiveStoreKey)
+    }
+
+    const loadChatMessages = async () => {        
+        try {
+
+            if (chatInfo.chat_name === PublicChat && $groupChatNameStore != PublicChat) {
+                const res = await messageApi.get("/")
+                $messagesStore = res.data
+                // console.log("messages:", res);
+            } else if ($groupChatNameStore != chatInfo.chat_name) {
+                const res = await messageApi.get(`/chat-messages/${chatInfo.id}`)
+                $messagesStore = res.data
+                // console.log("messages:", res);
+            }
+
+            
+        } catch (error) {
+            console.log("err:", error)
+        }
     }
 
     // When the UserChat component is mounted, highlight the user that was clicked.
@@ -39,10 +64,9 @@
         if (chatName && JSON.parse(chatName) == chatInfo.chat_name) {
             deselectChats()
             chatInfo.isChatActive = true
+            $groupChatNameStore = JSON.parse(chatName)
         }
     })
-
-    
 </script>
 
 <div class={chatInfo.isChatActive ? "user-chat selected" : "user-chat" } on:click={changeToChatWindow} on:keyup={null} tabindex="0" role="button" >

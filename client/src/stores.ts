@@ -1,5 +1,6 @@
 import { writable, type Writable } from "svelte/store";
 import { type Chat, type Message } from "./types/type"
+import { PublicChat } from "./components/constants/constant";
 import publicpic from "./assets/plogo.png"
 
 export const usernameStore           = writable("");
@@ -18,7 +19,7 @@ export const selectedChatStore       = writable<Chat>()
 export const displayNameStore        = writable<string>()
 export const chatsStore              = writable<Chat[]>([{
     id: 0,
-    chat_name: "Public",
+    chat_name: PublicChat,
     currentMessage: "N/A",
     time: "N/A",
     picture_url: publicpic,

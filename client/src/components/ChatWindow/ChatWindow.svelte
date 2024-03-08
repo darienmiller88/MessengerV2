@@ -1,8 +1,11 @@
 <script lang="ts">
-    import Message from "../Message/Message.svelte";
+    import MessageComponent from "../Message/Message.svelte";
     import { 
         messagesStore, 
+        selectedChatStore,
+        selectedChatStoreKey,
         chatsStore,
+        chatsStoreKey,
         persistStoreValue, 
         usernameStore, 
         usernameStoreKey, 
@@ -13,13 +16,16 @@
     import { afterUpdate, onMount } from 'svelte';
     import { navigate } from "svelte-routing";
     import pusher from "../../pusher/pusher";
-    import { messageApi, userApi } from "../../api/api";
+    import { messageApi, userApi, chatsApi } from "../../api/api";
     import PictureModal from "../PictureModal/PictureModal.svelte";
     import Modal from "../Modal/Modal.svelte";
     import DeleteMessageForm from "../DeleteMessageForm/DeleteMessageForm.svelte";
+    import { type Chat, type Message } from "../../types/type";
+    import { PublicChat } from "../constants/constant"
 
     let imageURL:          string
     let showModal:         boolean = false
+    let canScroll:         boolean = false
     let messagesRef:       HTMLElement
     let userTypingText:    string = ""
     let showPictureModal:  boolean = false
@@ -30,24 +36,60 @@
 
     afterUpdate(() => {  
         // imageURL = ""  
-        // messagesRef.scrollTop = messagesRef.scrollHeight  
+        // console.log("scroll top:", messagesRef.scrollTop);
+        if (canScroll) {
+            messagesRef.scrollTop = messagesRef.scrollHeight  
+        }
     
 		// if($messagesStore.length && imageURL) {
         //     scrollTo(messagesRef);
         // }
     });
 
-    onMount(async () => {
-        try {
-            const messagesRes = await messageApi.get("/")
-            $messagesStore = messagesRes.data 
+    const loadMessages = (chatName: string, messages: Message[]) => {
+        if (chatName == $selectedChatStore.chat_name) {
+            $messagesStore = messages
+        }
+    }
 
-            $chatsStore[0].currentMessage = $messagesStore[$messagesStore.length - 1].message_content 
-            $chatsStore[0].time = new Date($messagesStore[$messagesStore.length - 1].message_date).toLocaleTimeString()
-            
+    onMount(async () => {
+        let currentChat: string | null = window.localStorage.getItem(selectedChatStoreKey)
+        
+        if (currentChat) {
+            $selectedChatStore = (JSON.parse(currentChat) as Chat)
+        }
+
+        try {
             const usernameRes = await userApi.get("/username")
             $usernameStore = (usernameRes.data as string)
+
+            //Call the server to get the public chat messages.
+            const publicMessagesRes = await messageApi.get("/")
+            const messages = (publicMessagesRes.data as Message[])
+            
+            //Load the last message from the public chat messages into the Public chat component
+            $chatsStore[0].currentMessage = messages[messages.length - 1].message_content
+            $chatsStore[0].time = new Date(messages[messages.length - 1].message_date).toLocaleTimeString()
+
+            //Load the public messages into the chat window if the public chat is chosen.
+            loadMessages($chatsStore[0].chat_name, messages)
+            
+            //Afterwards, fill the users Private chats with the messages from those chats.
+            for (let i = 1; i < $chatsStore.length; i++) {
+                const privateChatMessagesRes = await messageApi(`/chat-messages/${$chatsStore[i].id}`)
+                const messages = (privateChatMessagesRes.data as Message[])
+                
+                if (messages.length) {
+                    $chatsStore[i].currentMessage = messages[messages.length - 1].message_content
+                    $chatsStore[i].time = new Date(messages[messages.length - 1].message_date).toLocaleTimeString()
+
+                    //Load the specific private chat messages into the chat window that match the chat that is selected.
+                    loadMessages($chatsStore[i].chat_name, messages)
+                }
+            }    
         } catch (error: any) {
+            console.log("err:", error);
+            
             if (error.response.status == 401) {
                 navigate("/", {replace: true})
             }
@@ -73,10 +115,9 @@
     //Reactive statement to scroll to the bottom after the user enters a new message.
     $: {
         if ($messagesStore.length && messagesRef) { 
-            // console.log("new message:", $messagesStore[$messagesStore.length - 1]);
-            
-            // messagesRef.scrollTo({ top: messagesRef.scrollHeight,  behavior: "instant" });
-            messagesRef.scrollTop = messagesRef.scrollHeight  
+            // console.log("new message:", $messagesStore[$messagesStore.length - 1]);            
+            messagesRef.scrollTo({ top: messagesRef.scrollHeight,  behavior: "instant" });            
+            // messagesRef.scrollTop = messagesRef.scrollHeight  
         }
     }
 </script>
@@ -84,7 +125,7 @@
 <div class="window">
     <div class="window-inner" bind:this={messagesRef}>
         {#each $messagesStore as message}
-            <Message 
+            <MessageComponent 
                 messageId={message.id}
                 messageContent={message.message_content} 
                 username={message.username} 
@@ -99,18 +140,18 @@
             />
         {/each}
     </div>
-    <Modal 
-        show={showModal}
-        modalHeader={"Delete Message"}
-        modalContent={DeleteMessageForm}
-        onHide={() => showModal = false}
-    />
-    <PictureModal 
-        show={showPictureModal}
-        onHide={() => showPictureModal = false}
-        imageURL={imageURL}
-    />
 </div>
+<Modal 
+    show={showModal}
+    modalHeader={"Delete Message"}
+    modalContent={DeleteMessageForm}
+    onHide={() => showModal = false}
+/>
+<PictureModal 
+    show={showPictureModal}
+    onHide={() => showPictureModal = false}
+    imageURL={imageURL}
+/>
 <div class={$isDarkModeStore ? "is-typing is-typing-dark-mode": "is-typing"}>
     {userTypingText}
 </div>

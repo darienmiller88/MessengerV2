@@ -18,10 +18,14 @@ func (c *ChatController) Init(){
 	c.db = database.GetDB()
 }
 
-func (c *ChatController) GetChats(fc *fiber.Ctx) error{
-	chats := []models.Chat{}
+func (c *ChatController) GetPrivateChats(fc *fiber.Ctx) error{
+	chats    := []models.Chat{}
+	username := fc.Params("username")
 
-	if err := c.db.Select(&chats, "SELECT * FROM chats"); err != nil{
+	if err := c.db.Select(&chats, "SELECT chats.* FROM chats " +
+								    "JOIN user_chats ON chats.id = user_chats.chat_id " +
+									"JOIN users ON users.username = user_chats.username " +
+									"WHERE users.username=$1", username); err != nil{
 		return fc.Status(http.StatusInternalServerError).JSON(fiber.Map{"err": err.Error()})
 	}
 
@@ -42,9 +46,9 @@ func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
 	
 	//Add the necessary data to the new chat the user will create.
 	chat.InitCreatedAt()
-	chat.ChatName = chatWithUsers.ChatName
+	chat.ChatName   = chatWithUsers.ChatName
 	chat.PictureUrl = chatWithUsers.PictureUrl
-	chat, err    := database.CreateNewChat(chat)
+	chat, err      := database.CreateNewChat(chat)
 	
 	if err != nil {
 		return fc.Status(http.StatusInternalServerError).SendString(err.Error())
@@ -72,7 +76,7 @@ func (c *ChatController) DeleteChat(fc *fiber.Ctx) error{
 	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 0 {
-		return fc.Status(http.StatusNotFound).SendString(fmt.Sprintf("No chat with id %s found.", id))
+		return fc.Status(http.StatusNotFound).SendString(fmt.Errorf("no chat with id %s found", id).Error())
 	}
 
 	return fc.Status(http.StatusOK).SendString("id: " + id)

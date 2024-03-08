@@ -122,6 +122,17 @@ func (m *MessageController) GetMessageHistory(c *fiber.Ctx) error{
 	return c.Status(http.StatusOK).JSON(messages)
 }
 
+func (m *MessageController) GetGroupChatMessages(c *fiber.Ctx) error{
+	id       := c.Params("id")
+	messages := []models.Message{}
+
+	if err := m.db.Select(&messages, "SELECT * FROM messages WHERE chat_id=$1 ORDER BY id ASC", id); err != nil{
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
+	}
+
+	return c.Status(http.StatusOK).JSON(messages)
+}
+
 func (m *MessageController) GetPublicMessages(c *fiber.Ctx) error{
 	messages := []models.Message{}
 
