@@ -44,9 +44,7 @@
         // }
     });
 
-    const loadMessages = (chatName: string, messages: Message[]) => {
-        // console.log("chatname:", chatName, "and selected name:", $selectedChatStore.chat_name);
-        
+    const loadMessages = (chatName: string, messages: Message[]) => {        
         if (chatName == $selectedChatStore.chat_name) {
             $messagesStore = messages
         }
@@ -177,7 +175,7 @@
 
 
 <style lang="scss">
-    .loading-wrapper{
+    .loading-wrapper, h1{
         display: grid;
         margin: auto;
     }

@@ -15,9 +15,16 @@ export const chosenMessageStore      = writable<Message>()
 export const usersStore              = writable<string[]>([])
 export const isDarkModeStore         = writable(false)
 export const messagesStore           = writable<Message[]>([])
-export const selectedChatStore       = writable<Chat>()
 export const displayNameStore        = writable<string>()
 export const subcribeNameStore       = writable<string>(PublicChat)
+export const selectedChatStore       = writable<Chat>({
+    id: 0,
+    chat_name: PublicChat,
+    currentMessage: "N/A",
+    time: "N/A",
+    picture_url: publicpic,
+    isChatActive: true
+})
 export const chatsStore              = writable<Chat[]>([{
     id: 0,
     chat_name: PublicChat,

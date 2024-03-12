@@ -18,6 +18,7 @@
     import { onMount } from "svelte";
     import { messageApi } from "../../api/api";
     import { PublicChat } from "../constants/constant";
+    import pusher from "../../pusher/pusher";
 
     export let chatInfo: Chat
     export let deselectChats = () => {}
@@ -28,13 +29,16 @@
         //Load the messages for the chat when it is clicked.
         loadChatMessages()
 
+        const subcribeName: string = chatInfo.chat_name == PublicChat ? PublicChat : chatInfo.id.toString() 
+        pusher.subscribe(subcribeName)
+
         chatInfo.isChatActive = true
 
         //When a user chat is clicked, persist the name of the group chat clicked, and the picture of the chat
         persistStoreValue(chatPictureStore,   chatInfo.picture_url,   chatPictureStoreKey)
         persistStoreValue(selectedChatStore,  chatInfo,               selectedChatStoreKey)
         persistStoreValue(groupChatNameStore, chatInfo.chat_name,     groupChatNameStoreKey)
-        persistStoreValue(subcribeNameStore,  chatInfo.chat_name == PublicChat ? PublicChat : chatInfo.id.toString(), subcribeNameStoreKey)
+        persistStoreValue(subcribeNameStore,  subcribeName,           subcribeNameStoreKey)
         
         //Boolean indicator for mobile view to swap between message window to see messages, and user chats window to
         //see all of the current chats the user has.
