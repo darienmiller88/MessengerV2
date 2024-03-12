@@ -17,8 +17,7 @@ func (c *ChatsRoutes) Init(){
 
 	c.Router.Use(middlewares.Auth).Route("/", func(router fiber.Router) {
 		router.Get("/private-chats/:username", c.chatsController.GetPrivateChats)
-		// router.Get("/",                        c.chatsController.GetChats)
 		router.Post("/",                       c.chatsController.AddNewChat)
-		router.Delete("/:id",                  c.chatsController.DeleteChat)
+		router.Delete("/:id",                  middlewares.AuthCheckUser, c.chatsController.DeleteChat)
 	})
 }

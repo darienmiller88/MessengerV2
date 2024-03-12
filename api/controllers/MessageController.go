@@ -17,6 +17,7 @@ import (
 )
 
 const MAX_SIZE int64 = 5 * 1024 * 1024 //Max number of bytes, which is 5mb or 5,248,000 bytes
+const public string = "Public"
 
 type MessageController struct{
 	pusherClient pusher.Client
@@ -29,6 +30,7 @@ func (m *MessageController) Init(){
 }
 
 func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error{
+	chatId    := c.Params("chat-id", public)
 	file, err := c.FormFile("file")
 
 	if err != nil{
@@ -59,7 +61,7 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error{
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
-	m.pusherClient.Trigger("public", "public_message", message)
+	m.pusherClient.Trigger(chatId, "message", message)
 	
 	message, _ = database.InsertMessage(message)
 
@@ -68,6 +70,7 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error{
 
 func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 	message := models.Message{DB: m.db}
+	chatId  := c.Params("chat-id", public)
 
 	if err := c.BodyParser(&message); err != nil{
 		fmt.Println("err parsing message:", err)
@@ -82,7 +85,7 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 	message.InitCreatedAt()
 	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
 	
-	if err := m.pusherClient.Trigger("public", "public_message", message); err != nil{
+	if err := m.pusherClient.Trigger(chatId, "message", message); err != nil{
 		fmt.Println("err broadcasting messages:", err)
 	}
 
@@ -90,9 +93,9 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 
 	if err != nil{
 		fmt.Println("err inserting message:", err)
-		return c.SendString(err.Error())
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
-	
+
 	return c.Status(http.StatusOK).JSON(message)
 }
 
@@ -145,22 +148,22 @@ func (m *MessageController) GetPublicMessages(c *fiber.Ctx) error{
 }
 
 func (m *MessageController) DeleteMessage(c *fiber.Ctx) error{
-	id      := c.Params("id")
+	id      := c.Params("id", public)
 	message := models.Message{}
 
 	if err := c.BodyParser(&message); err != nil{
 		c.Status(http.StatusInternalServerError).JSON(err)
 	}
 
-	if err := m.pusherClient.Trigger("public", "delete_public_message", message); err != nil{
+	if err := m.pusherClient.Trigger("public", "delete_message", message); err != nil{
 		fmt.Println("err broadcasting messages:", err)
 	}
 
-	result, _       := m.db.Exec("DELETE FROM messages WHERE id=$1", id)
+	result, err     := m.db.Exec("DELETE FROM messages WHERE id=$1 and username=$2", id, message.Username)
 	rowsAffected, _ := result.RowsAffected()
 
-	if rowsAffected == 0 {
-		return c.Status(http.StatusInternalServerError).SendString(fmt.Sprintf("No user with id %s found.", id))
+	if rowsAffected == 0 || err != nil{
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 
 	return c.Status(http.StatusOK).JSON(message)
@@ -168,7 +171,8 @@ func (m *MessageController) DeleteMessage(c *fiber.Ctx) error{
 
 //Function to allow clients on the front end to know when someone is typing.
 func (m *MessageController) UserTyping(c *fiber.Ctx) error{
-	data := struct{
+	chatId := c.Params("chat-id", public)
+	data   := struct{
 		Username string `json:"username"`
 	}{}
 
@@ -176,7 +180,7 @@ func (m *MessageController) UserTyping(c *fiber.Ctx) error{
 		return c.Status(http.StatusBadRequest).JSON(err)
 	}
 
-	if err := m.pusherClient.Trigger("public", "user_typing", data.Username); err != nil{
+	if err := m.pusherClient.Trigger(chatId, "user_typing", data.Username); err != nil{
 		fmt.Println("err broadcasting messages:", err)
 	}
 

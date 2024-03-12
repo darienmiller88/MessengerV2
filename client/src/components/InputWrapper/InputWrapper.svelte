@@ -2,12 +2,16 @@
     import { Image, SendFill, HandThumbsUpFill } from "svelte-bootstrap-icons";
     import { fillIconColorStore } from "../../stores";
     import { messagesStore } from "../../stores"
-    import { type Message } from "../../types/type"
+    import { type Message, type Chat } from "../../types/type"
     import { onMount } from "svelte";
     import { messageApi } from "../../api/api";
     import { 
         usernameStore, 
         usernameStoreKey, 
+        selectedChatStore,
+        selectedChatStoreKey,
+        subcribeNameStore,
+        subcribeNameStoreKey,
         displayNameStore, 
         displayNameStoreKey,
         chatsStore,
@@ -41,7 +45,7 @@
             isThumbsUp = true
 
             //Set canType to its inverse (true in this case) to prevent the user from typing another message
-            //While prpccessing the one they just sent.
+            //While proccessing the one they just sent.
             canType = true
 
             //Set is loading to true since uploading images take a while to process completely.
@@ -109,8 +113,12 @@
     }
 
     const updateChat = (message: Message) => {
-        $chatsStore[0].currentMessage = message.message_content
-        $chatsStore[0].time = new Date(message.message_date).toLocaleTimeString()
+        let index: number = $chatsStore.findIndex((chat: Chat) => {
+            return chat.chat_name == $selectedChatStore.chat_name
+        })
+
+        $chatsStore[index].currentMessage = message.message_content
+        $chatsStore[index].time = new Date(message.message_date).toLocaleTimeString()
     }
 
     const handleKeyInput = async (e: any) => {        
@@ -161,6 +169,16 @@
     onMount(() => {
         let username:     string | null = window.localStorage.getItem(usernameStoreKey)
         let display_name: string | null = window.localStorage.getItem(displayNameStoreKey)
+        let currentChat: string | null = window.localStorage.getItem(selectedChatStoreKey)
+        let subcribeName: string | null = window.localStorage.getItem(subcribeNameStoreKey)
+
+        if (subcribeName) {
+            $subcribeNameStore = JSON.parse(subcribeName)
+        }
+        
+        if (currentChat) {
+            $selectedChatStore = (JSON.parse(currentChat) as Chat)
+        }
 
         if (username) {
             $usernameStore = JSON.parse(username)
@@ -171,9 +189,9 @@
         }
 
         imageURL = null
-        const channel = pusher.subscribe('public');
+        const channel = pusher.subscribe($subcribeNameStore);
         
-        channel.bind('public_message', (message: Message) => {   
+        channel.bind('message', (message: Message) => {   
             if ($usernameStore != message.username) {
                 $messagesStore = [...$messagesStore, {
                     username: message.username,
@@ -188,7 +206,7 @@
             }
         });
 
-       channel.bind("delete_public_message", (messageToDelete: Message) => {
+       channel.bind("delete_message", (messageToDelete: Message) => {
             $messagesStore = $messagesStore.filter((message: Message) => {
                 return !(message.username == messageToDelete.username 
                     && message.message_content == messageToDelete.message_content

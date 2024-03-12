@@ -83,8 +83,21 @@ func CreateUser(user models.User) (models.User, error){
 }
 
 func InsertMessage(message models.Message) (models.Message, error){
-	result, err := db.PrepareNamed("INSERT INTO messages (message_content, message_date, created_at, updated_at, username, image_url, display_name) " +
-	"VALUES(:message_content, :message_date, :created_at, :updated_at, :username, :image_url, :display_name) RETURNING id")
+	var result *sqlx.NamedStmt
+	var err error
+
+	// If the message was sent to a particular chat, insert the message with that chat id.
+	if message.ChatID.Valid {
+		result, err = db.PrepareNamed("INSERT INTO messages " +
+		"(message_content, message_date, created_at, updated_at, username, image_url, display_name, chat_id) " +
+		"VALUES(:message_content, :message_date, :created_at, :updated_at, :username, :image_url, :display_name, :chat_id) " +
+		"RETURNING id")
+	}else{
+		result, err = db.PrepareNamed("INSERT INTO messages " +
+		"(message_content, message_date, created_at, updated_at, username, image_url, display_name) " +
+		"VALUES(:message_content, :message_date, :created_at, :updated_at, :username, :image_url, :display_name) " +
+		"RETURNING id")
+	}
 
 	if err != nil{
 		return models.Message{}, err

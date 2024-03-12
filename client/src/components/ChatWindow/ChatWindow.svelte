@@ -4,6 +4,8 @@
         messagesStore, 
         selectedChatStore,
         selectedChatStoreKey,
+        subcribeNameStore,
+        subcribeNameStoreKey,
         chatsStore,
         chatsStoreKey,
         persistStoreValue, 
@@ -54,6 +56,11 @@
 
     onMount(async () => {
         let currentChat: string | null = window.localStorage.getItem(selectedChatStoreKey)
+        let subcribeName: string | null = window.localStorage.getItem(subcribeNameStoreKey)
+
+        if (subcribeName) {
+            $subcribeNameStore = JSON.parse(subcribeName)
+        }
         
         if (currentChat) {
             $selectedChatStore = (JSON.parse(currentChat) as Chat)
@@ -95,7 +102,7 @@
             }
         }
 
-        const channel = pusher.subscribe("public")
+        const channel = pusher.subscribe($subcribeNameStore)
 
         channel.bind("user_typing", (username: string) => {
             if ($usernameStore != username) {

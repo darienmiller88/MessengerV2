@@ -17,6 +17,7 @@ export const isDarkModeStore         = writable(false)
 export const messagesStore           = writable<Message[]>([])
 export const selectedChatStore       = writable<Chat>()
 export const displayNameStore        = writable<string>()
+export const subcribeNameStore       = writable<string>(PublicChat)
 export const chatsStore              = writable<Chat[]>([{
     id: 0,
     chat_name: PublicChat,
@@ -38,6 +39,7 @@ export const isUserChatActiveStoreKey   = "isUserChatActiveKey"
 export const currentChatName            = "currentChatName"
 export const usersStoreKey              = "usersStoreKey"
 export const chatsStoreKey              = "chatsStoreKey"
+export const subcribeNameStoreKey       = "subcribeNameStoreKey"
 export const isDarkModeStoreKey         = "isDarkModeStoreKey"
 
 
