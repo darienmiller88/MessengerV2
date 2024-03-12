@@ -7,13 +7,8 @@
         subcribeNameStore,
         subcribeNameStoreKey,
         chatsStore,
-        chatsStoreKey,
-        persistStoreValue, 
         usernameStore, 
-        usernameStoreKey, 
         isDarkModeStore, 
-        chatPictureStore
-
     } from "../../stores";
     import { afterUpdate, onMount } from 'svelte';
     import { navigate } from "svelte-routing";
@@ -23,10 +18,11 @@
     import Modal from "../Modal/Modal.svelte";
     import DeleteMessageForm from "../DeleteMessageForm/DeleteMessageForm.svelte";
     import { type Chat, type Message } from "../../types/type";
-    import { PublicChat } from "../constants/constant"
+    import { Moon } from "svelte-loading-spinners";
 
     let imageURL:          string
     let showModal:         boolean = false
+    let isLoading:         boolean = false
     let canScroll:         boolean = false
     let messagesRef:       HTMLElement
     let userTypingText:    string = ""
@@ -49,6 +45,8 @@
     });
 
     const loadMessages = (chatName: string, messages: Message[]) => {
+        // console.log("chatname:", chatName, "and selected name:", $selectedChatStore.chat_name);
+        
         if (chatName == $selectedChatStore.chat_name) {
             $messagesStore = messages
         }
@@ -65,7 +63,8 @@
         if (currentChat) {
             $selectedChatStore = (JSON.parse(currentChat) as Chat)
         }
-
+        
+        isLoading = true
         try {
             const usernameRes = await userApi.get("/username")
             $usernameStore = (usernameRes.data as string)
@@ -102,9 +101,10 @@
             }
         }
 
+        isLoading = false
+
         const channel = pusher.subscribe($subcribeNameStore)
 
-        console.log("channel name on load:", channel.name);
         channel.bind("user_typing", (username: string) => {
             if ($usernameStore != username) {
                 userTypingText = username + " is typing...";
@@ -130,7 +130,11 @@
     }
 </script>
 
-{#if $messagesStore.length}
+{#if isLoading}
+    <div class="loading-wrapper">
+        <Moon size="120" color="#1DA1F2" unit="px" duration="1s"/>
+    </div>
+{:else if $messagesStore.length}
     <div class="window">
         <div class="window-inner" bind:this={messagesRef}>
             {#each $messagesStore as message}
@@ -173,6 +177,11 @@
 
 
 <style lang="scss">
+    .loading-wrapper{
+        display: grid;
+        margin: auto;
+    }
+
     .window{
         display: flex;
         overflow-y: scroll;

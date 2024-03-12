@@ -135,7 +135,8 @@
 
         if (canPublish) {
             try {
-                await messageApi.post("/userTyping", { username: $usernameStore})
+                const param: string = $selectedChatStore.chat_name == PublicChat ? "public" : $selectedChatStore.id.toString()
+                await messageApi.post(`/userTyping/${param}`, { username: $usernameStore})
                 
                 canPublish = false
                 setTimeout(() => {

@@ -35,8 +35,6 @@
         persistStoreValue(selectedChatStore,  chatInfo,               selectedChatStoreKey)
         persistStoreValue(groupChatNameStore, chatInfo.chat_name,     groupChatNameStoreKey)
         persistStoreValue(subcribeNameStore,  chatInfo.chat_name == PublicChat ? PublicChat : chatInfo.id.toString(), subcribeNameStoreKey)
-
-        console.log("channel name on chat click:", $subcribeNameStore);
         
         //Boolean indicator for mobile view to swap between message window to see messages, and user chats window to
         //see all of the current chats the user has.

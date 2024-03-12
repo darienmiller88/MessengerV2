@@ -71,19 +71,6 @@
 
             persistStoreValue(selectedChatStore, $selectedChatStore, selectedChatStoreKey)
         }
-
-        // Default chat name to "public"
-        // if (!groupChatName) {
-        //     $groupChatNameStore = "Public"
-        // }
-      
-        // if (!chats) {
-        //     persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
-        // }
-        
-        // if (!chatName) {
-        //     persistValue("Public", currentChatName)
-        // }
         
         //Retrieve the value of the dark mode boolean indicator, and change the mode to dark if it's true.
         if (isDarkModeValue && (JSON.parse(isDarkModeValue) as boolean)) {
