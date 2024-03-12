@@ -1,2 +1,0 @@
-# MessengerV2/api/controllers
-api\controllers\MessageController.go:69:42: c.Status(http.StatusBadRequest).Sends undefined (type *fiber.Ctx has no field or method Sends)

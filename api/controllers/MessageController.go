@@ -62,7 +62,6 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error{
 	}
 
 	m.pusherClient.Trigger(chatId, "message", message)
-	
 	message, err = database.InsertMessage(message)
 
 	if err != nil {

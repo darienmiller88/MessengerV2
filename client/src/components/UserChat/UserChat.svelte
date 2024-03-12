@@ -1,8 +1,10 @@
 <script lang="ts">
-    import { type Chat } from "../../types/type";
+    import { type Chat, type Message} from "../../types/type";
     import { 
         selectedChatStore,
         selectedChatStoreKey,
+        subcribeNameStore,
+        subcribeNameStoreKey,
         groupChatNameStore, 
         groupChatNameStoreKey, 
         isChatWindowActiveStore, 
@@ -29,10 +31,13 @@
         chatInfo.isChatActive = true
 
         //When a user chat is clicked, persist the name of the group chat clicked, and the picture of the chat
-        persistStoreValue(chatPictureStore,   chatInfo.picture_url, chatPictureStoreKey)
-        persistStoreValue(selectedChatStore,  chatInfo,             selectedChatStoreKey)
-        persistStoreValue(groupChatNameStore, chatInfo.chat_name,   groupChatNameStoreKey)
+        persistStoreValue(chatPictureStore,   chatInfo.picture_url,   chatPictureStoreKey)
+        persistStoreValue(selectedChatStore,  chatInfo,               selectedChatStoreKey)
+        persistStoreValue(groupChatNameStore, chatInfo.chat_name,     groupChatNameStoreKey)
+        persistStoreValue(subcribeNameStore,  chatInfo.chat_name == PublicChat ? PublicChat : chatInfo.id.toString(), subcribeNameStoreKey)
 
+        console.log("channel name on chat click:", $subcribeNameStore);
+        
         //Boolean indicator for mobile view to swap between message window to see messages, and user chats window to
         //see all of the current chats the user has.
         persistStoreValue(isChatWindowActiveStore, !$isChatWindowActiveStore, isChatWindowActiveStoreKey)
@@ -42,10 +47,10 @@
         try {
             if (chatInfo.chat_name === PublicChat && $groupChatNameStore != PublicChat) {
                 const res = await messageApi.get("/")
-                $messagesStore = res.data
+                $messagesStore = (res.data as Message[])
             } else if ($groupChatNameStore != chatInfo.chat_name) {
                 const res = await messageApi.get(`/chat-messages/${chatInfo.id}`)
-                $messagesStore = res.data
+                $messagesStore = (res.data as Message[])
             }
         } catch (error) {
             console.log("err:", error)

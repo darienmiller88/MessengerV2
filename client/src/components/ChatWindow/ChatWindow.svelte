@@ -39,9 +39,9 @@
     afterUpdate(() => {  
         // imageURL = ""  
         // console.log("scroll top:", messagesRef.scrollTop);
-        if (canScroll) {
-            messagesRef.scrollTop = messagesRef.scrollHeight  
-        }
+        // if (canScroll) {
+        //     messagesRef.scrollTop = messagesRef.scrollHeight  
+        // }
     
 		// if($messagesStore.length && imageURL) {
         //     scrollTo(messagesRef);
@@ -104,6 +104,7 @@
 
         const channel = pusher.subscribe($subcribeNameStore)
 
+        console.log("channel name on load:", channel.name);
         channel.bind("user_typing", (username: string) => {
             if ($usernameStore != username) {
                 userTypingText = username + " is typing...";

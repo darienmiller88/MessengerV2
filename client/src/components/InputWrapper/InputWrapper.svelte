@@ -5,6 +5,7 @@
     import { type Message, type Chat } from "../../types/type"
     import { onMount } from "svelte";
     import { messageApi } from "../../api/api";
+    import { PublicChat } from "../constants/constant";
     import { 
         usernameStore, 
         usernameStoreKey, 
@@ -18,7 +19,6 @@
         chatsStoreKey
      } from "../../stores";
     import pusher from "../../pusher/pusher";
-    import LoadingWrapper from "../LoadingWrapper/LoadingWrapper.svelte";
     import { Moon } from "svelte-loading-spinners";
     // import pic from "../../assets/profile.png"
 
@@ -51,7 +51,9 @@
             //Set is loading to true since uploading images take a while to process completely.
             isLoading = true
 
-            const res = await messageApi.post("/upload-image", formData, {
+            const res = await messageApi.post(`/upload-image/${
+                    $selectedChatStore.chat_name == PublicChat ? "public" : $selectedChatStore.id
+                }`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
@@ -101,7 +103,7 @@
         showIcon = false
 
         try {
-            await messageApi.post("/", message)
+            await messageApi.post(`/${$selectedChatStore.chat_name == PublicChat ? "public" : $selectedChatStore.id}`, message)
             
             setTimeout(() => {
                 showIcon = true
@@ -168,8 +170,8 @@
 
     onMount(() => {
         let username:     string | null = window.localStorage.getItem(usernameStoreKey)
+        let currentChat:  string | null = window.localStorage.getItem(selectedChatStoreKey)
         let display_name: string | null = window.localStorage.getItem(displayNameStoreKey)
-        let currentChat: string | null = window.localStorage.getItem(selectedChatStoreKey)
         let subcribeName: string | null = window.localStorage.getItem(subcribeNameStoreKey)
 
         if (subcribeName) {
