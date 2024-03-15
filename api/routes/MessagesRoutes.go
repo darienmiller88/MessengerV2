@@ -27,7 +27,7 @@ func (m *MessagesRoutes) Init(){
 		router.Get("/chat-messages/:id",       m.messageController.GetGroupChatMessages)
 		router.Get("/:id",                     m.messageController.GetMessageByID)
 		router.Get("/",                        m.messageController.GetPublicMessages)
-		router.Delete("/public/:messageid",   m.messageController.DeleteMessage)
-		router.Delete("/:chatid/:messageid", m.messageController.DeleteMessage)
+		router.Delete("/public/:messageid",    m.messageController.DeleteMessage)
+		router.Delete("/:chatid/:messageid",   m.messageController.DeleteMessage)
 	})
 }

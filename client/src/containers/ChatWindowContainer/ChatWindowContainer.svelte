@@ -20,11 +20,11 @@
 <style lang="scss">
     .chatwindow-container{
         display: grid;
-        grid-template-rows: 10% minmax(25vh, 80vh) auto;
+        grid-template-rows: 10% minmax(15vh, 80vh) auto;
         height: 100vh;
 
         @media only screen and (min-width: 768px){
-            grid-template-rows: 10% minmax(45vh, 75vh) auto;
+            grid-template-rows: 10% minmax(40vh, 75vh) auto;
         }
     }
 </style>

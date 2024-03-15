@@ -57,6 +57,12 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error{
 	message.MessageDate     = time.Now().Format("2006-01-02 3:4:5 pm")
 	message.ImageURL.Valid  = res != ""
 	message.ImageURL.String = res
+	convChatId, err        := strconv.Atoi(chatId)
+
+	if err == nil{
+		message.ChatID.Int64 = int64(convChatId)
+		message.ChatID.Valid = true
+	}
 
 	if err := message.Validate(); err != nil{
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
