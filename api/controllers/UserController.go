@@ -113,7 +113,7 @@ func (u *UserController) Signin(c *fiber.Ctx) error {
 		DisplayName    string `json:"display_name"`
 		ProfilePicture string `json:"profile_picture"`
 	}{
-		DisplayName: possibleUser.Username,
+		DisplayName: possibleUser.DisplayName,
 		ProfilePicture: possibleUser.ProfilePicture.String,
 	}
 	u.setCookie(c, u.getJwtToken(user), u.sessionLen)

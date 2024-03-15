@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -30,7 +31,7 @@ func (m *MessageController) Init(){
 }
 
 func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error{
-	chatId    := c.Params("chat-id", public)
+	chatId    := c.Params("chatid", public)
 	file, err := c.FormFile("file")
 
 	if err != nil{
@@ -73,7 +74,7 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error{
 
 func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 	message := models.Message{DB: m.db}
-	chatId  := c.Params("chat-id", public)
+	chatId  := c.Params("chatid", public)
 
 	if err := c.BodyParser(&message); err != nil{
 		fmt.Println("err parsing message:", err)
@@ -84,15 +85,21 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error{
 		fmt.Println("err validating message:", err)
 		return c.Status(http.StatusBadRequest).JSON(err)
 	}
-	
+
 	message.InitCreatedAt()
 	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
+	convChatId, err    := strconv.Atoi(chatId)
+
+	if err == nil{
+		message.ChatID.Int64 = int64(convChatId)
+		message.ChatID.Valid = true
+	}
 	
 	if err := m.pusherClient.Trigger(chatId, "message", message); err != nil{
 		fmt.Println("err broadcasting messages:", err)
 	}
 
-	message, err := database.InsertMessage(message)
+	message, err = database.InsertMessage(message)
 
 	if err != nil{
 		fmt.Println("err inserting message:", err)
@@ -151,14 +158,15 @@ func (m *MessageController) GetPublicMessages(c *fiber.Ctx) error{
 }
 
 func (m *MessageController) DeleteMessage(c *fiber.Ctx) error{
-	id      := c.Params("id", public)
+	id      := c.Params("id")
+	chatId  := c.Params("chatid", public)
 	message := models.Message{}
 
 	if err := c.BodyParser(&message); err != nil{
 		c.Status(http.StatusInternalServerError).JSON(err)
 	}
 
-	if err := m.pusherClient.Trigger("public", "delete_message", message); err != nil{
+	if err := m.pusherClient.Trigger(chatId, "delete_message", message); err != nil{
 		fmt.Println("err broadcasting messages:", err)
 	}
 
@@ -174,7 +182,7 @@ func (m *MessageController) DeleteMessage(c *fiber.Ctx) error{
 
 //Function to allow clients on the front end to know when someone is typing.
 func (m *MessageController) UserTyping(c *fiber.Ctx) error{
-	chatId := c.Params("chat-id", public)
+	chatId := c.Params("chatid", public)
 	data   := struct{
 		Username string `json:"username"`
 	}{}
