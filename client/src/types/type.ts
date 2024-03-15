@@ -25,6 +25,10 @@ export interface Message{
     display_name:    string
     isSender:        boolean
     isImage:         boolean
+    profile_picture?: {
+        String: string,
+        valid: boolean
+    }
 }
 
 export interface User{

@@ -18,8 +18,8 @@
     let isLoading:          boolean = false
     let displayName:        string  = ""
     let errorFileTooBig:    string  = ""
-    let isErrorFileTooBig:  boolean = false
     let errorInvalidName:   string  = ""
+    let isErrorFileTooBig:  boolean = false
     let isErrorInvalidName: boolean = false
 
     const saveSettings = async () => {

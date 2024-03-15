@@ -1,13 +1,15 @@
 package controllers
 
 import (
-	"MessengerV2/api/database"
-	"MessengerV2/api/models"
 	"fmt"
 	"net/http"
-
+	
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
+
+	"MessengerV2/api/database"
+	"MessengerV2/api/models"
+	"MessengerV2/api/SQLConstants"
 )
 
 type ChatController struct{
@@ -18,14 +20,11 @@ func (c *ChatController) Init(){
 	c.db = database.GetDB()
 }
 
-func (c *ChatController) GetPrivateChats(fc *fiber.Ctx) error{
+func (c *ChatController) GetGroupChats(fc *fiber.Ctx) error{
 	chats    := []models.Chat{}
 	username := fc.Params("username")
 
-	if err := c.db.Select(&chats, "SELECT chats.* FROM chats " +
-								    "JOIN user_chats ON chats.id = user_chats.chat_id " +
-									"JOIN users ON users.username = user_chats.username " +
-									"WHERE users.username=$1", username); err != nil{
+	if err := c.db.Select(&chats, sqlconstants.GET_GROUP_CHATS, username); err != nil{
 		return fc.Status(http.StatusInternalServerError).JSON(fiber.Map{"err": err.Error()})
 	}
 
@@ -61,6 +60,8 @@ func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
 	}
 
 	userChat.InitCreatedAt()
+
+	//Afterwards, insert all of the users in the group chat into the user_chats table, with the id of their group chat.
 	for _, user := range chatWithUsers.Users {
 		userChat.Username = user
 		userChat, err = database.CreateUserChat(userChat)
@@ -76,7 +77,7 @@ func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
 func (c *ChatController) DeleteChat(fc *fiber.Ctx) error{
 	id := fc.Params("id")
 
-	result, _       := c.db.Exec("DELETE FROM chats WHERE id=$1", id)
+	result, _       := c.db.Exec(sqlconstants.DELETE_CHAT, id)
 	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 0 {

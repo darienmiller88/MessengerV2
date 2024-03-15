@@ -15,6 +15,7 @@ import (
 	"MessengerV2/api/models"
 	"MessengerV2/api/pusherclient"
 	"MessengerV2/api/cloudinary"
+	"MessengerV2/api/SQLConstants"
 )
 
 const MAX_SIZE int64 = 5 * 1024 * 1024 //Max number of bytes, which is 5mb or 5,248,000 bytes
@@ -134,7 +135,7 @@ func (m *MessageController) GetMessageHistory(c *fiber.Ctx) error{
 		return c.Status(http.StatusBadRequest).SendString("Could not parse field \"username\" in token.")
 	}
 
-	if err := m.db.Select(&messages, "SELECT * FROM messages WHERE username=$1", username); err != nil{
+	if err := m.db.Select(&messages, sqlconstants.GET_MESSAGE_HISTORY, username); err != nil{
 		return c.Status(http.StatusNotFound).SendString(err.Error())
 	}
 
@@ -145,7 +146,7 @@ func (m *MessageController) GetGroupChatMessages(c *fiber.Ctx) error{
 	id       := c.Params("id")
 	messages := []models.Message{}
 
-	if err := m.db.Select(&messages, "SELECT * FROM messages WHERE chat_id=$1 ORDER BY id ASC", id); err != nil{
+	if err := m.db.Select(&messages, sqlconstants.GET_GROUP_CHAT_MESSAGES, id); err != nil{
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
 	}
 
@@ -156,7 +157,7 @@ func (m *MessageController) GetPublicMessages(c *fiber.Ctx) error{
 	messages := []models.Message{}
 
 	// SELECT messages.*, users.profile_picture FROM messages JOIN users ON messages.username = users.username;
-	if err := m.db.Select(&messages, "SELECT * FROM messages WHERE receiver IS NULL AND chat_id IS NULL ORDER BY id ASC"); err != nil{
+	if err := m.db.Select(&messages, sqlconstants.GET_PUBLIC_MESSAGES); err != nil{
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"err": err.Error()})
 	}
 
@@ -176,7 +177,7 @@ func (m *MessageController) DeleteMessage(c *fiber.Ctx) error{
 		fmt.Println("err broadcasting messages:", err)
 	}
 
-	result, err     := m.db.Exec("DELETE FROM messages WHERE id=$1 and username=$2", id, message.Username)
+	result, err     := m.db.Exec(sqlconstants.DELETE_MESSAGE, id, message.Username)
 	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 0 || err != nil{

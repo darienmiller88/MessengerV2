@@ -1,0 +1,2 @@
+# MessengerV2/api/controllers
+api\controllers\UserController.go:104:54: undefined: sqlconstants.ge

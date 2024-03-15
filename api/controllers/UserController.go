@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	sqlconstants "MessengerV2/api/SQLConstants"
 	"MessengerV2/api/database"
 	"MessengerV2/api/models"
 	"fmt"
@@ -63,9 +64,9 @@ func (u *UserController) ChangeUserProfilePicture(c *fiber.Ctx) error {
 			return err
 		}
 
-		u.db.MustExec("UPDATE users SET display_name=$1, profile_picture=$2, updated_at=$3 WHERE username=$4", displayName, res, time.Now(), username)
+		u.db.MustExec(sqlconstants.UPDATE_USER_PROFILE_PICTURE, displayName, res, time.Now(), username)
 	}else{
-		u.db.MustExec("UPDATE users SET display_name=$1, updated_at=$2 WHERE username=$3", displayName, time.Now(), username)
+		u.db.MustExec(sqlconstants.UPDATE_USER, displayName, time.Now(), username)
 	}
 
 	return c.Status(http.StatusOK).SendString(res)
@@ -100,7 +101,7 @@ func (u *UserController) Signin(c *fiber.Ctx) error {
 	}
 
 	//Check the database to see if the user was there, and compare their password to the user provided one.
-	usernameErr := u.db.Get(&possibleUser, "SELECT * FROM users WHERE username=$1", user.Username)
+	usernameErr := u.db.Get(&possibleUser, sqlconstants.GET_USER_BY_USERNAME, user.Username)
 	passwordErr := bcrypt.CompareHashAndPassword([]byte(possibleUser.Password), []byte(user.Password))
 
 	if usernameErr != nil || passwordErr != nil {
@@ -144,11 +145,11 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(err)
 	}
 
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
-
+	
 	user.InitCreatedAt()
-	user.Password = string(hashedPassword)
-	user, err := database.CreateUser(user)
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
+	user.Password      = string(hashedPassword)
+	user, err         := database.CreateUser(user)
 	
 	if err != nil{
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -172,7 +173,7 @@ func (u *UserController) Signout(c *fiber.Ctx) error {
 	}
 
 	if isAnonymous {
-		result, _ := u.db.Exec("DELETE FROM users WHERE username=$1", username)
+		result, _ := u.db.Exec(sqlconstants.DELETE_ANONYMOUS_USERS, username)
 		rowsAffected, _ := result.RowsAffected()
 
 		fmt.Println("rows:", rowsAffected)
@@ -185,7 +186,7 @@ func (u *UserController) Signout(c *fiber.Ctx) error {
 func (u *UserController) GetUsers(c *fiber.Ctx) error {
 	users := []models.User{}
 
-	if err := u.db.Select(&users, "SELECT username, profile_picture, is_anonymous FROM users"); err != nil {
+	if err := u.db.Select(&users, sqlconstants.GET_ALL_USERS); err != nil {
 		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 
@@ -207,7 +208,7 @@ func (u *UserController) GetUserByUsername(c *fiber.Ctx) error {
 	username := c.Params("username")
 	user := models.User{}
 
-	if err := u.db.Get(&user, "SELECT * FROM users WHERE username=$1", username); err != nil {
+	if err := u.db.Get(&user, sqlconstants.GET_USER_BY_USERNAME, username); err != nil {
 		fmt.Println("err:", err)
 		return c.Status(http.StatusInternalServerError).SendString(fmt.Sprintf("No user with username %s found.", username))
 	}
@@ -218,7 +219,7 @@ func (u *UserController) GetUserByUsername(c *fiber.Ctx) error {
 func (u *UserController) DeleteUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	result, _ := u.db.Exec("DELETE FROM users WHERE id=$1", id)
+	result, _ := u.db.Exec(sqlconstants.DELETE_USER, id)
 	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 0 {

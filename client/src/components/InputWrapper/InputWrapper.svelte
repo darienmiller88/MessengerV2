@@ -192,9 +192,7 @@
         }
 
         imageURL = null
-        const channel = pusher.subscribe($subcribeNameStore);
-        console.log("channel name:", channel.name);
-        
+        const channel = pusher.subscribe($subcribeNameStore);        
         
         channel.bind('message', (message: Message) => {   
             if ($usernameStore != message.username) {

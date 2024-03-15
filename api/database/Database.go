@@ -1,13 +1,15 @@
 package database
 
 import (
-	"MessengerV2/api/models"
 	"fmt"
 	"os"
 	// "time"
-
+	
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+
+	"MessengerV2/api/models"
+	"MessengerV2/api/SQLConstants"
 )
 
 var db *sqlx.DB
@@ -31,13 +33,8 @@ func Init(){
 	db = _db
 }
 
-func GetMessages(){
-
-}
-
 func CreateUserChat(userChat models.UserChat) (models.UserChat, error){
-	result, err := db.PrepareNamed("INSERT INTO user_chats (created_at, updated_at, chat_id, username) " +
-	"VALUES(:created_at, :updated_at, :chat_id, :username) RETURNING id")
+	result, err := db.PrepareNamed(sqlconstants.INSERT_USER_CHAT)
 
 	if err != nil{
 		return models.UserChat{}, err
@@ -52,8 +49,7 @@ func CreateUserChat(userChat models.UserChat) (models.UserChat, error){
 
 
 func CreateNewChat(chat models.Chat) (models.Chat, error){
-	result, err := db.PrepareNamed("INSERT INTO chats (created_at, updated_at, chat_name, picture_url) " +
-	"VALUES(:created_at, :updated_at, :chat_name, :picture_url) RETURNING id")
+	result, err := db.PrepareNamed(sqlconstants.INSERT_GROUP_CHAT)
 
 	if err != nil{
 		return models.Chat{}, err
@@ -67,8 +63,7 @@ func CreateNewChat(chat models.Chat) (models.Chat, error){
 }
 
 func CreateUser(user models.User) (models.User, error){
-	result, err := db.PrepareNamed("INSERT INTO users (created_at, updated_at, username, password, is_anonymous) " +
-		"VALUES (:created_at, :updated_at, :username, :password, :is_anonymous) RETURNING id")
+	result, err := db.PrepareNamed(sqlconstants.INSERT_USER)
 
 	if err != nil {
 		return models.User{}, err
@@ -88,15 +83,9 @@ func InsertMessage(message models.Message) (models.Message, error){
 
 	// If the message was sent to a particular chat, insert the message with that chat id.
 	if message.ChatID.Valid {
-		result, err = db.PrepareNamed("INSERT INTO messages " +
-		"(message_content, message_date, created_at, updated_at, username, image_url, display_name, chat_id) " +
-		"VALUES(:message_content, :message_date, :created_at, :updated_at, :username, :image_url, :display_name, :chat_id) " +
-		"RETURNING id")
+		result, err = db.PrepareNamed(sqlconstants.INSERT_GROUP_CHAT_MESSAGE)
 	}else{
-		result, err = db.PrepareNamed("INSERT INTO messages " +
-		"(message_content, message_date, created_at, updated_at, username, image_url, display_name) " +
-		"VALUES(:message_content, :message_date, :created_at, :updated_at, :username, :image_url, :display_name) " +
-		"RETURNING id")
+		result, err = db.PrepareNamed(sqlconstants.INSERT_PUBLIC_MESSAGE)
 	}
 
 	if err != nil{
