@@ -27,6 +27,9 @@ type Message struct {
 
 	//This model will keep a reference to the database to verify usernames.
 	DB *sqlx.DB `json:"-"`
+
+	// This field will allow the profile picture of the user this message belongs to, to be returned in a join.
+	Profile_picture sql.NullString `json:"profile_picture" db:"profile_picture"`
 }
 
 func (m *Message) Validate() error {

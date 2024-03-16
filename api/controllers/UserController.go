@@ -144,7 +144,6 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 	if err := user.Validate(); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(err)
 	}
-
 	
 	user.InitCreatedAt()
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)

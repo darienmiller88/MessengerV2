@@ -69,7 +69,7 @@
 
             //Call the server to get the public chat messages.
             const publicMessagesRes = await messageApi.get("/")
-            const messages = (publicMessagesRes.data as Message[])
+            const messages = (publicMessagesRes.data as Message[])            
             
             //Load the last message from the public chat messages into the Public chat component
             $chatsStore[0].currentMessage = messages[messages.length - 1].message_content
@@ -148,6 +148,7 @@
                     openModal={() => showModal = true}
                     openPictureModal={() => showPictureModal = true}
                     storeImageURL={(url) => imageURL = url}
+                    profilePicture={message.profile_picture?.String}
                 />
             {/each}
         </div>

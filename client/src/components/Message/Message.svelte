@@ -15,6 +15,7 @@
     export let display_name:   string
     export let time:           string
     export let isYourMessage:  boolean
+    export let profilePicture: string | undefined
     export let messageId:      number
     export let imageURL:       string
     export let isImage:        boolean
@@ -56,7 +57,7 @@
 
 <div class={isYourMessage ? "message-wrapper sender" : "message-wrapper receiver"}>
     <div class="profile-pic-wrapper">
-        <img src={isYourMessage ? $userProfilePictureStore : defaultPic} alt="pic" />
+        <img src={profilePicture ? profilePicture : defaultPic} alt="pic" />
     </div>
     <div class="message-content-wrapper">
         <div class="data">
