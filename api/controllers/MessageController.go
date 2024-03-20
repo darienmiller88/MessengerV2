@@ -164,19 +164,26 @@ func (m *MessageController) GetPublicMessages(c *fiber.Ctx) error {
 }
 
 func (m *MessageController) DeleteMessage(c *fiber.Ctx) error {
-	id := c.Params("id")
-	chatId := c.Params("chatid", public)
-	message := models.Message{}
+	id, err :=  strconv.Atoi(c.Params("messageid"))
+
+	if err != nil {
+		return c.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+
+	chatId  := c.Params("chatid", public)
+	message := struct{
+		Message models.Message `json:"message"`
+	}{}
 
 	if err := c.BodyParser(&message); err != nil {
 		c.Status(http.StatusInternalServerError).JSON(err)
 	}
 
-	if err := m.pusherClient.Trigger(chatId, "delete_message", message); err != nil {
+	if err := m.pusherClient.Trigger(chatId, "delete_message", message.Message); err != nil {
 		fmt.Println("err broadcasting messages:", err)
 	}
 
-	result, err := m.db.Exec(sqlconstants.DELETE_MESSAGE, id, message.Username)
+	result, err := m.db.Exec(sqlconstants.DELETE_MESSAGE, id, message.Message.Username)
 	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 0 || err != nil {

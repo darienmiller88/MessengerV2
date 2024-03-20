@@ -71,9 +71,11 @@
             const publicMessagesRes = await messageApi.get("/")
             const messages = (publicMessagesRes.data as Message[])            
             
-            //Load the last message from the public chat messages into the Public chat component
-            $chatsStore[0].currentMessage = messages[messages.length - 1].message_content
-            $chatsStore[0].time = new Date(messages[messages.length - 1].message_date).toLocaleTimeString()
+            if (messages.length) {
+                //Load the last message from the public chat messages into the Public chat component
+                $chatsStore[0].currentMessage = messages[messages.length - 1].message_content
+                $chatsStore[0].time = new Date(messages[messages.length - 1].message_date).toLocaleTimeString()
+            }
 
             //Load the public messages into the chat window if the public chat is chosen.
             loadMessages($chatsStore[0].chat_name, messages)

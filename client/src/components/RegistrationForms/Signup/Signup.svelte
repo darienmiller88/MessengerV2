@@ -16,7 +16,13 @@
         groupChatNameStoreKey,
         chatPictureStore,
         chatPictureStoreKey,
-        persistStoreValue
+        persistStoreValue,
+
+        displayNameStore,
+
+        displayNameStoreKey
+
+
     } from "../../../stores";
 
     let username:          string = ""
@@ -40,11 +46,15 @@
             await userApi.post("/signup", userCredentials)
 
             persistStoreValue(usernameStore, username, usernameStoreKey)
+            persistStoreValue(displayNameStore, username, displayNameStoreKey)
             persistStoreValue(userProfilePictureStore, defaultProfilePicture, userProfilePictureStoreKey)
             persistStoreValue(groupChatNameStore, "Public", groupChatNameStoreKey)
             persistStoreValue(chatPictureStore, publicChatPicture, chatPictureStoreKey)
             navigate("/home", {replace: true})
         } catch (error: any) {
+
+            console.log("err:", error);
+            
             //Check for an error that returns a map with username...
             if (error.response.data.username) {
                 isUsernameInvalid = true
