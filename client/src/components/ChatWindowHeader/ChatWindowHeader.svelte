@@ -1,7 +1,7 @@
 <script lang="ts">
     // import profilepic from "../../assets/profile.png"
     import { onMount } from "svelte";
-    import { ThreeDots, ArrowLeftCircle } from "svelte-bootstrap-icons";
+    import { ThreeDots, ArrowLeftCircle, PersonAdd } from "svelte-bootstrap-icons";
     import Modal from "../Modal/Modal.svelte";
     import DeleteGroupChat from "../DeleteGroupChat/DeleteGroupChat.svelte";
     import { PublicChat } from "../constants/constant";
@@ -59,9 +59,15 @@
         </div>
     </div>
     {#if $groupChatNameStore != PublicChat}
-        <button class="icon-wrapper" on:click={() => showModal = true} >
-            <ThreeDots width={24} height={24} fill={$fillIconColorStore}/>
-        </button>
+        <div class="icons-wrapper">
+            <button on:click={() => showModal = true} >
+                <ThreeDots width={24} height={24} fill={$fillIconColorStore}/>
+            </button>
+            <button on:click={() => showModal = true} >
+                <PersonAdd width={24} height={24} fill={$fillIconColorStore}/>
+            </button>
+        </div>
+        
     {/if}
 
     <Modal 
@@ -130,20 +136,23 @@
             }
         }
 
-        .icon-wrapper{
-            cursor: pointer;
-            transition: 0.4s;
-            // padding: 8px 10px;
-            border-radius: 50%;
-            border: none;
-            background-color: transparent;
-
-            &:hover{
-                background-color: rgba(200, 200, 200, 0.4);
-            }
-
-            &:active{
-                background-color: rgb(60, 60, 60);
+        .icons-wrapper{
+            // border: 2px solid red;
+            button{
+                cursor: pointer;
+                transition: 0.4s;
+                // padding: 8px 10px;
+                border-radius: 50%;
+                border: none;
+                background-color: transparent;
+    
+                &:hover{
+                    background-color: rgba(200, 200, 200, 0.4);
+                }
+    
+                &:active{
+                    background-color: rgb(60, 60, 60);
+                }
             }
         }
     }
