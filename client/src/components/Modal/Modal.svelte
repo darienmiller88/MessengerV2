@@ -19,7 +19,7 @@
             <span class="close" on:click={onHide} role="button" tabindex="0" on:keyup={null}>&times;</span>
         </div>
         <div class="modal_content">
-            <svelte:component this={modalContent} {onHide}/>
+            <svelte:component this={modalContent} {onHide} {show}/>
         </div>
         <div class="modal_footer" >
             <button on:click={onHide}>Close</button>

@@ -14,7 +14,7 @@
 <style lang="scss">
     .desktop-view{
         display: grid;
-        grid-template-columns: 6% 22% auto;
+        grid-template-columns: 6% 25% auto;
         height: 100vh;
     }
 </style>

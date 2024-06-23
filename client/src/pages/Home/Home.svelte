@@ -73,10 +73,10 @@
             const username = await userApi.get("/username")
             $usernameStore = (username.data as string)
 
-            const chatsResponse = await chatsApi.get(`/private-chats/${$usernameStore}`)
+            const chatsResponse = await chatsApi.get(`/private-chats/chats/${$usernameStore}`)
             const chats = (chatsResponse.data as Chat[])
             
-            //Request all of the users private chat, and store them into the chatsStore variable.
+            //Request all of the users private chats, and store them into the chatsStore variable.
             loadChats(chats)
 
             const publicMessagesRes = await messageApi.get("/")

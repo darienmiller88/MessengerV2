@@ -17,13 +17,12 @@
     import PictureModal from "../PictureModal/PictureModal.svelte";
     import Modal from "../Modal/Modal.svelte";
     import DeleteMessageForm from "../DeleteMessageForm/DeleteMessageForm.svelte";
-    import { type Chat, type Message } from "../../types/type";
+    import { type Message } from "../../types/type";
     import { Moon } from "svelte-loading-spinners";
 
     let imageURL:          string
     let showModal:         boolean = false
     let isLoading:         boolean = false
-    let canScroll:         boolean = false
     let messagesRef:       HTMLElement
     let userTypingText:    string = ""
     let showPictureModal:  boolean = false
@@ -32,6 +31,7 @@
         node.scrollTo({ top: node.scrollHeight,  behavior: "instant" });
     }; 
 
+    
     afterUpdate(() => {  
         // imageURL = ""  
         // console.log("scroll top:", messagesRef.scrollTop);
@@ -57,8 +57,6 @@
             $subcribeNameStore = JSON.parse(subcribeName)
         }
         
-        console.log("chat window mounted");
-
         isLoading = true
         try {
             const usernameRes = await userApi.get("/username")
@@ -91,12 +89,10 @@
     })
 
     //Reactive statement to scroll to the bottom after the user enters a new message.
-    $: {
-        if ($messagesStore.length && messagesRef) { 
-            // console.log("new message:", $messagesStore[$messagesStore.length - 1]);            
-            messagesRef.scrollTo({ top: messagesRef.scrollHeight,  behavior: "instant" });            
-            // messagesRef.scrollTop = messagesRef.scrollHeight  
-        }
+    $: if ($messagesStore.length && messagesRef) { 
+        // console.log("new message:", $messagesStore[$messagesStore.length - 1]);            
+        // messagesRef.scrollTop = messagesRef.scrollHeight  
+        messagesRef.scrollTo({ top: messagesRef.scrollHeight,  behavior: "instant" });            
     }
 </script>
 
@@ -129,7 +125,6 @@
     <h1>There's nothing here!</h1>
 {/if}
 
-
 <Modal 
     show={showModal}
     modalHeader={"Delete Message"}
@@ -144,8 +139,6 @@
 <div class={$isDarkModeStore ? "is-typing is-typing-dark-mode": "is-typing"}>
     {userTypingText}
 </div>
-
-
 
 <style lang="scss">
     .loading-wrapper, h1{

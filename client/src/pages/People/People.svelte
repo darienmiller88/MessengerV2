@@ -33,7 +33,6 @@
             console.log("res:", res.data);
         } catch (error: any) {
             if (error.response.status == 401) {
-                console.log("err unauthroized");
                 navigate("/", {replace: true})
             }
 
@@ -94,7 +93,6 @@
                 align-items: center;
                 justify-content: center;
                 font-size: 45px;
-                
             }
 
             .users-list{
@@ -107,8 +105,9 @@
                     margin: 20px;
 
                     img{
-                        width: 70px;
-                        height: auto;
+                        width: 60px;
+                        height: 60px;
+                        border-radius: 50%;
                     }
 
                     .username{

@@ -7,6 +7,8 @@
         subcribeNameStoreKey,
         groupChatNameStore, 
         groupChatNameStoreKey, 
+        usersInChatStore,
+        usersInChatStoreKey,
         isChatWindowActiveStore, 
         isChatWindowActiveStoreKey, 
         persistStoreValue, 
@@ -16,7 +18,7 @@
         isDarkModeStore
     } from "../../stores";
     import { onMount } from "svelte";
-    import { messageApi } from "../../api/api";
+    import { chatsApi, messageApi } from "../../api/api";
     import { PublicChat } from "../constants/constant";
     import pusher from "../../pusher/pusher";
 
@@ -28,6 +30,9 @@
         
         //Load the messages for the chat when it is clicked.
         loadChatMessages()
+
+        //Get the users belonging to this chat from the server.
+        getUsersInChat()
 
         const subcribeName: string = chatInfo.chat_name == PublicChat ? PublicChat : chatInfo.id.toString() 
         pusher.subscribe(subcribeName)
@@ -45,6 +50,18 @@
         persistStoreValue(isChatWindowActiveStore, !$isChatWindowActiveStore, isChatWindowActiveStoreKey)
     }
 
+    const getUsersInChat = async () => {
+        //Only get the users in the group chat when clicking the chat once. Prevents unnecessary server calls.
+        if ($groupChatNameStore != chatInfo.chat_name) {
+            const usersInChatRes = await chatsApi.get(`/private-chats/users/${encodeURIComponent(chatInfo.chat_name)}`)
+            const users: string[] = (usersInChatRes.data as string[])    
+            
+            console.log(`users in chat ${chatInfo.chat_name}: ${users}`);
+
+            persistStoreValue(usersInChatStore, users, usersInChatStoreKey)    
+        }        
+    }
+
     const loadChatMessages = async () => {        
         try {
             if (chatInfo.chat_name === PublicChat && $groupChatNameStore != PublicChat) {
@@ -57,6 +74,21 @@
         } catch (error) {
             console.log("err:", error)
         }
+    }
+
+    const formatTime = (time: string): string => {
+        if (time === "N/A") {
+            return time
+        }
+
+        const date = new Date("2000-01-01 " + time);
+        const ftime: string = new Intl.DateTimeFormat('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        }).format(date)
+        
+        return ftime
     }
 
     // When the UserChat component is mounted, highlight the user that was clicked.
@@ -76,12 +108,12 @@
         <img src={chatInfo.picture_url} alt="chat-pic" />
     </div>
     <div class="chat-info">
-        <div class="name-time-wrapper">
-            <div class={$isDarkModeStore ? "name dark-mode-theme" : "name"}>{chatInfo.chat_name}</div>
-            <div class="time">{chatInfo.time}</div>
+        <div class={$isDarkModeStore ? "name dark-mode-theme" : "name light-mode-theme"}>
+            {chatInfo.chat_name}
         </div>
-        <div class={$isDarkModeStore ? "current-message dark-mode-theme" : "light-mode-theme current-message"}>
-            {chatInfo.currentMessage}
+        <div class="message-time-wrapper">
+            <div class={$isDarkModeStore ? "current-message dark-mode-theme" : "current-message"}>{chatInfo.currentMessage}</div>
+            <div class="time">{formatTime(chatInfo.time)}</div>
         </div>
     </div>
 </div>
@@ -89,9 +121,9 @@
 <style lang="scss">
     .user-chat{
         display: grid;
-        grid-template-columns: 22% auto;
+        grid-template-columns: 18% auto;
 
-        width: 85%;
+        width: 90%;
         margin: auto;
         padding: 10px 10px;
         border-radius: 10px;
@@ -138,8 +170,10 @@
         .chat-info{
             display: grid;
             margin-left: 6px;
+            // width: 100%;
+            // border: 2px solid black;
 
-            .name-time-wrapper{
+            .message-time-wrapper{
                 display: flex;
                 justify-content: space-between;
 
@@ -176,6 +210,8 @@
                 overflow-x: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
+                // border: 2px solid red;
+                max-width: 140px;
 
                 @media only screen and (min-width: 768px){
                     font-size: 20px;

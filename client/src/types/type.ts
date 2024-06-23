@@ -7,6 +7,7 @@ export interface Chat{
     currentMessage: string
 }
 
+//Type made specifically for the custom dropdown in the modals for adding and removing users from group Chats.
 export interface FilteredUser{
     index: Number
     value: string
@@ -34,11 +35,11 @@ export interface Message{
 export interface User{
     username:       string         
     password:       string         
+    is_anonymous:   boolean           
 	profile_picture: {
         String: string,
         valid: boolean
     }
-	is_anonymous:    boolean           
 }
 
 export interface MinifiedUser{

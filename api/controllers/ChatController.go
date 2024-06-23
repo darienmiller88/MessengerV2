@@ -3,13 +3,15 @@ package controllers
 import (
 	"fmt"
 	"net/http"
-	
+	"net/url"
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
 
+	"MessengerV2/api/SQLConstants"
 	"MessengerV2/api/database"
 	"MessengerV2/api/models"
-	"MessengerV2/api/SQLConstants"
 )
 
 type ChatController struct{
@@ -18,6 +20,82 @@ type ChatController struct{
 
 func (c *ChatController) Init(){
 	c.db = database.GetDB()
+}
+
+func (c *ChatController) AddNewUsersToChat(fc *fiber.Ctx) error{
+	chatId    := fc.Params("chatid")
+	usernames := []string{}
+
+	if err := fc.BodyParser(&usernames); err != nil{
+		return fc.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+
+	convertedChatID, err := strconv.Atoi(chatId)
+
+	if err != nil {
+		return fc.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+
+	userChatsToSend := []models.UserChat{}
+	userChat        := models.UserChat{
+		ChatID: convertedChatID,
+	}
+	userChat.InitCreatedAt()
+
+	//Iterate through each username the user from the front end has requested to delete from the group chat.
+	for _, username := range usernames{
+		userChat.Username = username
+		userChat, err    := database.CreateUserChat(userChat)
+
+		if err != nil{
+			return fc.Status(http.StatusBadRequest).SendString(err.Error())
+		}
+
+		userChatsToSend = append(userChatsToSend, userChat)
+	}
+
+	return fc.Status(http.StatusOK).JSON(userChatsToSend)
+}
+
+func (c *ChatController) RemoveUsersFromChat(fc *fiber.Ctx) error{
+	chatId    := fc.Params("chatid")
+	usernames := []string{}
+
+	if err := fc.BodyParser(&usernames); err != nil{
+		return fc.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+
+	for _, username := range usernames {
+		if err := database.DeleteUserFromGroupChat(chatId, username); err != nil{
+			return fc.Status(http.StatusBadRequest).SendString(err.Error())
+		}
+	}
+
+	return fc.Status(http.StatusOK).JSON(fiber.Map{
+		"removed": usernames,
+	})
+}
+
+func (c *ChatController) GetUsersInGroupchats(fc *fiber.Ctx) error{
+	chatName      := fc.Params("chatname")
+	users         := []models.User{}
+	chatName, err := url.QueryUnescape(chatName)
+
+	if err != nil{
+		return fc.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+
+	if err := c.db.Select(&users, sqlconstants.GET_USERS_IN_GROUP_CHAT, chatName); err != nil{
+		return fc.Status(http.StatusInternalServerError).SendString(err.Error())
+	}
+
+	usernames := []string{}
+
+	for _, user := range users {
+		usernames = append(usernames, user.Username)
+	}
+
+	return fc.Status(http.StatusOK).JSON(usernames)
 }
 
 func (c *ChatController) GetGroupChats(fc *fiber.Ctx) error{
@@ -32,17 +110,18 @@ func (c *ChatController) GetGroupChats(fc *fiber.Ctx) error{
 }
 
 func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
-	chat          := models.Chat{}
 	chatWithUsers := struct{
 		ChatName   string `json:"chat_name"`
 		PictureUrl string `json:"picture_url"` 
 		Users    []string `json:"users"`
 	}{}
-
+		
 	if err := fc.BodyParser(&chatWithUsers); err != nil{
 		return fc.Status(http.StatusBadRequest).SendString(err.Error())
 	}
-	
+		
+	chat := models.Chat{}
+
 	//Add the necessary data to the new chat the user will create.
 	chat.InitCreatedAt()
 	chat.ChatName   = chatWithUsers.ChatName
@@ -75,7 +154,7 @@ func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
 }
 
 func (c *ChatController) DeleteChat(fc *fiber.Ctx) error{
-	id := fc.Params("id")
+	id := fc.Params("chatid")
 
 	result, _       := c.db.Exec(sqlconstants.DELETE_CHAT, id)
 	rowsAffected, _ := result.RowsAffected()

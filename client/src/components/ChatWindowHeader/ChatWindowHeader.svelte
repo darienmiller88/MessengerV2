@@ -1,9 +1,12 @@
 <script lang="ts">
     // import profilepic from "../../assets/profile.png"
     import { onMount } from "svelte";
-    import { ThreeDots, ArrowLeftCircle, PersonAdd } from "svelte-bootstrap-icons";
+    import { ArrowLeftCircle, QuestionCircle, ThreeDots, PersonAdd, PencilSquare, PersonCircle } from "svelte-bootstrap-icons";
     import Modal from "../Modal/Modal.svelte";
     import DeleteGroupChat from "../DeleteGroupChat/DeleteGroupChat.svelte";
+    import AddNewUserForm from "../AddNewUserForm/AddNewUserForm.svelte";
+    import ChangeChatNameForm from "../ChangeChatNameForm/ChangeChatNameForm.svelte"
+    import ChangeChatPictureForm from "../ChangeChatPictureForm/ChangeChatPictureForm.svelte"
     import { PublicChat } from "../constants/constant";
     import { 
         chatPictureStore,
@@ -18,7 +21,10 @@
         persistStoreValue
     } from "../../stores";
 
-    let showModal: boolean = false
+    let showDeleteModal: boolean = false
+    let showAddUserModal: boolean = false
+    let showChangeChatNameModal: boolean = false
+    let showChangeChatPictureModal: boolean = false
 
     const changeToUserChats = () => {
         $isChatWindowActiveStore = !$isChatWindowActiveStore
@@ -49,8 +55,9 @@
 
 <div class="chat-window-header">
     <div class="profile-picture-wrapper">
+        <!-- Will show only on mobile -->
         <button class="icon-wrapper back" on:click={changeToUserChats}>
-            <ArrowLeftCircle width={28} height={28} fill={$fillIconColorStore}/>
+            <ArrowLeftCircle width={22} height={22} fill={$fillIconColorStore}/>
         </button>
         <img src={$chatPictureStore} alt="chat-pic"/>
         <div class="online-status-wrapper">
@@ -60,21 +67,57 @@
     </div>
     {#if $groupChatNameStore != PublicChat}
         <div class="icons-wrapper">
-            <button on:click={() => showModal = true} >
+            <button on:click={() => console.log("exiting group chat...")}>
+                <ArrowLeftCircle width={24} height={24} fill={$fillIconColorStore}/>
+            </button>
+            <button on:click={() => showDeleteModal = true} >
                 <ThreeDots width={24} height={24} fill={$fillIconColorStore}/>
             </button>
-            <button on:click={() => showModal = true} >
+            <button on:click={() => showAddUserModal = true} >
                 <PersonAdd width={24} height={24} fill={$fillIconColorStore}/>
             </button>
+            <!-- <button on:click={() => console.log("changing group picture")} >
+                <PersonCircle width={24} height={24} fill={$fillIconColorStore}/>
+            </button> -->
+            <button on:click={() => console.log("changing groupchat name")} >
+                <PencilSquare width={24} height={24} fill={$fillIconColorStore}/>
+            </button>
+            <button on:click={() => console.log("Information about users")} >
+                <QuestionCircle width={24} height={24} fill={$fillIconColorStore}/>
+            </button>
         </div>
-        
     {/if}
 
+    <!-- Finished -->
     <Modal 
-        show={showModal}
+        show={showDeleteModal}
         modalHeader={"Delete Conversation"}
         modalContent={DeleteGroupChat}
-        onHide={() => showModal = false}
+        onHide={() => showDeleteModal = false}
+    />
+
+    <!-- Almost finished -->
+    <Modal 
+        show={showAddUserModal}
+        modalHeader={"Add New User/Remove User"}
+        modalContent={AddNewUserForm}
+        onHide={() => showAddUserModal = false}
+    />
+
+    <!-- Need to implement -->
+    <Modal 
+        show={showChangeChatNameModal}
+        modalHeader={"Change Chat Name"}
+        modalContent={ChangeChatNameForm}
+        onHide={() => showChangeChatNameModal = false}
+    />
+
+    <!-- Need to implement -->
+    <Modal 
+        show={showChangeChatPictureModal}
+        modalHeader={"Change Chat Picture"}
+        modalContent={ChangeChatPictureForm}
+        onHide={() => showChangeChatPictureModal = false}
     />
 </div>
 
@@ -92,6 +135,9 @@
 
             .back{
                 margin-right: 10px;
+                padding: 5px;
+
+                // Only show this on mobile, and hide it on desktop.
                 @media only screen and (min-width: 992px){
                     display: none;
                 }
@@ -138,6 +184,10 @@
 
         .icons-wrapper{
             // border: 2px solid red;
+            max-width: 40vw;
+            overflow-x: scroll;
+            white-space: nowrap;
+
             button{
                 cursor: pointer;
                 transition: 0.4s;
@@ -145,7 +195,8 @@
                 border-radius: 50%;
                 border: none;
                 background-color: transparent;
-    
+                margin-right: 10px;
+
                 &:hover{
                     background-color: rgba(200, 200, 200, 0.4);
                 }
@@ -153,6 +204,25 @@
                 &:active{
                     background-color: rgb(60, 60, 60);
                 }
+            }
+
+            ::-webkit-scrollbar {
+            width: 20px;
+            }
+
+            /* Track */
+            ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            }
+
+            /* Handle */
+            ::-webkit-scrollbar-thumb {
+            background: #888;
+            }
+
+            /* Handle on hover */
+            ::-webkit-scrollbar-thumb:hover {
+            background: #555;
             }
         }
     }

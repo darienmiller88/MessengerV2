@@ -99,6 +99,17 @@ func InsertMessage(message models.Message) (models.Message, error){
 	return message, nil
 }
 
+// Function to delete a user from a group chat using their username, and the Id of the groupchat they belonged to.
+func DeleteUserFromGroupChat(chatId string, username string) error {
+	_, err       := db.Exec(sqlconstants.DELETE_USER_FROM_GROUPCHAT, chatId, username)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func GetDB() *sqlx.DB{
 	return db
 }

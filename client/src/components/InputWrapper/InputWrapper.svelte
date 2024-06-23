@@ -15,6 +15,8 @@
         subcribeNameStoreKey,
         displayNameStore, 
         displayNameStoreKey,
+        userProfilePictureStore,
+        userProfilePictureStoreKey,
         chatsStore,
         chatsStoreKey
      } from "../../stores";
@@ -89,6 +91,10 @@
                 String: "",
                 Valid: false
             },
+            profile_picture: {
+                String: $userProfilePictureStore,
+                valid: true
+            },
             isImage: false,
             isSender: true,
             id: 0
@@ -115,14 +121,22 @@
     }
 
     const updateChat = (message: Message) => {
+        //In order to update the chat when a new message has been received, find the index of the selected chat.
         let index: number = $chatsStore.findIndex((chat: Chat) => {
             return chat.chat_name == $selectedChatStore.chat_name
         })
 
+        //Afterwards
         $chatsStore[index].currentMessage = message.message_content
         $chatsStore[index].time = new Date(message.message_date).toLocaleTimeString()
     }
 
+    /**
+     * Function will handle user input to either enter a newline, send a text message, or send a text message
+     * with an image attached to it.
+     * 
+     * @param e - The Event passed by the user through the keyboard.
+     */    
     const handleKeyInput = async (e: any) => {        
         //if the first key the user clicked down was shift, and the next key they clicked was enter, add a new line.
         if (firstKey === 16 && e.keyCode == 13) {
@@ -157,6 +171,11 @@
         }
     }
 
+    /**
+     * Function will process the image uploaded by the user, and store the result in "imageURL"
+     * 
+     * @param e The Event returned from the image input.
+     */
     const onFileSelected = (e: any)=>{
         let reader = new FileReader();
 
@@ -170,10 +189,11 @@
     }
 
     onMount(() => {
-        let username:     string | null = window.localStorage.getItem(usernameStoreKey)
-        let currentChat:  string | null = window.localStorage.getItem(selectedChatStoreKey)
-        let display_name: string | null = window.localStorage.getItem(displayNameStoreKey)
-        let subcribeName: string | null = window.localStorage.getItem(subcribeNameStoreKey)
+        let username:        string | null = window.localStorage.getItem(usernameStoreKey)
+        let currentChat:     string | null = window.localStorage.getItem(selectedChatStoreKey)
+        let display_name:    string | null = window.localStorage.getItem(displayNameStoreKey)
+        let subcribeName:    string | null = window.localStorage.getItem(subcribeNameStoreKey)
+        let profile_picture: string | null = window.localStorage.getItem(userProfilePictureStoreKey)
 
         if (subcribeName) {
             $subcribeNameStore = JSON.parse(subcribeName)
@@ -189,6 +209,10 @@
 
         if (display_name) {
             $displayNameStore = JSON.parse(display_name)
+        }
+
+        if (profile_picture) {            
+            $userProfilePictureStore = JSON.parse(profile_picture)
         }
 
         imageURL = null
@@ -227,6 +251,7 @@
             </span>
             <img src={imageURL} alt="">
         </div>
+        <h1>image is shown</h1>
     {/if}
     
     <div class="input-icon-wrapper">

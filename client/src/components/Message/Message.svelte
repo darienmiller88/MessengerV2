@@ -67,16 +67,16 @@
         <div class="message-delete-wrapper">
             {#if messageContent == "👍"}
                 <div class="thumbs-up-wrapper"><HandThumbsUpFill width={150} height={150} fill={$fillIconColorStore} /></div>
-            {:else if isImage && messageContent === ""}
-                <div class="message-image-wrapper" on:click={enlargeImage} on:keyup={null} tabindex="0" role="button">
-                    <img src={imageURL} alt="message_image" class="message-image" >
-                </div>
-            {:else if isImage}
+            {:else if isImage && messageContent !== ""}
                 <div class="message">
                     {messageContent}
                     <div class="message-image-wrapper" on:keyup={null} tabindex="0" role="button" on:click={enlargeImage}>
                         <img src={imageURL} alt="message_image" class="message-image" >
                     </div>
+                </div>
+            {:else if isImage}
+                <div class="message-image-wrapper" on:click={enlargeImage} on:keyup={null} tabindex="0" role="button">
+                    <img src={imageURL} alt="message_image" class="message-image" >
                 </div>
             {:else}
                 <div class="message">{messageContent}</div>
@@ -206,7 +206,7 @@
                 width: fit-content;
 
                 .message{
-                    padding: 10px 10px;
+                    padding: 10px 15px;
                     margin: 5px;
                     width: fit-content;
                     height: fit-content;

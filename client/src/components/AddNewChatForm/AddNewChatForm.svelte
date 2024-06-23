@@ -30,6 +30,7 @@
         isChatActive: false
     }
     export let onHide = () => {}
+    export const show: boolean = true
     
     const createNewChat = async () => {
         let users: string[] = (value as FilteredUser[]).map((filteredUser: FilteredUser) => {

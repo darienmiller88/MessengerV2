@@ -11,6 +11,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+//Check if a user is in the group chat they are trying to make changes to. This middleware prevents users from
+//making calls to chats they don't belong in.
 func AuthCheckUser(c *fiber.Ctx) error{
 	username, usernameErr := c.UserContext().Value("token").(jwt.MapClaims)["username"].(string)
 

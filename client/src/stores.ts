@@ -17,6 +17,7 @@ export const isDarkModeStore         = writable(false)
 export const messagesStore           = writable<Message[]>([])
 export const displayNameStore        = writable<string>()
 export const subcribeNameStore       = writable<string>(PublicChat)
+export const usersInChatStore        = writable<string[]>([])
 export const selectedChatStore       = writable<Chat>({
     id: 0,
     chat_name: PublicChat,
@@ -48,6 +49,7 @@ export const usersStoreKey              = "usersStoreKey"
 export const chatsStoreKey              = "chatsStoreKey"
 export const subcribeNameStoreKey       = "subcribeNameStoreKey"
 export const isDarkModeStoreKey         = "isDarkModeStoreKey"
+export const usersInChatStoreKey        = "usersInChatStoreKey"           
 
 
 // Utility function to help persist store values on reload. This is done by simply storing it in local storage.

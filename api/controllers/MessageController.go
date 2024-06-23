@@ -43,7 +43,7 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).SendString("File too big.")
 	}
 
-	res, err := cloudinary.UploadImage(file)
+	imageURL, err := cloudinary.UploadImage(file)
 
 	if err != nil {
 		return c.SendString(err.Error())
@@ -56,10 +56,12 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error {
 	message.DisplayName = c.FormValue("display_name")
 	message.MessageContent = c.FormValue("message_content")
 	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
-	message.ImageURL.Valid = res != ""
-	message.ImageURL.String = res
+	message.ImageURL.Valid = imageURL != ""
+	message.ImageURL.String = imageURL
 	convChatId, err := strconv.Atoi(chatId)
-
+	
+	//The "chatid" URL Param will either be a number, or default to "Public". If the URL param can be converted
+	//to a number, assign it to the messages "ChatID" field.
 	if err == nil {
 		message.ChatID.Int64 = int64(convChatId)
 		message.ChatID.Valid = true
@@ -69,6 +71,7 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
+	//Send the message to the other clients connected to the chat the user is conencted to.
 	m.pusherClient.Trigger(chatId, "message", message)
 	message, err = database.InsertMessage(message)
 
@@ -89,7 +92,6 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error {
 	}
 
 	if err := message.Validate(); err != nil {
-		fmt.Println("err validating message:", err)
 		return c.Status(http.StatusBadRequest).JSON(err)
 	}
 
@@ -97,6 +99,8 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error {
 	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
 	convChatId, err := strconv.Atoi(chatId)
 
+	//The "chatid" URL Param will either be a number, or default to "Public". If the URL param can be converted
+	//to a number, assign it to the messages "ChatID" field.
 	if err == nil {
 		message.ChatID.Int64 = int64(convChatId)
 		message.ChatID.Valid = true
@@ -116,6 +120,7 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(message)
 }
 
+
 func (m *MessageController) GetMessageByID(c *fiber.Ctx) error {
 	id := c.Params("id")
 	message := models.Message{}
@@ -127,6 +132,11 @@ func (m *MessageController) GetMessageByID(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(message)
 }
 
+/**
+* Function will handle user input to either enter a newline, send a text message, or send a text message
+* with an image attached to it.
+* 
+*/    
 func (m *MessageController) GetMessageHistory(c *fiber.Ctx) error {
 	messages := []models.Message{}
 	username, usernameErr := c.UserContext().Value("token").(jwt.MapClaims)["username"].(string)
@@ -164,7 +174,7 @@ func (m *MessageController) GetPublicMessages(c *fiber.Ctx) error {
 }
 
 func (m *MessageController) DeleteMessage(c *fiber.Ctx) error {
-	id, err :=  strconv.Atoi(c.Params("messageid"))
+	messageId, err :=  strconv.Atoi(c.Params("messageid"))
 
 	if err != nil {
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -183,7 +193,7 @@ func (m *MessageController) DeleteMessage(c *fiber.Ctx) error {
 		fmt.Println("err broadcasting messages:", err)
 	}
 
-	result, err := m.db.Exec(sqlconstants.DELETE_MESSAGE, id, message.Message.Username)
+	result, err := m.db.Exec(sqlconstants.DELETE_MESSAGE, messageId, message.Message.Username)
 	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 0 || err != nil {

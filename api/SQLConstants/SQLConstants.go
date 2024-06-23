@@ -52,6 +52,12 @@ const (
 	GET_GROUP_CHATS string = "SELECT chats.* FROM chats JOIN user_chats ON chats.id = user_chats.chat_id " +
 	"JOIN users ON users.username = user_chats.username WHERE users.username=$1"
 
+	//Get all of the users belonging to a particular group chat by joining "users" onto "user_chats", and
+	//then by joining "chats" onto "user_chats".
+	GET_USERS_IN_GROUP_CHAT string = "SELECT users.username FROM users " + 
+	"JOIN user_chats ON users.username = user_chats.username JOIN chats ON user_chats.chat_id = chats.id " +
+	"WHERE chats.chat_name = $1"
+
 	//Get all users in the "users" table, only retrieving the username, profile_picture, and is_anonymous columns.
 	GET_ALL_USERS string = "SELECT username, profile_picture, is_anonymous FROM users"
 
@@ -78,8 +84,12 @@ const (
 	// DESTROY
 	///////////////////////////////////////////////////
 
+	//Delete a user from a "user_chats" with a particular username and chat_id. This will remove a user from a 
+	//group chat with the id "chat_id".
+	DELETE_USER_FROM_GROUPCHAT string = "DELETE FROM user_chats WHERE chat_id=$1 AND username=$2"
+
 	//Delete a message from "messages" with a particular id and username.
-	DELETE_MESSAGE string = "DELETE FROM messages WHERE id=$1 and username=$2"
+	DELETE_MESSAGE string = "DELETE FROM messages WHERE id=$1 AND username=$2"
 
 	//Delete a group chat from "chats" with a particular id.
 	DELETE_CHAT string = "DELETE FROM chats WHERE id=$1"
