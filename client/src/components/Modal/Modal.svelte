@@ -15,6 +15,7 @@
 <div class={`modal ${show ? "slidein" : "slideout"}`} bind:this={modalRef} on:click={closeModal} tabindex="0" role="button" on:keyup={null}>
     <div class="modal_body">
         <div class="modal_header">
+            <div class="filler"></div>
             <div class="header">{ modalHeader }</div>
             <span class="close" on:click={onHide} role="button" tabindex="0" on:keyup={null}>&times;</span>
         </div>
@@ -56,14 +57,11 @@
             margin: auto;
             width: 95vw;
             border-radius: 10px;
-            // z-index:  -5;
-
 
             .modal_header{
-                display: flex;
-                // grid-template-columns: auto auto;
-                justify-content: space-between;
-                align-items: center;
+                display: grid;
+                grid-template-columns: auto 90% auto;
+                // justify-content: space-between;
                 // border: 2px red solid;
                 border-bottom: 1px solid $borderColor;
                 background-color: white;
@@ -72,9 +70,12 @@
                 border-top-right-radius: $border_radius;
 
                 .header{
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                     // border: 2px solid red;
-                    justify-self: right;
                     font-size: 17px;
+                    text-align: center;
 
                     @media screen and (min-width: 768px) {
                         font-size: 25px;
@@ -83,7 +84,7 @@
 
                 .close{
                     // border: 2px solid saddlebrown;
-                    justify-self: right;
+                    text-align: right;
                     transition: 0.5s;
                     font-size: 35px;
                 }

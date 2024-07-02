@@ -44,16 +44,13 @@
                 })
                                 
                 if (chatIndex == $chatsStore.length) {
-                    $chatsStore[chatIndex - 1].isChatActive = true
-                    $selectedChatStore = $chatsStore[chatIndex - 1]
-                    $groupChatNameStore = $chatsStore[chatIndex - 1].chat_name
-                    $chatPictureStore = $chatsStore[chatIndex - 1].picture_url
-                } else {
-                    $chatsStore[chatIndex].isChatActive = true
-                    $selectedChatStore = $chatsStore[chatIndex]
-                    $groupChatNameStore = $chatsStore[chatIndex].chat_name
-                    $chatPictureStore = $chatsStore[chatIndex].picture_url
-                }
+                    chatIndex-- 
+                } 
+                
+                $chatsStore[chatIndex].isChatActive = true
+                $selectedChatStore = $chatsStore[chatIndex]
+                $groupChatNameStore = $chatsStore[chatIndex].chat_name
+                $chatPictureStore = $chatsStore[chatIndex].picture_url
 
                 persistStoreValue(selectedChatStore, $selectedChatStore, selectedChatStoreKey)
                 persistStoreValue(groupChatNameStore, $groupChatNameStore, groupChatNameStoreKey)
@@ -74,6 +71,9 @@
         if (currentChat) {
             chatInfo = (JSON.parse(currentChat) as Chat)
         }
+
+        console.log("chats in delete group caht:", $chatsStore);
+
     })
 </script>
 

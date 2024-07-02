@@ -47,7 +47,6 @@ func CreateUserChat(userChat models.UserChat) (models.UserChat, error){
 	return userChat, nil
 }
 
-
 func CreateNewChat(chat models.Chat) (models.Chat, error){
 	result, err := db.PrepareNamed(sqlconstants.INSERT_GROUP_CHAT)
 

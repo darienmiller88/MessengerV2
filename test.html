@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            .container {
+            display: grid;
+            grid-template-columns: auto 80% auto;
+            width: 100%;
+            padding: 20px 0px;
+            border: 1px solid #000; /* Just for visualization */
+            }
+
+            .item-left{
+                border: 2px solid black;
+            }
+
+            .item-center {
+                text-align: center;
+                border: 2px solid black;
+            }
+
+            .item-right {
+                border: 2px solid black;
+                text-align: right;
+                /* margin-right: 0; */
+            /* margin-left: auto; */
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="item-left">left item</div>
+            <div class="item-center">Center Item</div>
+            <div class="item-right">Right Item</div>
+        </div>
+    </body>
+</html>

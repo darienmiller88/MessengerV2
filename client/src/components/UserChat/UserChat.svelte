@@ -34,6 +34,7 @@
         //Get the users belonging to this chat from the server.
         getUsersInChat()
 
+        //Subsrcibe to the channel for this chat so real time messages will go through.
         const subcribeName: string = chatInfo.chat_name == PublicChat ? PublicChat : chatInfo.id.toString() 
         pusher.subscribe(subcribeName)
 
@@ -56,8 +57,6 @@
             const usersInChatRes = await chatsApi.get(`/private-chats/users/${encodeURIComponent(chatInfo.chat_name)}`)
             const users: string[] = (usersInChatRes.data as string[])    
             
-            console.log(`users in chat ${chatInfo.chat_name}: ${users}`);
-
             persistStoreValue(usersInChatStore, users, usersInChatStoreKey)    
         }        
     }

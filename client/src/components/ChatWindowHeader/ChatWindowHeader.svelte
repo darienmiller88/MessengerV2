@@ -1,12 +1,13 @@
 <script lang="ts">
     // import profilepic from "../../assets/profile.png"
     import { onMount } from "svelte";
-    import { ArrowLeftCircle, QuestionCircle, ThreeDots, PersonAdd, PencilSquare, PersonCircle } from "svelte-bootstrap-icons";
+    import { ArrowLeftCircle, QuestionCircle, PersonAdd, PencilSquare, Trash } from "svelte-bootstrap-icons"
     import Modal from "../Modal/Modal.svelte";
     import DeleteGroupChat from "../DeleteGroupChat/DeleteGroupChat.svelte";
     import AddNewUserForm from "../AddNewUserForm/AddNewUserForm.svelte";
     import ChangeChatNameForm from "../ChangeChatNameForm/ChangeChatNameForm.svelte"
     import ChangeChatPictureForm from "../ChangeChatPictureForm/ChangeChatPictureForm.svelte"
+    import LeaveGroupChatForm from "../LeaveGroupChatForm/LeaveGroupChatForm.svelte";
     import { PublicChat } from "../constants/constant";
     import { 
         chatPictureStore,
@@ -21,6 +22,7 @@
         persistStoreValue
     } from "../../stores";
 
+    let showLeaveGroupChatModal: boolean = false
     let showDeleteModal: boolean = false
     let showAddUserModal: boolean = false
     let showChangeChatNameModal: boolean = false
@@ -67,11 +69,11 @@
     </div>
     {#if $groupChatNameStore != PublicChat}
         <div class="icons-wrapper">
-            <button on:click={() => console.log("exiting group chat...")}>
+            <button on:click={() => showLeaveGroupChatModal = true}>
                 <ArrowLeftCircle width={24} height={24} fill={$fillIconColorStore}/>
             </button>
             <button on:click={() => showDeleteModal = true} >
-                <ThreeDots width={24} height={24} fill={$fillIconColorStore}/>
+                <Trash width={24} height={24} fill={$fillIconColorStore}/>
             </button>
             <button on:click={() => showAddUserModal = true} >
                 <PersonAdd width={24} height={24} fill={$fillIconColorStore}/>
@@ -88,6 +90,14 @@
         </div>
     {/if}
 
+    <!-- In Progress -->
+    <Modal 
+        show={showLeaveGroupChatModal}
+        modalHeader={"Leave Group"}
+        modalContent={LeaveGroupChatForm}
+        onHide={() => showLeaveGroupChatModal = false}
+    />
+
     <!-- Finished -->
     <Modal 
         show={showDeleteModal}
@@ -96,7 +106,7 @@
         onHide={() => showDeleteModal = false}
     />
 
-    <!-- Almost finished -->
+    <!-- Finished -->
     <Modal 
         show={showAddUserModal}
         modalHeader={"Add New User/Remove User"}

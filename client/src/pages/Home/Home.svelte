@@ -31,7 +31,7 @@
             tempChats.push(newChat)
         })
                 
-        $chatsStore = [$chatsStore[0], ...tempChats]
+        $chatsStore = [$chatsStore[0], ...tempChats]        
     }
 
     const applyLatestMessageToChat = async (messages: Message[]) => {

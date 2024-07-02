@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/jmoiron/sqlx"
 
 	"MessengerV2/api/SQLConstants"
@@ -21,6 +22,8 @@ type ChatController struct{
 func (c *ChatController) Init(){
 	c.db = database.GetDB()
 }
+
+
 
 func (c *ChatController) AddNewUsersToChat(fc *fiber.Ctx) error{
 	chatId    := fc.Params("chatid")
@@ -151,6 +154,21 @@ func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
 	}
 	
 	return fc.Status(http.StatusOK).JSON(chat)
+}
+
+func (c *ChatController) LeaveGroupChat(fc *fiber.Ctx) error{
+	chatId := fc.Params("chatid")
+	username, usernameErr := fc.UserContext().Value("token").(jwt.MapClaims)["username"].(string)
+
+	if !usernameErr {
+		return fc.Status(http.StatusUnprocessableEntity).SendString("Could not parse \"username\" field.")
+	}
+
+	if err := database.DeleteUserFromGroupChat(chatId, username); err != nil{
+		return fc.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+
+	return fc.Status(http.StatusOK).SendString(fmt.Sprintf("Removed user: %s", username))
 }
 
 func (c *ChatController) DeleteChat(fc *fiber.Ctx) error{
