@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { type Chat } from "../../types/type";
-    import { chatsApi } from "../../api/api";
+    import { type Chat, type Message } from "../../types/type";
+    import { chatsApi, messageApi } from "../../api/api";
     import { 
         chatPictureStore,
         chatPictureStoreKey,
@@ -9,13 +9,17 @@
         selectedChatStore,
         selectedChatStoreKey,
         chatsStore, 
+        usersInChatStore,
+        usersInChatStoreKey,
+        subcribeNameStore,
+        subcribeNameStoreKey,
+        messagesStore,
         persistStoreValue, 
-        persistValue
-
     } from "../../stores"
     import { onMount } from "svelte";
     import { Moon } from "svelte-loading-spinners";
-
+    import pusher from "../../pusher/pusher"
+    import { PublicChat } from "../constants/constant"
     
     export let onHide = () => {}
     let chatInfo: Chat
@@ -32,26 +36,58 @@
     
             if (groupChatName) {
                 let parsedChatName = (JSON.parse(groupChatName) as string)
-                let chatIndex = 0
+                let selectedChatIndex = 0
                 
                 //Assign to the chatsStore a filtered array that does not include to chat to be deleted.
                 $chatsStore = $chatsStore.filter((chat: Chat, i: number) => {
                     if(chat.chat_name == parsedChatName){
-                        chatIndex = i
+                        selectedChatIndex = i
                     }
     
                     return chat.chat_name != parsedChatName
                 })
                                 
-                if (chatIndex == $chatsStore.length) {
-                    chatIndex-- 
+                if (selectedChatIndex == $chatsStore.length) {
+                    selectedChatIndex-- 
                 } 
-                
-                $chatsStore[chatIndex].isChatActive = true
-                $selectedChatStore = $chatsStore[chatIndex]
-                $groupChatNameStore = $chatsStore[chatIndex].chat_name
-                $chatPictureStore = $chatsStore[chatIndex].picture_url
 
+                 //Retrieve the users in the new chat pointed to by "selectedIndex" after leaving the previous chat.
+                //The chats array will always have 1 element in it, the public chat, so only retrieve the users if
+                //the user has at least more group chat.
+                if ($chatsStore.length > 1) {
+                    const usersInChatResponse = await chatsApi.get(`/private-chats/users/${$chatsStore[selectedChatIndex].chat_name}`)
+                    const usersInChat: string[] = (usersInChatResponse.data as string[])
+                    
+                    $usersInChatStore = usersInChat
+                    persistStoreValue(usersInChatStore, $usersInChatStore, usersInChatStoreKey)
+                }
+                
+                $chatsStore[selectedChatIndex].isChatActive = true
+                $selectedChatStore = $chatsStore[selectedChatIndex]
+                $groupChatNameStore = $chatsStore[selectedChatIndex].chat_name
+                $chatPictureStore = $chatsStore[selectedChatIndex].picture_url
+
+                //If the public chat is the last chat left after the user just left a group chat, retrieve the public 
+                //messages, and store them in the messages store. Also, store the value of the pusher subscribe name 
+                //into local sotrage for caching. Repeat for group chats as well.
+                if ($chatsStore.length === 1) {
+                    const messageResponse = await messageApi.get("/")
+                    $messagesStore = (messageResponse.data as Message[])
+
+                    //Resubscribe to the public chat to continue retrieving real time messages.
+                    pusher.subscribe(PublicChat)
+                    persistStoreValue(subcribeNameStore, PublicChat, subcribeNameStoreKey)
+                } else {
+                    const messageResponse = await messageApi.get(`/chat-messages/${$chatsStore[selectedChatIndex].id}`)
+                    $messagesStore = (messageResponse.data as Message[])
+
+                    //Resubscribe to this particular group chat continue retrieving real time messages.
+                    pusher.subscribe($chatsStore[selectedChatIndex].id.toString())
+                    persistStoreValue(subcribeNameStore, $chatsStore[selectedChatIndex].id.toString(), subcribeNameStoreKey)
+                }
+
+                //Finally, store the new chat "selectedChatIndex" in pointing to, the name of the group chat, and the
+                //picture of the group chat all in localstorage.
                 persistStoreValue(selectedChatStore, $selectedChatStore, selectedChatStoreKey)
                 persistStoreValue(groupChatNameStore, $groupChatNameStore, groupChatNameStoreKey)
                 persistStoreValue(chatPictureStore, $chatPictureStore, chatPictureStoreKey)
