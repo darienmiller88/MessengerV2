@@ -20,18 +20,20 @@
     import { type Message } from "../../types/type";
     import { Moon } from "svelte-loading-spinners";
 
-    let imageURL:          string
-    let showModal:         boolean = false
-    let isLoading:         boolean = false
-    let messagesRef:       HTMLElement
-    let userTypingText:    string = ""
-    let showPictureModal:  boolean = false
+    let imageURL:         string
+    let showModal:        boolean = false
+    let isLoading:        boolean = false
+    let messagesRef:      HTMLElement
+    let usersTyping:      string[] = []
+    let userTypingText:   string = ""
+    let userLeftChatText: string = ""
+    let showPictureModal: boolean = false
+    let usersLeavingChat: string[] = []
 
     const scrollTo = async (node: Element) => {
         node.scrollTo({ top: node.scrollHeight,  behavior: "instant" });
-    }; 
+    }
 
-    
     afterUpdate(() => {  
         // imageURL = ""  
         // console.log("scroll top:", messagesRef.scrollTop);
@@ -47,6 +49,18 @@
     const loadMessages = (chatName: string, messages: Message[]) => {        
         if (chatName == $selectedChatStore.chat_name) {
             $messagesStore = messages
+        }
+    }
+
+    const displayChatWindowNotifications = (username: string, timeoutLen: number, users: string[]) => {
+        if ($usernameStore != username) {
+            users = [...users, username]
+            // userTypingText = username + " is typing...";
+            
+            setTimeout(() => {
+                // userTypingText = ""
+                users = users.filter((userTyping: string) => username != userTyping)
+            }, timeoutLen)
         }
     }
 
@@ -74,13 +88,11 @@
         const channel = pusher.subscribe($subcribeNameStore)
 
         channel.bind("user_typing", (username: string) => {
-            if ($usernameStore != username) {
-                userTypingText = username + " is typing...";
-               
-                setTimeout(() => {
-                    userTypingText = ""
-                }, 950)
-            }
+            displayChatWindowNotifications(username, 950, usersTyping)
+        })
+
+        channel.bind("user_left", (username: string) => {
+            displayChatWindowNotifications(username, 1500, usersLeavingChat)
         })
 
         if (messagesRef) {
@@ -136,9 +148,16 @@
     onHide={() => showPictureModal = false}
     imageURL={imageURL}
 />
-<div class={$isDarkModeStore ? "is-typing is-typing-dark-mode": "is-typing"}>
-    {userTypingText}
-</div>
+{#each usersTyping as userTyping}
+    <div class={$isDarkModeStore ? "is-typing dark-mode": "is-typing"}>
+        {userTyping} is typing...
+    </div>
+{/each}
+{#each usersLeavingChat as userLeavingChat}
+    <div class={$isDarkModeStore ? "user-left dark-mode": "user-left"}>
+        {userLeavingChat} left the chat!
+    </div>    
+{/each}
 
 <style lang="scss">
     .loading-wrapper, h1{
@@ -161,11 +180,11 @@
         }
     }
 
-    .is-typing{
+    .is-typing, .user-left{
         text-align: center;
     }
 
-    .is-typing-dark-mode{
+    .dark-mode{
         color: white;
     }
 </style>
