@@ -33,6 +33,9 @@
         isLoading = true
 
         try {
+            //Make a post request to the route that handles pusher notifications to notify users a user left.
+            await chatsApi.post(`/notify-user-left/${$selectedChatStore.id}`,{ username: $usernameStore})
+
             const res = await chatsApi.delete(`/leave-group-chat/${$selectedChatStore.id}`,{ data: $usernameStore})
             console.log("res:", res.data);
             
@@ -47,6 +50,7 @@
                 return chat.chat_name != $groupChatNameStore
             })
             
+            //If the index is the same as the length of the array, decrement it so we don't go out of bounds.
             if (selectedChatIndex == $chatsStore.length) {
                 selectedChatIndex-- 
             } 
@@ -119,7 +123,6 @@
             $selectedChatStore = (JSON.parse(selectedChatUnparsed) as Chat)
         }
     })
-
 </script>
 
 <div class="leave-group-chat-wrapper">

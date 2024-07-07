@@ -59,7 +59,7 @@
             
             setTimeout(() => {
                 // userTypingText = ""
-                users = users.filter((userTyping: string) => username != userTyping)
+                users = users.filter((user: string) => username != user)
             }, timeoutLen)
         }
     }

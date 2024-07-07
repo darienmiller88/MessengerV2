@@ -9,21 +9,40 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jmoiron/sqlx"
+	"github.com/pusher/pusher-http-go/v5"
 
 	"MessengerV2/api/SQLConstants"
 	"MessengerV2/api/database"
 	"MessengerV2/api/models"
+	"MessengerV2/api/pusherclient"
 )
 
 type ChatController struct{
-	db *sqlx.DB
+	db          *sqlx.DB
+	pusherClient pusher.Client
 }
 
 func (c *ChatController) Init(){
-	c.db = database.GetDB()
+	c.db           = database.GetDB()
+	c.pusherClient = pusherclient.GetPusherClient()
 }
 
+func (c *ChatController) NotifyUserLeavingGroupChat(fc *fiber.Ctx) error{
+	chatId := fc.Params("chatid", public)
+	data := struct {
+		Username string `json:"username"`
+	}{}
 
+	if err := fc.BodyParser(&data); err != nil {
+		return fc.Status(http.StatusBadRequest).JSON(err)
+	}
+
+	if err := c.pusherClient.Trigger(chatId, "user_left", data.Username); err != nil {
+		fmt.Println("err broadcasting messages:", err)
+	}
+
+	return fc.Status(http.StatusOK).JSON(data)
+}
 
 func (c *ChatController) AddNewUsersToChat(fc *fiber.Ctx) error{
 	chatId    := fc.Params("chatid")
