@@ -3,6 +3,6 @@ client/src/components/ChatWindowHeader
     - Implement "ChangeChatNameForm" component in "ChatWindowHeader" component [in progress]
     - Implement "ChangeChatPictureForm" component in "ChatWindowHeader" component [ ]
     - Implement "leave chat" button in "ChatWindowHeader" component [x]
-    - Implement "check currnent chat members" button in "ChatWindowHeader" component [in progress]
+    - Implement "check current chat members" button in "ChatWindowHeader" component [in progress]
 client/src/components/AddNewChatForm 
     - Implement "Message new user" feature [ ]

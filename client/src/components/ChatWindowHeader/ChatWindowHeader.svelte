@@ -8,6 +8,7 @@
     import ChangeChatNameForm from "../ChangeChatNameForm/ChangeChatNameForm.svelte"
     import ChangeChatPictureForm from "../ChangeChatPictureForm/ChangeChatPictureForm.svelte"
     import LeaveGroupChatForm from "../LeaveGroupChatForm/LeaveGroupChatForm.svelte";
+    import CheckCurrentChatUsers from "../CheckCurrentChatUsers/CheckCurrentChatUsers.svelte";
     import { PublicChat } from "../constants/constant";
     import { 
         chatPictureStore,
@@ -27,6 +28,7 @@
     let showAddUserModal: boolean = false
     let showChangeChatNameModal: boolean = false
     let showChangeChatPictureModal: boolean = false
+    let showCheckCurrentChatUsersModal: boolean = false
 
     const changeToUserChats = () => {
         $isChatWindowActiveStore = !$isChatWindowActiveStore
@@ -84,13 +86,13 @@
             <button on:click={() => console.log("changing groupchat name")} >
                 <PencilSquare width={24} height={24} fill={$fillIconColorStore}/>
             </button>
-            <button on:click={() => console.log("Information about users")} >
+            <button on:click={() => showCheckCurrentChatUsersModal = true} >
                 <QuestionCircle width={24} height={24} fill={$fillIconColorStore}/>
             </button>
         </div>
     {/if}
 
-    <!-- In Progress -->
+    <!-- Finished -->
     <Modal 
         show={showLeaveGroupChatModal}
         modalHeader={"Leave Group"}
@@ -112,6 +114,13 @@
         modalHeader={"Add New User/Remove User"}
         modalContent={AddNewUserForm}
         onHide={() => showAddUserModal = false}
+    />
+
+    <Modal 
+        show={showCheckCurrentChatUsersModal}
+        modalHeader={"Users in this chat"}
+        modalContent={CheckCurrentChatUsers}
+        onHide={() => showCheckCurrentChatUsersModal = false}
     />
 
     <!-- Need to implement -->

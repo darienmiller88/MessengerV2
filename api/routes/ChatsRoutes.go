@@ -26,6 +26,6 @@ func (c *ChatsRoutes) Init(){
 		router.Delete("/leave-group-chat/:chatid",   middlewares.AuthCheckUser, c.chatsController.LeaveGroupChat)
 		router.Post("/add-new-users/:chatid",        middlewares.AuthCheckUser, c.chatsController.AddNewUsersToChat)
 		router.Post("/notify-user-left/:chatid",     middlewares.AuthCheckUser, c.chatsController.NotifyUserLeavingGroupChat)
-		router.Post("/",                             c.chatsController.AddNewChat)
+		router.Post("/",                             middlewares.AuthCheckUser, c.chatsController.AddNewChat)
 	})
 }
