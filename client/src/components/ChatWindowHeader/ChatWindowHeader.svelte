@@ -5,8 +5,7 @@
     import Modal from "../Modal/Modal.svelte";
     import DeleteGroupChat from "../DeleteGroupChat/DeleteGroupChat.svelte";
     import AddNewUserForm from "../AddNewUserForm/AddNewUserForm.svelte";
-    import ChangeChatNameForm from "../ChangeChatNameForm/ChangeChatNameForm.svelte"
-    import ChangeChatPictureForm from "../ChangeChatPictureForm/ChangeChatPictureForm.svelte"
+    import ChangeChatInfoForm from "../ChangeChatInfoForm/ChangeChatInfoForm.svelte"
     import LeaveGroupChatForm from "../LeaveGroupChatForm/LeaveGroupChatForm.svelte";
     import CheckCurrentChatUsers from "../CheckCurrentChatUsers/CheckCurrentChatUsers.svelte";
     import { PublicChat } from "../constants/constant";
@@ -26,8 +25,7 @@
     let showLeaveGroupChatModal: boolean = false
     let showDeleteModal: boolean = false
     let showAddUserModal: boolean = false
-    let showChangeChatNameModal: boolean = false
-    let showChangeChatPictureModal: boolean = false
+    let showChangeChatInfoModal: boolean = false
     let showCheckCurrentChatUsersModal: boolean = false
 
     const changeToUserChats = () => {
@@ -80,10 +78,7 @@
             <button on:click={() => showAddUserModal = true} >
                 <PersonAdd width={24} height={24} fill={$fillIconColorStore}/>
             </button>
-            <!-- <button on:click={() => console.log("changing group picture")} >
-                <PersonCircle width={24} height={24} fill={$fillIconColorStore}/>
-            </button> -->
-            <button on:click={() => console.log("changing groupchat name")} >
+            <button on:click={() => showChangeChatInfoModal} >
                 <PencilSquare width={24} height={24} fill={$fillIconColorStore}/>
             </button>
             <button on:click={() => showCheckCurrentChatUsersModal = true} >
@@ -116,6 +111,7 @@
         onHide={() => showAddUserModal = false}
     />
 
+    <!-- Finished -->
     <Modal 
         show={showCheckCurrentChatUsersModal}
         modalHeader={"Users in this chat"}
@@ -125,18 +121,10 @@
 
     <!-- Need to implement -->
     <Modal 
-        show={showChangeChatNameModal}
+        show={showChangeChatInfoModal}
         modalHeader={"Change Chat Name"}
-        modalContent={ChangeChatNameForm}
-        onHide={() => showChangeChatNameModal = false}
-    />
-
-    <!-- Need to implement -->
-    <Modal 
-        show={showChangeChatPictureModal}
-        modalHeader={"Change Chat Picture"}
-        modalContent={ChangeChatPictureForm}
-        onHide={() => showChangeChatPictureModal = false}
+        modalContent={ChangeChatInfoForm}
+        onHide={() => showChangeChatInfoModal = false}
     />
 </div>
 
