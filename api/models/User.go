@@ -1,10 +1,12 @@
 package models
 
 import (
+	"MessengerV2/api/utilities"
 	"database/sql"
 	"errors"
 	"fmt"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/go-ozzo/ozzo-validation"
@@ -47,6 +49,7 @@ func (u *User) Validate() error{
 			validation.Match(regexp.MustCompile("[A-Z]")).Error("Password must contain at least one uppercase letter"),
 			validation.Match(regexp.MustCompile("[0-9]")).Error("Password must contain at least one number"),
 		),
+		validation.Field(&u.ProfilePicture, validation.By(u.isValidImage)),
 	)
 }
 
@@ -62,9 +65,25 @@ func (u *User) CheckUsername(val interface{}) error{
 		return fmt.Errorf("username \"%s\" is taken", username)
 	}
 
-	fmt.Println(username)
-
 	return nil
+}
+
+func (c *User) isValidImage(val interface{}) error {
+	url, success := val.(sql.NullString)
+
+	if !success {
+		return errors.New("error parsing value, expected string")
+	}
+
+	if strings.Trim(url.String, " ") == ""{
+		return nil
+	}
+
+	if err := utilities.CheckValidImageURL(url.String); err != nil{
+		return err
+	}
+
+	return nil	
 }
 
 func (u *User) InitCreatedAt(){

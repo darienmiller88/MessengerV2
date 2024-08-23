@@ -24,6 +24,7 @@
 
     const saveSettings = async () => {
         const formData = new FormData();
+        
         displayName = displayName.trim() == "" ? $displayNameStore : displayName
         formData.append('file', imageFile);
         formData.append("display_name", displayName)

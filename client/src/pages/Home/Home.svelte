@@ -7,8 +7,8 @@
     import { userApi, messageApi, chatsApi } from "../../api/api";
     import type { Message , Chat} from "../../types/type";
     import MediaQuery from 'svelte-media-queries'
-    import defaultPic from "../../assets/default.png"
 
+    //Load the messages for a specific group chat into the Chat Window.
     const loadMessages = (chatName: string, messages: Message[]) => {        
         if (chatName == $selectedChatStore.chat_name) {
             $messagesStore = messages
@@ -23,7 +23,7 @@
                 id: chat.id,
                 chat_name: chat.chat_name,
                 time: "N/A",
-                picture_url: defaultPic,
+                picture_url: chat.picture_url,
                 currentMessage: "N/A",
                 isChatActive: false
             }
@@ -31,7 +31,7 @@
             tempChats.push(newChat)
         })
                 
-        $chatsStore = [$chatsStore[0], ...tempChats]        
+        $chatsStore = [$chatsStore[0], ...tempChats.sort((a: Chat, b: Chat) => a.id - b.id)]        
     }
 
     const applyLatestMessageToChat = async (messages: Message[]) => {
@@ -47,7 +47,7 @@
         //Afterwards, fill the users Private chats with the messages from those chats.
         for (let i = 1; i < $chatsStore.length; i++) {
             const privateChatMessagesRes = await messageApi(`/chat-messages/${$chatsStore[i].id}`)
-            const messages = (privateChatMessagesRes.data as Message[])
+            const messages: Message[] = (privateChatMessagesRes.data as Message[])
             
             if (messages.length) {
                 $chatsStore[i].currentMessage = messages[messages.length - 1].message_content
@@ -74,7 +74,7 @@
             $usernameStore = (username.data as string)
 
             const chatsResponse = await chatsApi.get(`/private-chats/chats/${$usernameStore}`)
-            const chats = (chatsResponse.data as Chat[])
+            const chats: Chat[] = (chatsResponse.data as Chat[])
             
             //Request all of the users private chats, and store them into the chatsStore variable.
             loadChats(chats)

@@ -1,6 +1,6 @@
 client/src/components/ChatWindowHeader 
     - Implement "AddNewUserForm" component in "ChatWindowHeader" component [x]
-    - Implement "ChangeChatInfoForm" component in "ChatWindowHeader" component [in progress]
+    - Implement "ChangeChatInfoForm" component in "ChatWindowHeader" component [x]
     - Implement "leave chat" button in "ChatWindowHeader" component [x]
     - Implement "check current chat members" button in "ChatWindowHeader" component [x]
 client/src/components/AddNewChatForm 

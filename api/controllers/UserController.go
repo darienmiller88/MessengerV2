@@ -39,7 +39,7 @@ func (u *UserController) ChangeUserProfilePicture(c *fiber.Ctx) error {
 	file, _ := c.FormFile("file")
 
 	if file != nil && file.Size > MAX_SIZE{
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"errFileTooBig": "File size too big."})
+		return c.Status(http.StatusRequestEntityTooLarge).JSON(fiber.Map{"errFileTooBig": "File size too big."})
 	}
 	
 	username    := c.FormValue("username")
@@ -61,7 +61,7 @@ func (u *UserController) ChangeUserProfilePicture(c *fiber.Ctx) error {
 		res, err = cloudinary.UploadImage(file)
 	
 		if err != nil {
-			return err
+			return c.Status(http.StatusInternalServerError).SendString(err.Error())
 		}
 
 		u.db.MustExec(sqlconstants.UPDATE_USER_PROFILE_PICTURE, displayName, res, time.Now(), username)

@@ -77,7 +77,8 @@ const (
 	//Update the user's display name only
 	UPDATE_USER string = "UPDATE users SET display_name=$1, updated_at=$2 WHERE username=$3"
 
-
+	//Update the nme and picture url of a group chat.
+	UPDATE_GROUPCHAT_PICTURE_AND_NAME string = "UPDATE chats SET chat_name=$1, picture_url=$2, updated_at=$3 WHERE id=$4"
 
 	
 	///////////////////////////////////////////////////

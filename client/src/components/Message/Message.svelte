@@ -69,7 +69,9 @@
                 <div class="thumbs-up-wrapper"><HandThumbsUpFill width={150} height={150} fill={$fillIconColorStore} /></div>
             {:else if isImage && messageContent !== ""}
                 <div class="message">
-                    {messageContent}
+                    <div class="message-content">
+                        {messageContent}
+                    </div> 
                     <div class="message-image-wrapper" on:keyup={null} tabindex="0" role="button" on:click={enlargeImage}>
                         <img src={imageURL} alt="message_image" class="message-image" >
                     </div>
@@ -200,10 +202,12 @@
                     color: var(--darker-grey);
                 }
             }
-
+            
             .message-delete-wrapper{
                 display: flex;
                 width: fit-content;
+
+                
 
                 .message{
                     padding: 10px 15px;
@@ -216,6 +220,10 @@
 
                     .message-image-wrapper{
                         text-align: right;
+                    }
+
+                    .message-content{
+                        margin-bottom: 10px;
                     }
     
                     @media only screen and (min-width: 768px) {

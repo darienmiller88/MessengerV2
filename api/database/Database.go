@@ -3,13 +3,14 @@ package database
 import (
 	"fmt"
 	"os"
-	// "time"
-	
+	"time"
+
+
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 
-	"MessengerV2/api/models"
 	"MessengerV2/api/SQLConstants"
+	"MessengerV2/api/models"
 )
 
 var db *sqlx.DB
@@ -100,7 +101,18 @@ func InsertMessage(message models.Message) (models.Message, error){
 
 // Function to delete a user from a group chat using their username, and the Id of the groupchat they belonged to.
 func DeleteUserFromGroupChat(chatId string, username string) error {
-	_, err       := db.Exec(sqlconstants.DELETE_USER_FROM_GROUPCHAT, chatId, username)
+	_, err := db.Exec(sqlconstants.DELETE_USER_FROM_GROUPCHAT, chatId, username)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+//Takes in the name of the group chat, the url for the group chat picture, and the id to update a row in "chats".
+func UpdateGroupChatPictureAndName(chatName string, pictureUrl string, chatId string) error {
+	_, err := db.Exec(sqlconstants.UPDATE_GROUPCHAT_PICTURE_AND_NAME, chatName, pictureUrl, time.Now(), chatId)
 
 	if err != nil {
 		return err

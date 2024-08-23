@@ -51,6 +51,7 @@
         persistStoreValue(isChatWindowActiveStore, !$isChatWindowActiveStore, isChatWindowActiveStoreKey)
     }
 
+    
     const getUsersInChat = async () => {
         //Only get the users in the group chat when clicking the chat once. Prevents unnecessary server calls.
         if ($groupChatNameStore != chatInfo.chat_name) {

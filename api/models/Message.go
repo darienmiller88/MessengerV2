@@ -4,13 +4,14 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"net/http"
 	"strings"
 	"time"
 
 	"github.com/go-ozzo/ozzo-validation"
 	"github.com/jmoiron/sqlx"
+
 	// "github.com/nerock/ozzo-validation/is"
+	"MessengerV2/api/utilities"
 )
 
 type Message struct {
@@ -86,31 +87,15 @@ func (m *Message) isValidImage(val interface{}) error {
 		return errors.New("error parsing value, expected string")
 	}
 
-	if url.String == ""{
+	if strings.Trim(url.String, " ") == ""{
 		return nil
 	}
 
-	// Make a HEAD request to the URL to request header content.
-	resp, err := http.Head(url.String)
-
-	if err != nil {
+	if err := utilities.CheckValidImageURL(url.String); err != nil{
 		return err
 	}
 
-	defer resp.Body.Close()
-
-	// Check if the response status code is within the success range
-	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("HTTP request failed with status code: %d", resp.StatusCode)
-	}
-
-	// Check the Content-Type header for image formats
-	contentType := resp.Header.Get("Content-Type")
-	if strings.HasPrefix(contentType, "image/png") || strings.HasPrefix(contentType, "image/jpeg") {
-		return nil
-	}
-
-	return fmt.Errorf("%s is not a valid image url", url.String)
+	return nil	
 }
 
 func (m *Message) InitCreatedAt() {

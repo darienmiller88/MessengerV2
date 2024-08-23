@@ -78,7 +78,7 @@
             <button on:click={() => showAddUserModal = true} >
                 <PersonAdd width={24} height={24} fill={$fillIconColorStore}/>
             </button>
-            <button on:click={() => showChangeChatInfoModal} >
+            <button on:click={() => showChangeChatInfoModal = true} >
                 <PencilSquare width={24} height={24} fill={$fillIconColorStore}/>
             </button>
             <button on:click={() => showCheckCurrentChatUsersModal = true} >
@@ -122,7 +122,7 @@
     <!-- Need to implement -->
     <Modal 
         show={showChangeChatInfoModal}
-        modalHeader={"Change Chat Name"}
+        modalHeader={"Change Chat Name/Update Chat Picture"}
         modalContent={ChangeChatInfoForm}
         onHide={() => showChangeChatInfoModal = false}
     />

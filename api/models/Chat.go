@@ -22,7 +22,7 @@ type Chat struct {
 func (c *Chat) Validate() error {
 	return validation.ValidateStruct(
 		c,
-		validation.Field(&c.ChatName, validation.By(c.validateChatName)),
+		validation.Field(&c.ChatName, validation.Length(2, 15), validation.By(c.validateChatName)),
 	)
 }
 

@@ -4,14 +4,17 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strconv"
 
+	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jmoiron/sqlx"
 	"github.com/pusher/pusher-http-go/v5"
 
 	"MessengerV2/api/SQLConstants"
+	"MessengerV2/api/cloudinary"
 	"MessengerV2/api/database"
 	"MessengerV2/api/models"
 	"MessengerV2/api/pusherclient"
@@ -25,6 +28,45 @@ type ChatController struct{
 func (c *ChatController) Init(){
 	c.db           = database.GetDB()
 	c.pusherClient = pusherclient.GetPusherClient()
+}
+
+func (c *ChatController) ChangeGroupChatSettings(fc *fiber.Ctx) error {
+	groupchatImageFile, _ := fc.FormFile("groupchat_image")
+
+	if groupchatImageFile != nil && groupchatImageFile.Size > MAX_SIZE{
+		return fc.Status(http.StatusRequestEntityTooLarge).JSON(fiber.Map{"errFileTooBig": "File size too big."})
+	}
+	
+	chatId          := fc.FormValue("chat_id")
+	chatName        := fc.FormValue("chat_name")
+	currentImageUrl := fc.FormValue("current_image_url")
+	err             := validation.Validate(chatName, 
+		validation.Length(2, 15),
+		validation.Match(regexp.MustCompile("[a-z]|[A-Z]")).Error("Chat name must contain at least one letter."),
+	)
+
+	if err != nil{
+		return fc.Status(http.StatusBadRequest).JSON(fiber.Map{"errInvalidName": err.Error()})
+	}
+
+	var imageUrl string
+
+	//Upload a file to cloudinary only if the user provided a file. If not, do not upload, and simply update the display name.
+	if groupchatImageFile != nil {
+		imageUrl, err = cloudinary.UploadImage(groupchatImageFile)
+	
+		if err != nil {
+			return fc.Status(http.StatusInternalServerError).SendString(err.Error())
+		}
+	}else{
+		imageUrl = currentImageUrl
+	}
+	
+	if err := database.UpdateGroupChatPictureAndName(chatName, imageUrl, chatId); err != nil{
+		return fc.Status(http.StatusInternalServerError).SendString(err.Error())
+	}
+
+	return fc.Status(http.StatusOK).SendString(imageUrl)
 }
 
 func (c *ChatController) NotifyUserLeavingGroupChat(fc *fiber.Ctx) error{

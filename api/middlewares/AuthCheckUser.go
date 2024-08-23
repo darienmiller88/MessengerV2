@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"fmt"
 	"net/http"
 
 	"MessengerV2/api/database"
@@ -24,7 +23,6 @@ func AuthCheckUser(c *fiber.Ctx) error{
 
 	userChat := models.UserChat{}
 	if err := database.GetDB().Get(&userChat, "SELECT * FROM user_chats WHERE username=$1 AND chat_id=$2", username, id); err != nil{
-		fmt.Println("err auth middleare:", err)
 		return c.Status(http.StatusForbidden).SendString(err.Error())
 	}
 
