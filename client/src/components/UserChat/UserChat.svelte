@@ -130,6 +130,8 @@
         transition: 0.3s;
         cursor: pointer;
 
+        // border: 2px solid red;
+
         @media only screen and (min-width: 768px){
             grid-template-columns: 12% auto;
         }
@@ -154,8 +156,8 @@
                 margin: auto;
                 border-radius: 50%;
 
-                width: 80%;
-                height: auto;
+                width: 50px;
+                height: 50px;
 
                 @media only screen and (min-width: 768px){
                     width: 70%;

@@ -46,8 +46,9 @@
                 font-size: 25px;
                 padding: 0px 10px;
                 transition: 0.3s;
-                color: rgba(0, 0, 0, 0.4);
-                // border: 2px solid red;
+                color: rgba(150, 150, 150, 0.6);
+                // border: 2px solid black;
+                // border-radius: 50%;
 
                 @media screen and (min-width: 992px) {
                     font-size: 50px;  

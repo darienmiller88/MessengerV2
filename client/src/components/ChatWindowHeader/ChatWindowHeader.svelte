@@ -3,6 +3,7 @@
     import { onMount } from "svelte";
     import { ArrowLeftCircle, QuestionCircle, PersonAdd, PencilSquare, Trash } from "svelte-bootstrap-icons"
     import Modal from "../Modal/Modal.svelte";
+    import PictureModal from "../PictureModal/PictureModal.svelte";
     import DeleteGroupChat from "../DeleteGroupChat/DeleteGroupChat.svelte";
     import AddNewUserForm from "../AddNewUserForm/AddNewUserForm.svelte";
     import ChangeChatInfoForm from "../ChangeChatInfoForm/ChangeChatInfoForm.svelte"
@@ -23,6 +24,7 @@
     } from "../../stores";
 
     let showLeaveGroupChatModal: boolean = false
+    let showGroupChatPictureModal: boolean = false
     let showDeleteModal: boolean = false
     let showAddUserModal: boolean = false
     let showChangeChatInfoModal: boolean = false
@@ -61,7 +63,10 @@
         <button class="icon-wrapper back" on:click={changeToUserChats}>
             <ArrowLeftCircle width={22} height={22} fill={$fillIconColorStore}/>
         </button>
-        <img src={$chatPictureStore} alt="chat-pic"/>
+
+        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <img src={$chatPictureStore} alt="chat-pic" on:click={() => showGroupChatPictureModal = true}/>
         <div class="online-status-wrapper">
             <div class={$isDarkModeStore ? "group-chat-name dark-mode-theme" : "group-chat-name" }>{$groupChatNameStore}</div>
             <div class="online-status">Online</div>
@@ -119,12 +124,18 @@
         onHide={() => showCheckCurrentChatUsersModal = false}
     />
 
-    <!-- Need to implement -->
+    <!-- Finished -->
     <Modal 
         show={showChangeChatInfoModal}
         modalHeader={"Change Chat Name/Update Chat Picture"}
         modalContent={ChangeChatInfoForm}
         onHide={() => showChangeChatInfoModal = false}
+    />
+
+    <PictureModal 
+        show={showGroupChatPictureModal}
+        imageURL={$chatPictureStore}
+        onHide={() => showGroupChatPictureModal = false}
     />
 </div>
 
@@ -150,12 +161,19 @@
                 }
             }
 
+            .chat-picture-wrapper{
+                // border: 2px solid red;
+                
+            }
+            
             img{
                 width: 45px;
                 height: auto;
                 margin-right: 10px;
 
                 border-radius: 50%;
+
+                cursor: pointer;
 
                 @media only screen and (min-width: 768px){
                     width: 65px;
@@ -165,6 +183,7 @@
                     width: 45px;
                 }
             }
+        
 
             .online-status-wrapper{
                 .online-status{
