@@ -126,7 +126,7 @@
             return chat.chat_name == $selectedChatStore.chat_name
         })
 
-        //Afterwards
+        //Afterwards, assign the newly created message, and its message date ti the chat the message was sent to.
         $chatsStore[index].currentMessage = message.message_content
         $chatsStore[index].time = new Date(message.message_date).toLocaleTimeString()
     }
@@ -230,6 +230,16 @@
                     isImage: message.image_url.Valid,
                     id: message.id
                 }]
+
+                //add the new message to the current chat
+                $chatsStore = $chatsStore.map((chat: Chat) => {
+                    if (chat.chat_name === $selectedChatStore.chat_name) {
+                        chat.currentMessage = message.message_content
+                        chat.time = message.message_date
+                    }
+
+                    return chat
+                })
             }
         });
 

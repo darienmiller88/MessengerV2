@@ -53,6 +53,7 @@ func (m *Message) CheckUsername(val interface{}) error {
 	}
 
 	if err := m.DB.Get(&user, "SELECT * FROM users WHERE username=$1", username); err != nil {
+		fmt.Println("err:", err, "user:", user.DisplayName)
 		return fmt.Errorf("username \"%s\" was not found", username)
 	}
 

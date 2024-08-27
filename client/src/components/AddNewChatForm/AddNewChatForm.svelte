@@ -71,7 +71,7 @@
     }
 
     const messageNewUser = () => {
-        let user = (value as FilteredUser)
+        let user: FilteredUser = (value as FilteredUser)
 
         newChat.chat_name = user.value
         newChat.currentMessage = message

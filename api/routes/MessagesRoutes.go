@@ -17,10 +17,15 @@ func (m *MessagesRoutes) Init(){
 	m.messageController.Init()
 
 	m.Router.Use(middlewares.Auth).Route("/", func(router fiber.Router) {
+		router.Post("/sender/:senderUsername/receiver/:receiverUsername", m.messageController.PostMessageToOtherUser)
+		router.Post("/upload-image/sender/:senderUsername/receiver/:receiverUsername", m.messageController.UploadImageAsMessageToOtherUser)
+		router.Post("/userTyping/sender/:senderUsername/receiver/:receiverUsername", nil)
 		router.Post("/public",               m.messageController.PostMessage)
 		router.Post("/:chatid",              middlewares.AuthCheckUser, m.messageController.PostMessage)
 		router.Post("/userTyping/public",    m.messageController.UserTyping)
 		router.Post("/userTyping/:chatid",   m.messageController.UserTyping)
+		router.Post("/userLeft/public",      m.messageController.UserLeft)
+		router.Post("/userLeft/:chatid",     m.messageController.UserLeft)
 		router.Post("/upload-image/public",  m.messageController.UploadImageAsMessage)
 		router.Post("/upload-image/:chatid", middlewares.AuthCheckUser, m.messageController.UploadImageAsMessage)
 		router.Get("/message-history",       m.messageController.GetMessageHistory)

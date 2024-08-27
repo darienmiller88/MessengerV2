@@ -172,7 +172,7 @@ func (u *UserController) Signout(c *fiber.Ctx) error {
 	}
 
 	if isAnonymous {
-		result, _ := u.db.Exec(sqlconstants.DELETE_ANONYMOUS_USERS, username)
+		result, _ := u.db.Exec(sqlconstants.DELETE_ANONYMOUS_USER, username)
 		rowsAffected, _ := result.RowsAffected()
 
 		fmt.Println("rows:", rowsAffected)

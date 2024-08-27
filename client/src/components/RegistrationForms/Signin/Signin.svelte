@@ -80,6 +80,7 @@
         try {
             isSigninAnoymousLoading = true
             $usernameStore = "User-" + (uuid() as string).substring(0, 8)
+            $displayNameStore = $usernameStore
 
             //Just as above, store the values in local storage to be referenced later.
             storeAllValues(defaultProfilePicture)
@@ -90,12 +91,11 @@
                 password: $usernameStore,
                 profile_picture: {
                     String: "",
-                    valid: true
+                    valid: false
                 },
                 is_anonymous: true,
             }
 
-            console.log("user:", user);
             const response = await userApi.post("/signup", user)
 
             console.log("res:", response.data);

@@ -5,7 +5,7 @@
     import Modal from "../Modal/Modal.svelte";
     import PictureModal from "../PictureModal/PictureModal.svelte";
     import DeleteGroupChat from "../DeleteGroupChat/DeleteGroupChat.svelte";
-    import AddNewUserForm from "../AddNewUserForm/AddNewUserForm.svelte";
+    import AddAndRemoveUserForm from "../AddAndRemoveUserForm/AddAndRemoveUserForm.svelte";
     import ChangeChatInfoForm from "../ChangeChatInfoForm/ChangeChatInfoForm.svelte"
     import LeaveGroupChatForm from "../LeaveGroupChatForm/LeaveGroupChatForm.svelte";
     import CheckCurrentChatUsers from "../CheckCurrentChatUsers/CheckCurrentChatUsers.svelte";
@@ -112,7 +112,7 @@
     <Modal 
         show={showAddUserModal}
         modalHeader={"Add New User/Remove User"}
-        modalContent={AddNewUserForm}
+        modalContent={AddAndRemoveUserForm}
         onHide={() => showAddUserModal = false}
     />
 
@@ -159,11 +159,6 @@
                 @media only screen and (min-width: 992px){
                     display: none;
                 }
-            }
-
-            .chat-picture-wrapper{
-                // border: 2px solid red;
-                
             }
             
             img{

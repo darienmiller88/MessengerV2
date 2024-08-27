@@ -31,6 +31,14 @@ func (m *MessageController) Init() {
 	m.db = database.GetDB()
 }
 
+func (m *MessageController) PostMessageToOtherUser(c *fiber.Ctx) error{
+	return nil
+}
+
+func (m *MessageController) UploadImageAsMessageToOtherUser(c *fiber.Ctx) error{
+	return nil
+}
+
 func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error {
 	chatId := c.Params("chatid", public)
 	file, err := c.FormFile("file")
@@ -113,7 +121,6 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error {
 	message, err = database.InsertMessage(message)
 
 	if err != nil {
-		fmt.Println("err inserting message:", err)
 		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 
@@ -205,6 +212,17 @@ func (m *MessageController) DeleteMessage(c *fiber.Ctx) error {
 
 // Function to allow clients on the front end to know when someone is typing.
 func (m *MessageController) UserTyping(c *fiber.Ctx) error {
+	return m.handleUserLeavingAndUserTypingPushNotifications(c, "user_typing")
+}
+
+// Function to allow clients on the front end to know when someone is typing.
+func (m *MessageController) UserLeft(c *fiber.Ctx) error {
+	return m.handleUserLeavingAndUserTypingPushNotifications(c, "user_left")
+}
+
+//Function to combine the logic for the above two functions to notify the users of other users typing and 
+//leaving group chats.
+func (m *MessageController) handleUserLeavingAndUserTypingPushNotifications(c *fiber.Ctx, pusherEventName string) error{
 	chatId := c.Params("chatid", public)
 	data := struct {
 		Username string `json:"username"`
@@ -214,7 +232,7 @@ func (m *MessageController) UserTyping(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(err)
 	}
 
-	if err := m.pusherClient.Trigger(chatId, "user_typing", data.Username); err != nil {
+	if err := m.pusherClient.Trigger(chatId, pusherEventName, data.Username); err != nil {
 		fmt.Println("err broadcasting messages:", err)
 	}
 

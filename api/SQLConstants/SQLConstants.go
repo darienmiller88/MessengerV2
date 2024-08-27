@@ -18,8 +18,8 @@ const (
 	"RETURNING id"
 
 	// Insert a new user into the "users" table.
-	INSERT_USER string = "INSERT INTO users (created_at, updated_at, username, password, is_anonymous) " +
-	"VALUES (:created_at, :updated_at, :username, :password, :is_anonymous) RETURNING id"
+	INSERT_USER string = "INSERT INTO users (created_at, updated_at, username, display_name, password, is_anonymous) " +
+	"VALUES (:created_at, :updated_at, :username, :display_name, :password, :is_anonymous) RETURNING id"
 
 	//Insert a new group chat into the "chats" table.
 	INSERT_GROUP_CHAT string = "INSERT INTO chats (created_at, updated_at, chat_name, picture_url) " +
@@ -96,7 +96,7 @@ const (
 	DELETE_CHAT string = "DELETE FROM chats WHERE id=$1"
 
 	//Delete all anonymous users in the "users" table.
-	DELETE_ANONYMOUS_USERS string = "DELETE FROM users WHERE is_anonymous IS TRUE"
+	DELETE_ANONYMOUS_USER string = "DELETE FROM users WHERE is_anonymous IS TRUE AND username=$1"
 
 	//Delete a user from "users" by their id.
 	DELETE_USER string = "DELETE FROM users WHERE id=$1"
