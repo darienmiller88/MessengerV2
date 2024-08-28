@@ -5,6 +5,12 @@ const (
 	// CREATE
 	///////////////////////////////////////////
 
+	//Insert a message that is being sent from one user to another user.
+	INSERT_USER_TO_USER_MESSAGE string = "INSERT INTO messages " +
+	"(created_at, updated_at, receiver, message_content, message_date, username, image_url, display_name) " +
+	"VALUES (:created_at, :updated_at, :receiver, :message_content, :message_date, :username, :image_url, :display_name) " + 
+	"RETURNING id"
+
 	// Insert a message into "messages" with a particular chat_id.
 	INSERT_GROUP_CHAT_MESSAGE string = "INSERT INTO messages " +
 	"(message_content, message_date, created_at, updated_at, username, image_url, display_name, chat_id) " +
@@ -82,7 +88,7 @@ const (
 
 	
 	///////////////////////////////////////////////////
-	// DESTROY
+	// DELETE
 	///////////////////////////////////////////////////
 
 	//Delete a user from a "user_chats" with a particular username and chat_id. This will remove a user from a 

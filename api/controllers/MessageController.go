@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -31,17 +32,10 @@ func (m *MessageController) Init() {
 	m.db = database.GetDB()
 }
 
-func (m *MessageController) PostMessageToOtherUser(c *fiber.Ctx) error{
-	return nil
-}
-
-func (m *MessageController) UploadImageAsMessageToOtherUser(c *fiber.Ctx) error{
-	return nil
-}
-
 func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error {
-	chatId := c.Params("chatid", public)
-	file, err := c.FormFile("file")
+	chatId       := c.Params("chatid", public)
+	file, err    := c.FormFile("file")
+	receiverUsername := c.Params("receiverName")
 
 	if err != nil {
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -66,21 +60,34 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error {
 	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
 	message.ImageURL.Valid = imageURL != ""
 	message.ImageURL.String = imageURL
-	convChatId, err := strconv.Atoi(chatId)
-	
-	//The "chatid" URL Param will either be a number, or default to "Public". If the URL param can be converted
-	//to a number, assign it to the messages "ChatID" field.
-	if err == nil {
-		message.ChatID.Int64 = int64(convChatId)
-		message.ChatID.Valid = true
+
+	var channelName string
+
+	//If the route "/receiver/:receiverUsername" is hit, fill out the "receiver" field. Otherwise, fill
+	//out the "chat_id" field for the "messages" table.
+	if strings.Contains(c.Path(), "/receiver") {
+		message.Receiver.String = receiverUsername
+		message.Receiver.Valid = true
+
+		channelName = message.Username + "-" + receiverUsername
+	}else{
+		convChatId, err := strconv.Atoi(chatId)
+		
+		//The "chatid" URL Param will either be a number, or default to "Public". If the URL param can be converted
+		//to a number, assign it to the messages "ChatID" field.
+		if err == nil {
+			message.ChatID.Int64 = int64(convChatId)
+			message.ChatID.Valid = true
+		}
+
+		channelName = chatId
 	}
 
 	if err := message.Validate(); err != nil {
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
-	//Send the message to the other clients connected to the chat the user is conencted to.
-	m.pusherClient.Trigger(chatId, "message", message)
+	m.pusherClient.Trigger(channelName, "message", message)
 	message, err = database.InsertMessage(message)
 
 	if err != nil {
@@ -91,8 +98,9 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error {
 }
 
 func (m *MessageController) PostMessage(c *fiber.Ctx) error {
-	message := models.Message{DB: m.db}
-	chatId := c.Params("chatid", public)
+	message          := models.Message{DB: m.db}
+	chatId           := c.Params("chatid", public)
+	receiverUsername := c.Params("receiverUsername")
 
 	if err := c.BodyParser(&message); err != nil {
 		fmt.Println("err parsing message:", err)
@@ -103,22 +111,35 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(err)
 	}
 
+	var channelName string
 	message.InitCreatedAt()
 	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
-	convChatId, err := strconv.Atoi(chatId)
 
-	//The "chatid" URL Param will either be a number, or default to "Public". If the URL param can be converted
-	//to a number, assign it to the messages "ChatID" field.
-	if err == nil {
-		message.ChatID.Int64 = int64(convChatId)
-		message.ChatID.Valid = true
+	//If the route "/receiver/:receiverUsername" is hit, fill out the "receiver" field. Otherwise, fill
+	//out the "chat_id" field for the "messages" table.
+	if strings.Contains(c.Path(), "/receiver"){
+		message.Receiver.String = receiverUsername
+		message.Receiver.Valid = true
+
+		channelName = message.Username + "-" + receiverUsername
+	}else{
+		convChatId, err := strconv.Atoi(chatId)
+	
+		//The "chatid" URL Param will either be a number, or default to "Public". If the URL param can be 
+		//converted to a number, assign it to the messages "ChatID" field.
+		if err == nil {
+			message.ChatID.Int64 = int64(convChatId)
+			message.ChatID.Valid = true
+		}
+
+		channelName = chatId
 	}
 
-	if err := m.pusherClient.Trigger(chatId, "message", message); err != nil {
+	if err := m.pusherClient.Trigger(channelName, "message", message); err != nil {
 		fmt.Println("err broadcasting messages:", err)
 	}
 
-	message, err = database.InsertMessage(message)
+	message, err := database.InsertMessage(message)
 
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).SendString(err.Error())
@@ -181,14 +202,9 @@ func (m *MessageController) GetPublicMessages(c *fiber.Ctx) error {
 }
 
 func (m *MessageController) DeleteMessage(c *fiber.Ctx) error {
-	messageId, err :=  strconv.Atoi(c.Params("messageid"))
-
-	if err != nil {
-		return c.Status(http.StatusBadRequest).SendString(err.Error())
-	}
-
-	chatId  := c.Params("chatid", public)
-	message := struct{
+	messageId := c.Params("messageid")
+	chatId    := c.Params("chatid", public)
+	message   := struct{
 		Message models.Message `json:"message"`
 	}{}
 
@@ -200,10 +216,7 @@ func (m *MessageController) DeleteMessage(c *fiber.Ctx) error {
 		fmt.Println("err broadcasting messages:", err)
 	}
 
-	result, err := m.db.Exec(sqlconstants.DELETE_MESSAGE, messageId, message.Message.Username)
-	rowsAffected, _ := result.RowsAffected()
-
-	if rowsAffected == 0 || err != nil {
+	if err := database.DeleteMessage(messageId, message.Message.Username); err != nil {
 		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 
@@ -224,6 +237,7 @@ func (m *MessageController) UserLeft(c *fiber.Ctx) error {
 //leaving group chats.
 func (m *MessageController) handleUserLeavingAndUserTypingPushNotifications(c *fiber.Ctx, pusherEventName string) error{
 	chatId := c.Params("chatid", public)
+	receiverUsername := c.Params("receiverUsername")
 	data := struct {
 		Username string `json:"username"`
 	}{}
@@ -232,7 +246,14 @@ func (m *MessageController) handleUserLeavingAndUserTypingPushNotifications(c *f
 		return c.Status(http.StatusBadRequest).JSON(err)
 	}
 
-	if err := m.pusherClient.Trigger(chatId, pusherEventName, data.Username); err != nil {
+	var channelName string
+	if strings.Contains(c.Path(), "/receiverUsername") {
+		channelName = data.Username + "-" + receiverUsername
+	}else{
+		channelName = chatId
+	}
+
+	if err := m.pusherClient.Trigger(channelName, pusherEventName, data.Username); err != nil {
 		fmt.Println("err broadcasting messages:", err)
 	}
 
