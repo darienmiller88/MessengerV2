@@ -34,6 +34,7 @@ func Init(){
 	db = _db
 }
 
+//Create a new "user_chat" row, which is a many-to-many relation between the "users" table, and "chats" table.
 func CreateUserChat(userChat models.UserChat) (models.UserChat, error){
 	result, err := db.PrepareNamed(sqlconstants.INSERT_USER_CHAT)
 
@@ -48,6 +49,7 @@ func CreateUserChat(userChat models.UserChat) (models.UserChat, error){
 	return userChat, nil
 }
 
+//Create a new group chat, and insert it into the database, in the "chats" table.
 func CreateNewChat(chat models.Chat) (models.Chat, error){
 	result, err := db.PrepareNamed(sqlconstants.INSERT_GROUP_CHAT)
 
@@ -62,6 +64,7 @@ func CreateNewChat(chat models.Chat) (models.Chat, error){
 	return chat, nil
 }
 
+//Create a new user for this website, and insert them into the database
 func CreateUser(user models.User) (models.User, error){
 	result, err := db.PrepareNamed(sqlconstants.INSERT_USER)
 
@@ -77,12 +80,15 @@ func CreateUser(user models.User) (models.User, error){
 	return user, nil
 }
 
+//Insert a message into the database. Handles User to User, User to public chat, and User to Group chat.
 func InsertMessage(message models.Message) (models.Message, error){
 	var result *sqlx.NamedStmt
 	var sqlQuery string
 	var err error
 
 	// If the message was sent to a particular chat, insert the message with that chat id.
+	// If the messgage was sent to a particular user, insert the message with the receiver's username
+	// Otherwise, insert the message into the public chat, with no chat id or receiver username.
 	if message.ChatID.Valid {
 		sqlQuery = sqlconstants.INSERT_GROUP_CHAT_MESSAGE
 	} else if message.Receiver.Valid {

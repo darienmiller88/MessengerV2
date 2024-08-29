@@ -50,7 +50,6 @@
         //see all of the current chats the user has.
         persistStoreValue(isChatWindowActiveStore, !$isChatWindowActiveStore, isChatWindowActiveStoreKey)
     }
-
     
     const getUsersInChat = async () => {
         //Only get the users in the group chat when clicking the chat once. Prevents unnecessary server calls.
@@ -77,18 +76,9 @@
     }
 
     const formatTime = (time: string): string => {
-        if (time === "N/A") {
-            return time
-        }
-
-        const date = new Date("2000-01-01 " + time);
-        const ftime: string = new Intl.DateTimeFormat('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true
-        }).format(date)
+        let secondColonIndex: number = time.lastIndexOf(":")
         
-        return ftime
+        return time.substring(0, secondColonIndex) + time.substring(secondColonIndex + 3)
     }
 
     // When the UserChat component is mounted, highlight the user that was clicked.

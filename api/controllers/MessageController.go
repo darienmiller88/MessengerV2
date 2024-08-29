@@ -33,9 +33,7 @@ func (m *MessageController) Init() {
 }
 
 func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error {
-	chatId       := c.Params("chatid", public)
-	file, err    := c.FormFile("file")
-	receiverUsername := c.Params("receiverName")
+	file, err := c.FormFile("file")
 
 	if err != nil {
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
@@ -61,49 +59,24 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error {
 	message.ImageURL.Valid = imageURL != ""
 	message.ImageURL.String = imageURL
 
-	var channelName string
-
-	//If the route "/receiver/:receiverUsername" is hit, fill out the "receiver" field. Otherwise, fill
-	//out the "chat_id" field for the "messages" table.
-	if strings.Contains(c.Path(), "/receiver") {
-		message.Receiver.String = receiverUsername
-		message.Receiver.Valid = true
-
-		channelName = message.Username + "-" + receiverUsername
-	}else{
-		convChatId, err := strconv.Atoi(chatId)
-		
-		//The "chatid" URL Param will either be a number, or default to "Public". If the URL param can be converted
-		//to a number, assign it to the messages "ChatID" field.
-		if err == nil {
-			message.ChatID.Int64 = int64(convChatId)
-			message.ChatID.Valid = true
-		}
-
-		channelName = chatId
-	}
-
 	if err := message.Validate(); err != nil {
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
-	m.pusherClient.Trigger(channelName, "message", message)
-	message, err = database.InsertMessage(message)
+	channelName := m.getPusherChannelName(c, message)
+	message, err = m.insertAndTriggerMessage(channelName, message)
 
 	if err != nil {
-		return c.Status(http.StatusBadRequest).SendString(err.Error())
+		return err
 	}
-
+	
 	return c.Status(http.StatusOK).JSON(message)
 }
 
 func (m *MessageController) PostMessage(c *fiber.Ctx) error {
-	message          := models.Message{DB: m.db}
-	chatId           := c.Params("chatid", public)
-	receiverUsername := c.Params("receiverUsername")
+	message := models.Message{DB: m.db}
 
 	if err := c.BodyParser(&message); err != nil {
-		fmt.Println("err parsing message:", err)
 		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 
@@ -111,43 +84,17 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(err)
 	}
 
-	var channelName string
 	message.InitCreatedAt()
 	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
+	channelName := m.getPusherChannelName(c, message)
+	message, err := m.insertAndTriggerMessage(channelName, message)
 
-	//If the route "/receiver/:receiverUsername" is hit, fill out the "receiver" field. Otherwise, fill
-	//out the "chat_id" field for the "messages" table.
-	if strings.Contains(c.Path(), "/receiver"){
-		message.Receiver.String = receiverUsername
-		message.Receiver.Valid = true
-
-		channelName = message.Username + "-" + receiverUsername
-	}else{
-		convChatId, err := strconv.Atoi(chatId)
-	
-		//The "chatid" URL Param will either be a number, or default to "Public". If the URL param can be 
-		//converted to a number, assign it to the messages "ChatID" field.
-		if err == nil {
-			message.ChatID.Int64 = int64(convChatId)
-			message.ChatID.Valid = true
-		}
-
-		channelName = chatId
-	}
-
-	if err := m.pusherClient.Trigger(channelName, "message", message); err != nil {
-		fmt.Println("err broadcasting messages:", err)
-	}
-
-	message, err := database.InsertMessage(message)
-
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).SendString(err.Error())
+	if err != nil{
+		return err
 	}
 
 	return c.Status(http.StatusOK).JSON(message)
 }
-
 
 func (m *MessageController) GetMessageByID(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -160,11 +107,6 @@ func (m *MessageController) GetMessageByID(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(message)
 }
 
-/**
-* Function will handle user input to either enter a newline, send a text message, or send a text message
-* with an image attached to it.
-* 
-*/    
 func (m *MessageController) GetMessageHistory(c *fiber.Ctx) error {
 	messages := []models.Message{}
 	username, usernameErr := c.UserContext().Value("token").(jwt.MapClaims)["username"].(string)
@@ -228,13 +170,57 @@ func (m *MessageController) UserTyping(c *fiber.Ctx) error {
 	return m.handleUserLeavingAndUserTypingPushNotifications(c, "user_typing")
 }
 
-// Function to allow clients on the front end to know when someone is typing.
+// Function to allow clients on the front end to know when someone left the chat.
 func (m *MessageController) UserLeft(c *fiber.Ctx) error {
 	return m.handleUserLeavingAndUserTypingPushNotifications(c, "user_left")
 }
 
-//Function to combine the logic for the above two functions to notify the users of other users typing and 
-//leaving group chats.
+//Function will return the name of the pusher channel to trigger events to based on which route was it.
+func (m *MessageController) getPusherChannelName(c *fiber.Ctx, message models.Message) string{
+	channelName      := ""
+	chatId           := c.Params("chatid", public)
+	receiverUsername := c.Params("receiverUsername")
+
+	//If the route "/receiver/:receiverUsername" is hit, fill out the "receiver" field in the message object.
+	//Otherwise, fill out the "chat_id" field for the "messages" table.
+	if strings.Contains(c.Path(), "/receiver"){
+		message.Receiver.String = receiverUsername
+		message.Receiver.Valid = true
+
+		channelName = message.Username + "-" + receiverUsername
+	}else{
+		convChatId, err := strconv.Atoi(chatId)
+	
+		//The "chatid" URL Param will either be a number, or default to "Public". If the URL param can be 
+		//converted to a number, assign it to the messages "ChatID" field.
+		if err == nil {
+			message.ChatID.Int64 = int64(convChatId)
+			message.ChatID.Valid = true
+		}
+
+		channelName = chatId
+	}
+
+	return channelName
+}
+
+//Function will insert a message into the database, trigger the pusher event to the front end, and
+//return that message with its table id.
+func (m *MessageController) insertAndTriggerMessage(channelName string, message models.Message) (models.Message, error){
+	if err := m.pusherClient.Trigger(channelName, "message", message); err != nil {
+		fmt.Println("err broadcasting messages:", err)
+	}
+
+	message, err := database.InsertMessage(message)
+
+	if err != nil {
+		return models.Message{}, err
+	}
+
+	return message, nil
+}
+
+//Function to combine the logic of notifying the user of other users typing and leaving group chats.
 func (m *MessageController) handleUserLeavingAndUserTypingPushNotifications(c *fiber.Ctx, pusherEventName string) error{
 	chatId := c.Params("chatid", public)
 	receiverUsername := c.Params("receiverUsername")
@@ -247,7 +233,7 @@ func (m *MessageController) handleUserLeavingAndUserTypingPushNotifications(c *f
 	}
 
 	var channelName string
-	if strings.Contains(c.Path(), "/receiverUsername") {
+	if strings.Contains(c.Path(), "/receiver") {
 		channelName = data.Username + "-" + receiverUsername
 	}else{
 		channelName = chatId

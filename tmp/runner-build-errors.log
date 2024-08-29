@@ -1,3 +1,0 @@
-# MessengerV2/api/controllers
-api\controllers\MessageController.go:240:2: receiverUsername declared and not used
-api\controllers\MessageController.go:251:23: data.receiverUsername undefined (type struct{Username string "json:\"username\""} has no field or method receiverUsername)

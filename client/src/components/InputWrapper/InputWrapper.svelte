@@ -235,11 +235,14 @@
                 $chatsStore = $chatsStore.map((chat: Chat) => {
                     if (chat.chat_name === $selectedChatStore.chat_name) {
                         chat.currentMessage = message.message_content
-                        chat.time = message.message_date
+                        chat.time = new Date(message.message_date).toLocaleTimeString()
                     }
 
                     return chat
                 })
+
+                console.log("last chat time:", $chatsStore[$chatsStore.length - 1].time);
+                
             }
         });
 
