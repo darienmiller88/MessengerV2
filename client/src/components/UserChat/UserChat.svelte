@@ -35,16 +35,16 @@
         getUsersInChat()
 
         //Subsrcibe to the channel for this chat so real time messages will go through.
-        const subcribeName: string = chatInfo.chat_name == PublicChat ? PublicChat : chatInfo.id.toString() 
+        const subcribeName: string = chatInfo.chat_name === PublicChat ? PublicChat : chatInfo.id.toString() 
         pusher.subscribe(subcribeName)
 
         chatInfo.isChatActive = true
 
         //When a user chat is clicked, persist the name of the group chat clicked, and the picture of the chat
-        persistStoreValue(selectedChatStore,  chatInfo,               selectedChatStoreKey)
-        persistStoreValue(subcribeNameStore,  subcribeName,           subcribeNameStoreKey)
-        persistStoreValue(groupChatNameStore, chatInfo.chat_name,     groupChatNameStoreKey)
-        persistStoreValue(chatPictureStore,   chatInfo.picture_url,   chatPictureStoreKey)
+        persistStoreValue(selectedChatStore,  chatInfo,             selectedChatStoreKey)
+        persistStoreValue(subcribeNameStore,  subcribeName,         subcribeNameStoreKey)
+        persistStoreValue(groupChatNameStore, chatInfo.chat_name,   groupChatNameStoreKey)
+        persistStoreValue(chatPictureStore,   chatInfo.picture_url, chatPictureStoreKey)
         
         //Boolean indicator for mobile view to swap between message window to see messages, and user chats window to
         //see all of the current chats the user has.
@@ -75,9 +75,10 @@
         }
     }
 
+    //Format the time from the format "11:25:26 PM" to "11:25 PM"
     const formatTime = (time: string): string => {
         let secondColonIndex: number = time.lastIndexOf(":")
-        
+
         return time.substring(0, secondColonIndex) + time.substring(secondColonIndex + 3)
     }
 

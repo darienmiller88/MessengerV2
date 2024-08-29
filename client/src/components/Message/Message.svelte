@@ -42,7 +42,7 @@
     }
 
     const enlargeImage = () => {
-        openPictureModal()
+        openPictureModal()        
         storeImageURL(imageURL)
     }
 

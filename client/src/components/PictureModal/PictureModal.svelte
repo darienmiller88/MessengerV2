@@ -1,7 +1,7 @@
 <script lang="ts">
-    export let show:         Boolean
-    export let onHide:       () => {}
-    export let imageURL:     string
+    export let show:     Boolean
+    export let onHide:   () => {}
+    export let imageURL: string
     let modalRef: any = null
 
     const closeModal = (e: Event) => {
@@ -9,6 +9,9 @@
             onHide()
         }
     }
+
+    console.log("image url:", imageURL);
+    
 </script>
 
 <div class={`modal ${show ? "slidein" : "slideout"}`} bind:this={modalRef} on:click={closeModal} tabindex="0" role="button" on:keyup={null}>
@@ -66,7 +69,7 @@
                 height: auto;
 
                 @media screen and (min-width: 992px) {
-                    height: 80vh;
+                    height: 70vh;
                     width: auto;
                 }
             }

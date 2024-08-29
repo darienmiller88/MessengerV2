@@ -264,7 +264,6 @@
             </span>
             <img src={imageURL} alt="">
         </div>
-        <h1>image is shown</h1>
     {/if}
     
     <div class="input-icon-wrapper">

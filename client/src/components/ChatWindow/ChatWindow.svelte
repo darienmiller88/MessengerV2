@@ -25,8 +25,7 @@
     let isLoading:        boolean = false
     let messagesRef:      HTMLElement
     let usersTyping:      string[] = []
-    let userTypingText:   string = ""
-    let userLeftChatText: string = ""
+    let previousLength:   number = $messagesStore.length;
     let showPictureModal: boolean = false
     let usersLeavingChat: string[] = []
 
@@ -34,26 +33,12 @@
         node.scrollTo({ top: node.scrollHeight,  behavior: "instant" });
     }
 
-    //In order to get the chat window to scroll to the bottom after a component is added, I would have to 
-    //uncomment the following code. Unfortunately, when an image is clicked that's on a message, and the modal
-    //opens up, this functions activates and scrolls to the bottom
-    // afterUpdate(() => {  
-    //     imageURL = ""  
-    //     console.log("scroll top:", messagesRef.scrollTop);
-    //     // if (canScroll) {
-    //     //     messagesRef.scrollTop = messagesRef.scrollHeight  
-    //     // }
-    
-	// 	if($messagesStore.length ) {
-    //         scrollTo(messagesRef);
-    //     }
-    // });
-
-    const loadMessages = (chatName: string, messages: Message[]) => {        
-        if (chatName == $selectedChatStore.chat_name) {
-            $messagesStore = messages
+    afterUpdate(() => {  
+        if($messagesStore.length > previousLength) {
+            scrollTo(messagesRef);
+            previousLength = $messagesStore.length
         }
-    }
+    });
 
     onMount(async () => {
         let subcribeName: string | null = window.localStorage.getItem(subcribeNameStoreKey)
@@ -82,10 +67,8 @@
             if ($usernameStore != username) {
                 //Filter out the user that sent this notification to prevent duplicate "Username is typing..."
                 usersTyping = [...usersTyping.filter((user: string) => username != user), username]
-                userTypingText = username + " is typing...";
                             
                 setTimeout(() => {
-                    userTypingText = ""
                     usersTyping = usersTyping.filter((user: string) => username != user)
                 }, 1000)
             }
@@ -94,14 +77,12 @@
         channel.bind("user_left", (username: string) => {
             if ($usernameStore != username) {
                 usersLeavingChat = [...usersLeavingChat, username]
-                userLeftChatText = username + " left the chat!";
                             
                 setTimeout(() => {
-                    userLeftChatText = ""
                     usersLeavingChat = usersLeavingChat.filter((user: string) => username != user)
                 }, 1500)
             }
-        })
+        })        
 
         if (messagesRef) {
             messagesRef.scrollTop = messagesRef.scrollHeight  
@@ -110,8 +91,6 @@
 
     //Reactive statement to scroll to the bottom after the user enters a new message.
     $: if ($messagesStore.length && messagesRef) { 
-        // console.log("new message:", $messagesStore[$messagesStore.length - 1]);            
-        // messagesRef.scrollTop = messagesRef.scrollHeight  
         messagesRef.scrollTo({ top: messagesRef.scrollHeight,  behavior: "instant" });            
     }
 </script>
