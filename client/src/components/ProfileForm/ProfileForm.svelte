@@ -12,6 +12,7 @@
         persistStoreValue
     } from "../../stores"
 
+    export const show: boolean = false
     export let onHide = () => {}
     let imageURL:           any 
     let imageFile:          any 

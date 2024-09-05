@@ -46,7 +46,7 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error {
 	imageURL, err := cloudinary.UploadImage(file)
 
 	if err != nil {
-		return c.SendString(err.Error())
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 
 	message := models.Message{DB: m.db}

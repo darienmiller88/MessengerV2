@@ -18,7 +18,7 @@ func (c *ChatsRoutes) Init(){
 	c.Router = fiber.New()
 	c.chatsController.Init()
 
-	c.Router.Use(middlewares.Auth).Route("/", func(router fiber.Router) {
+	c.Router.Use(middlewares.Auth, middlewares.AuthAnonymousUserCloseToSignout).Route("/", func(router fiber.Router) {
 		router.Get("/private-chats/chats/:username", c.chatsController.GetGroupChats)
 		router.Get("/private-chats/users/:chatname", c.chatsController.GetUsersInGroupchats)
 		router.Post("/",                             c.chatsController.AddNewChat)

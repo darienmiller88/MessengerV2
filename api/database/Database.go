@@ -82,9 +82,7 @@ func CreateUser(user models.User) (models.User, error){
 
 //Insert a message into the database. Handles User to User, User to public chat, and User to Group chat.
 func InsertMessage(message models.Message) (models.Message, error){
-	var result *sqlx.NamedStmt
 	var sqlQuery string
-	var err error
 
 	// If the message was sent to a particular chat, insert the message with that chat id.
 	// If the messgage was sent to a particular user, insert the message with the receiver's username
@@ -97,7 +95,7 @@ func InsertMessage(message models.Message) (models.Message, error){
 		sqlQuery = sqlconstants.INSERT_PUBLIC_MESSAGE
 	}
 	
-	result, err = db.PrepareNamed(sqlQuery)
+	result, err := db.PrepareNamed(sqlQuery)
 
 	if err != nil{
 		return models.Message{}, err
@@ -127,6 +125,16 @@ func DeleteMessage(messageId string, username string) error {
 	rowsAffected, _ := result.RowsAffected()
 
 	if rowsAffected == 0 || err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteAnonymousUser(username string) error{
+	_, err := db.Exec(sqlconstants.DELETE_ANONYMOUS_USER, username)
+
+	if err != nil {
 		return err
 	}
 

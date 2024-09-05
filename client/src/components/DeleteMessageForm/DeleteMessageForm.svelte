@@ -8,6 +8,7 @@
 
     export let onHide = () => {}
     let isLoading: boolean = false
+    
     const deleteMessage = async () => {
         $messagesStore = $messagesStore.filter((message: Message) => {            
             return message.id != $chosenMessageStore.id

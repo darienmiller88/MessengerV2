@@ -2,22 +2,18 @@
     import MessageComponent from "../Message/Message.svelte";
     import { 
         messagesStore, 
-        selectedChatStore,
-        selectedChatStoreKey,
         subcribeNameStore,
         subcribeNameStoreKey,
-        chatsStore,
         usernameStore, 
         isDarkModeStore, 
     } from "../../stores";
     import { afterUpdate, onMount } from 'svelte';
     import { navigate } from "svelte-routing";
     import pusher from "../../pusher/pusher";
-    import { messageApi, userApi, chatsApi } from "../../api/api";
+    import { userApi } from "../../api/api";
     import PictureModal from "../PictureModal/PictureModal.svelte";
     import Modal from "../Modal/Modal.svelte";
     import DeleteMessageForm from "../DeleteMessageForm/DeleteMessageForm.svelte";
-    import { type Message } from "../../types/type";
     import { Moon } from "svelte-loading-spinners";
 
     let imageURL:         string

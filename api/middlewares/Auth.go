@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 )
+
 func Auth(c *fiber.Ctx) error{
 	token, err := retrieveTokenFromCookie(c.Cookies("user"))//Retrieve value from cookie and parse token from it.
 

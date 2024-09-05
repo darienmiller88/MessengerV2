@@ -8,10 +8,7 @@
         if(e.target == modalRef){
             onHide()
         }
-    }
-
-    console.log("image url:", imageURL);
-    
+    }    
 </script>
 
 <div class={`modal ${show ? "slidein" : "slideout"}`} bind:this={modalRef} on:click={closeModal} tabindex="0" role="button" on:keyup={null}>
@@ -50,8 +47,6 @@
                 padding: 0px 10px;
                 transition: 0.3s;
                 color: rgba(150, 150, 150, 0.6);
-                // border: 2px solid black;
-                // border-radius: 50%;
 
                 @media screen and (min-width: 992px) {
                     font-size: 50px;  
@@ -75,5 +70,4 @@
             }
         }
     }
-
 </style>

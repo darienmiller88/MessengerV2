@@ -8,6 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+//Prevent users from being able to view the information of another user when using "username" as a route parameter.
 func ProtectUser(c *fiber.Ctx) error{
 	usernameFromContext := c.UserContext().Value("token").(jwt.MapClaims)["username"]
 	usernameFromURL     := c.Params("username")

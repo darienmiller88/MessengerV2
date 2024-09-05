@@ -19,7 +19,7 @@ func (u *UserRoutes) Init() {
 	u.Router.Post("/signout", middlewares.Auth,          u.userController.Signout)
 	u.Router.Post("/signin",  middlewares.ProtectSignin, u.userController.Signin)
 	u.Router.Post("/signup",  middlewares.ProtectSignin, u.userController.Signup)
-	u.Router.Use(middlewares.Auth).Route("/", func(router fiber.Router) {
+	u.Router.Use(middlewares.Auth, middlewares.AuthAnonymousUserCloseToSignout).Route("/", func(router fiber.Router) {
 		router.Get("/",                   u.userController.GetUsers)
 		router.Get("/username",           u.userController.GetUsername)
 		router.Get("/checkauth",          u.userController.CheckAuth) //Throw away route to check log in status
