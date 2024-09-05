@@ -224,6 +224,7 @@
                     username: message.username,
                     display_name: message.display_name,
                     message_date: new Date(message.message_date).toLocaleString(),
+                    profile_picture: message.profile_picture,
                     message_content: message.message_content,
                     image_url: message.image_url,
                     isSender: false,
