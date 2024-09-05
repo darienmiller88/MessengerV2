@@ -63,11 +63,10 @@ func (m *MessageController) UploadImageAsMessage(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
-	channelName := m.getPusherChannelName(c, message)
-	message, err = m.insertAndTriggerMessage(channelName, message)
+	message, err = m.addFieldsToMessage(c, message)
 
 	if err != nil {
-		return err
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 	
 	return c.Status(http.StatusOK).JSON(message)
@@ -84,13 +83,10 @@ func (m *MessageController) PostMessage(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(err)
 	}
 
-	message.InitCreatedAt()
-	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
-	channelName := m.getPusherChannelName(c, message)
-	message, err := m.insertAndTriggerMessage(channelName, message)
+	message, err := m.addFieldsToMessage(c, message)
 
 	if err != nil{
-		return err
+		return c.Status(http.StatusInternalServerError).SendString(err.Error())
 	}
 
 	return c.Status(http.StatusOK).JSON(message)
@@ -176,10 +172,13 @@ func (m *MessageController) UserLeft(c *fiber.Ctx) error {
 }
 
 //Function will return the name of the pusher channel to trigger events to based on which route was it.
-func (m *MessageController) getPusherChannelName(c *fiber.Ctx, message models.Message) string{
+func (m *MessageController) addFieldsToMessage(c *fiber.Ctx, message models.Message) (models.Message, error){
 	channelName      := ""
 	chatId           := c.Params("chatid", public)
 	receiverUsername := c.Params("receiverUsername")
+
+	message.InitCreatedAt()
+	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
 
 	//If the route "/receiver/:receiverUsername" is hit, fill out the "receiver" field in the message object.
 	//Otherwise, fill out the "chat_id" field for the "messages" table.
@@ -201,14 +200,21 @@ func (m *MessageController) getPusherChannelName(c *fiber.Ctx, message models.Me
 		channelName = chatId
 	}
 
-	return channelName
+	//After adding the fields, insert the message into the database and trigger the message to the front end.
+	message, err :=  m.insertAndTriggerMessage(channelName, message)
+
+	if err != nil {
+		return models.Message{}, err
+	}
+
+	return message, nil
 }
 
 //Function will insert a message into the database, trigger the pusher event to the front end, and
 //return that message with its table id.
 func (m *MessageController) insertAndTriggerMessage(channelName string, message models.Message) (models.Message, error){
 	if err := m.pusherClient.Trigger(channelName, "message", message); err != nil {
-		fmt.Println("err broadcasting messages:", err)
+		fmt.Println("err broadcasting messages for event message", ":",  err)
 	}
 
 	message, err := database.InsertMessage(message)
@@ -240,7 +246,7 @@ func (m *MessageController) handleUserLeavingAndUserTypingPushNotifications(c *f
 	}
 
 	if err := m.pusherClient.Trigger(channelName, pusherEventName, data.Username); err != nil {
-		fmt.Println("err broadcasting messages:", err)
+		fmt.Println("err broadcasting messages for event", pusherEventName, ":",  err)
 	}
 
 	return c.Status(http.StatusOK).JSON(data)

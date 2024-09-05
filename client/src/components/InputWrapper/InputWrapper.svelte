@@ -54,7 +54,7 @@
             isLoading = true
 
             const res = await messageApi.post(`/upload-image/${
-                    $selectedChatStore.chat_name == PublicChat ? "public" : $selectedChatStore.id
+                    $selectedChatStore.chat_name == PublicChat ? PublicChat : $selectedChatStore.id
                 }`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
@@ -109,7 +109,7 @@
         showIcon = false
 
         try {
-            await messageApi.post(`/${$selectedChatStore.chat_name == PublicChat ? "public" : $selectedChatStore.id}`, message)
+            await messageApi.post(`/${$selectedChatStore.chat_name == PublicChat ? PublicChat : $selectedChatStore.id}`, message)
             
             setTimeout(() => {
                 showIcon = true
@@ -239,10 +239,7 @@
                     }
 
                     return chat
-                })
-
-                console.log("last chat time:", $chatsStore[$chatsStore.length - 1].time);
-                
+                })                
             }
         });
 
