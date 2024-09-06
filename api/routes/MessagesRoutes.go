@@ -16,7 +16,7 @@ func (m *MessagesRoutes) Init(){
 	m.Router = fiber.New()
 	m.messageController.Init()
 
-	m.Router.Use(middlewares.Auth, middlewares.AuthAnonymousUserCloseToSignout).Route("/", func(router fiber.Router) {
+	m.Router.Use(middlewares.Auth).Route("/", func(router fiber.Router) {
 		router.Post("/receiver/:receiverUsername", m.messageController.PostMessage)
 		router.Post("/upload-image/receiver/:receiverUsername", m.messageController.UploadImageAsMessage)
 		router.Post("/userTyping/receiver/:receiverUsername", m.messageController.UserTyping)

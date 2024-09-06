@@ -16,19 +16,25 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jmoiron/sqlx"
 	"github.com/sethvargo/go-password/password"
+	"github.com/pusher/pusher-http-go/v5"
 	"golang.org/x/crypto/bcrypt"
 
 	"MessengerV2/api/cloudinary"
+	"MessengerV2/api/pusherclient"
 )
 
 type UserController struct {
-	db         *sqlx.DB
-	sessionLen int
+	db                *sqlx.DB
+	pusherClient       pusher.Client
+	sessionLen         int
+	extendedSessionLen int
 }
 
 func (u *UserController) Init() {
 	u.db         = database.GetDB()
 	u.sessionLen = 500000 //in seconds, so about 138 hrs, or 5.75 days.
+	u.extendedSessionLen = 31536000//In seconds, exactly one year.
+	u.pusherClient = pusherclient.GetPusherClient()
 }
 
 func (u *UserController) CheckAuth(c *fiber.Ctx) error {
@@ -117,7 +123,8 @@ func (u *UserController) Signin(c *fiber.Ctx) error {
 		DisplayName: possibleUser.DisplayName,
 		ProfilePicture: possibleUser.ProfilePicture.String,
 	}
-	u.setCookie(c, u.getJwtToken(user), u.sessionLen)
+
+	u.setCookie(c, u.getJwtToken(user), "user", u.sessionLen)
 
 	return c.Status(http.StatusOK).JSON(minifiedUser)
 }
@@ -136,7 +143,7 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 
 	//Add password gen for anonymous user to clear password validation
 	if user.IsAnonymous {
-		randomPassword, _ := password.Generate(12, 8, 0, false, false)
+		randomPassword, _ := password.Generate(25, 8, 0, false, false)
 		user.Password = randomPassword
 	}
 
@@ -154,7 +161,11 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).SendString(err.Error())
 	}
 
-	u.setCookie(c, u.getJwtToken(user), u.sessionLen)
+	if user.IsAnonymous{
+		u.setCookie(c, user.Username, "anoymous", u.extendedSessionLen)
+	}
+
+	u.setCookie(c, u.getJwtToken(user), "user", u.sessionLen)
 	return c.Status(http.StatusCreated).JSON(user)
 }
 
@@ -172,13 +183,21 @@ func (u *UserController) Signout(c *fiber.Ctx) error {
 	}
 
 	if isAnonymous {
-		result, _ := u.db.Exec(sqlconstants.DELETE_ANONYMOUS_USER, username)
-		rowsAffected, _ := result.RowsAffected()
+		_, err := u.db.Exec(sqlconstants.DELETE_ANONYMOUS_USER, username)
 
-		fmt.Println("rows:", rowsAffected)
+		if err != nil {
+			return c.Status(http.StatusInternalServerError).SendString(err.Error())
+		}
+
+		//Trigger a response to the front end with the username to delete the anonymous user's messages.
+		if err := u.pusherClient.Trigger(public, "anonymous_user_deleted", username); err != nil{
+			return c.Status(http.StatusInternalServerError).SendString(err.Error())
+		}
+
+		u.setCookie(c, "",  "anoymous", 0)
 	}
 
-	u.setCookie(c, "", 0)
+	u.setCookie(c, "", "user", 0)
 	return c.Status(http.StatusOK).SendString("signed out")
 }
 
@@ -239,9 +258,9 @@ func (u *UserController) getJwtToken(user models.User) string {
 	return tokenString
 }
 
-func (u *UserController) setCookie(c *fiber.Ctx, value string, sessionLen int) {
+func (u *UserController) setCookie(c *fiber.Ctx, value string, cookieName string, sessionLen int) {
 	c.Cookie(&fiber.Cookie{
-		Name:     "user",
+		Name:     cookieName,
 		Path:     "/",
 		HTTPOnly: true,
 		Secure:   true,

@@ -25,6 +25,7 @@ func AuthAnonymousUserCloseToSignout(c *fiber.Ctx) error {
 		c.Cookie(&fiber.Cookie{
 			MaxAge: 0,
 			Value:  "",
+			Name:   "user",
 		})
 
 		return c.Status(http.StatusUnauthorized).SendString("A valid cookie is required for entry.")

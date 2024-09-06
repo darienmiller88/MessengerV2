@@ -244,13 +244,19 @@
             }
         });
 
-       channel.bind("delete_message", (messageToDelete: Message) => {
+        channel.bind("anonymous_user_deleted", (username: string) => {
+            $messagesStore = $messagesStore.filter((message: Message) => {
+                return username == message.username
+            })
+        })
+
+        channel.bind("delete_message", (messageToDelete: Message) => {
             $messagesStore = $messagesStore.filter((message: Message) => {
                 return !(message.username == messageToDelete.username 
                     && message.message_content == messageToDelete.message_content
                         && message.message_date == messageToDelete.message_date)
             })
-       })
+        })
     })    
 </script>
 
