@@ -246,7 +246,7 @@
 
         channel.bind("anonymous_user_deleted", (username: string) => {
             $messagesStore = $messagesStore.filter((message: Message) => {
-                return username == message.username
+                return username != message.username
             })
         })
 
