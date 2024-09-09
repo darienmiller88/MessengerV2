@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -19,7 +20,7 @@ func Auth(c *fiber.Ctx) error{
 
 	//If the user has the anonymous cookie, and but their sign in cookie expired, delete the anonymous user.
 	if userTokenErr != nil && anonymousTokenErr == nil{
-
+		fmt.Println("no sign in token, and anonymous token")
 		//Extract the claims from the anonymous token, and proceed with deletion.
 		if claims, ok := anonymousToken.Claims.(jwt.MapClaims); ok && anonymousToken.Valid {
 			username := claims["username"].(string)
@@ -33,11 +34,12 @@ func Auth(c *fiber.Ctx) error{
 			}
 		}
 
-		// c.Cookie(&fiber.Cookie{
-		// 	Name: "anonymous",
-		// 	MaxAge: 0,
-		// })
-		c.ClearCookie()
+		c.Cookie(&fiber.Cookie{
+			Name: "anonymous",
+			Expires: time.Now(),
+			MaxAge: 0,
+		})
+		// c.ClearCookie()
 		return c.Status(http.StatusUnauthorized).SendString("A valid token is required for entry.")
 	}
 

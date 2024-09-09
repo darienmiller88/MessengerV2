@@ -159,10 +159,10 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 	}
 
 	if user.IsAnonymous{
-		u.setCookie(c, u.getJwtToken(u.extendedSessionLen, user), "anoymous", u.extendedSessionLen)
+		u.setCookie(c, u.getJwtToken(u.extendedSessionLen, user), "anonymous", u.extendedSessionLen)
 	}
 
-	u.setCookie(c, u.getJwtToken(u.sessionLen, user), "user", u.sessionLen)
+	u.setCookie(c, u.getJwtToken(60, user), "user", 60)
 	return c.Status(http.StatusCreated).JSON(user)
 }
 
