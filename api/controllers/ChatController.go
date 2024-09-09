@@ -11,7 +11,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jmoiron/sqlx"
-	"github.com/pusher/pusher-http-go/v5"
 
 	"MessengerV2/api/SQLConstants"
 	"MessengerV2/api/cloudinary"
@@ -22,12 +21,12 @@ import (
 
 type ChatController struct{
 	db          *sqlx.DB
-	pusherClient pusher.Client
+	// pusherClient pusher.Client
 }
 
 func (c *ChatController) Init(){
 	c.db           = database.GetDB()
-	c.pusherClient = pusherclient.GetPusherClient()
+	// c.pusherClient = pusherclient.GetPusherClient()
 }
 
 func (c *ChatController) ChangeGroupChatSettings(fc *fiber.Ctx) error {
@@ -79,7 +78,7 @@ func (c *ChatController) NotifyUserLeavingGroupChat(fc *fiber.Ctx) error{
 		return fc.Status(http.StatusBadRequest).JSON(err)
 	}
 
-	if err := c.pusherClient.Trigger(chatId, "user_left", data.Username); err != nil {
+	if err := pusherclient.GetPusherClient().Trigger(chatId, "user_left", data.Username); err != nil {
 		fmt.Println("err broadcasting messages:", err)
 	}
 

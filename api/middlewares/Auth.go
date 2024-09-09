@@ -8,17 +8,46 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
+
+	"MessengerV2/api/database"
+	"MessengerV2/api/pusherclient"
 )
 
 func Auth(c *fiber.Ctx) error{
-	token, err := retrieveTokenFromCookie(c.Cookies("user"))//Retrieve value from cookie and parse token from it.
+	userToken, userTokenErr := retrieveTokenFromCookie(c.Cookies("user"))//Retrieve value from cookie and parse token from it.
+	anonymousToken, anonymousTokenErr := retrieveTokenFromCookie(c.Cookies("anonymous"))
 
-	if err != nil {
+	//If the user has the anonymous cookie, and but their sign in cookie expired, delete the anonymous user.
+	if userTokenErr != nil && anonymousTokenErr == nil{
+
+		//Extract the claims from the anonymous token, and proceed with deletion.
+		if claims, ok := anonymousToken.Claims.(jwt.MapClaims); ok && anonymousToken.Valid {
+			username := claims["username"].(string)
+			
+ 			if err := database.DeleteAnonymousUser(username); err != nil{
+				return c.Status(http.StatusInternalServerError).SendString(err.Error())
+			}
+
+			if err := pusherclient.GetPusherClient().Trigger("Public", "anonymous_user_deleted", username); err != nil{
+				return c.Status(http.StatusInternalServerError).SendString(err.Error())
+			}
+		}
+
+		// c.Cookie(&fiber.Cookie{
+		// 	Name: "anonymous",
+		// 	MaxAge: 0,
+		// })
+		c.ClearCookie()
+		return c.Status(http.StatusUnauthorized).SendString("A valid token is required for entry.")
+	}
+
+	//If there is no anonymous cookie, just check to see if the user has a valid token.
+	if userTokenErr != nil {
 		return c.Status(http.StatusUnauthorized).SendString("A valid token is required for entry.")
 	}
 
 	//Parse the token and pull out the username from the token.
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+	if claims, ok := userToken.Claims.(jwt.MapClaims); ok && userToken.Valid {
 		c.SetUserContext(context.WithValue(c.Context(), "token", claims))
 	}
 

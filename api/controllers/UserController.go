@@ -16,7 +16,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jmoiron/sqlx"
 	"github.com/sethvargo/go-password/password"
-	"github.com/pusher/pusher-http-go/v5"
 	"golang.org/x/crypto/bcrypt"
 
 	"MessengerV2/api/cloudinary"
@@ -25,7 +24,6 @@ import (
 
 type UserController struct {
 	db                *sqlx.DB
-	pusherClient       pusher.Client
 	sessionLen         int
 	extendedSessionLen int
 }
@@ -34,7 +32,6 @@ func (u *UserController) Init() {
 	u.db         = database.GetDB()
 	u.sessionLen = 500000 //in seconds, so about 138 hrs, or 5.75 days.
 	u.extendedSessionLen = 31536000//In seconds, exactly one year.
-	u.pusherClient = pusherclient.GetPusherClient()
 }
 
 func (u *UserController) CheckAuth(c *fiber.Ctx) error {
@@ -52,7 +49,7 @@ func (u *UserController) ChangeUserProfilePicture(c *fiber.Ctx) error {
 	displayName := c.FormValue("display_name")
 	err         := validation.Validate(displayName, 
 		validation.Length(4, 15),
-		validation.Match(regexp.MustCompile("[0-9]")).Error("Disply name must contain at least one number"),
+		validation.Match(regexp.MustCompile("[0-9]")).Error("Display name must contain at least one number"),
 		validation.Match(regexp.MustCompile("[a-z]|[A-Z]")).Error("Display name must contain at least one letter."),
 	)
 
@@ -124,7 +121,7 @@ func (u *UserController) Signin(c *fiber.Ctx) error {
 		ProfilePicture: possibleUser.ProfilePicture.String,
 	}
 
-	u.setCookie(c, u.getJwtToken(user), "user", u.sessionLen)
+	u.setCookie(c, u.getJwtToken(u.sessionLen, user), "user", u.sessionLen)
 
 	return c.Status(http.StatusOK).JSON(minifiedUser)
 }
@@ -162,10 +159,10 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 	}
 
 	if user.IsAnonymous{
-		u.setCookie(c, user.Username, "anoymous", u.extendedSessionLen)
+		u.setCookie(c, u.getJwtToken(u.extendedSessionLen, user), "anoymous", u.extendedSessionLen)
 	}
 
-	u.setCookie(c, u.getJwtToken(user), "user", u.sessionLen)
+	u.setCookie(c, u.getJwtToken(u.sessionLen, user), "user", u.sessionLen)
 	return c.Status(http.StatusCreated).JSON(user)
 }
 
@@ -190,11 +187,11 @@ func (u *UserController) Signout(c *fiber.Ctx) error {
 		}
 
 		//Trigger a response to the front end with the username to delete the anonymous user's messages.
-		if err := u.pusherClient.Trigger(public, "anonymous_user_deleted", username); err != nil{
+		if err := pusherclient.GetPusherClient().Trigger(public, "anonymous_user_deleted", username); err != nil{
 			return c.Status(http.StatusInternalServerError).SendString(err.Error())
 		}
 
-		u.setCookie(c, "",  "anoymous", 0)
+		u.setCookie(c, "",  "anonymous", 0)
 	}
 
 	u.setCookie(c, "", "user", 0)
@@ -247,8 +244,8 @@ func (u *UserController) DeleteUser(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).SendString(fmt.Sprintf("Deleted user with id \"%s\"", id))
 }
 
-func (u *UserController) getJwtToken(user models.User) string {
-	expiry := time.Now().Add(time.Duration(u.sessionLen) * time.Second)
+func (u *UserController) getJwtToken(sessionLen int, user models.User) string {
+	expiry := time.Now().Add(time.Duration(sessionLen) * time.Second)
 	tokenString, _ := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"exp":          expiry.Unix(),
 		"username":     user.Username,

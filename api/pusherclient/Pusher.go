@@ -6,10 +6,10 @@ import (
 	"github.com/pusher/pusher-http-go/v5"
 )
 
-var pusherClient pusher.Client
+var pusherClient* pusher.Client
 
 func Init(){
-	pusherClient = pusher.Client{
+	pusherClient = &pusher.Client{
 		AppID: os.Getenv("PUSHER_APPID"),
 		Key: os.Getenv("PUSHER_KEY"),
 		Secret: os.Getenv("PUSHER_SECRET"),
@@ -18,6 +18,6 @@ func Init(){
 	}
 }
 
-func GetPusherClient() pusher.Client{
+func GetPusherClient() *pusher.Client{
 	return pusherClient
 }

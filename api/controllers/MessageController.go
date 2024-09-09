@@ -10,7 +10,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jmoiron/sqlx"
-	"github.com/pusher/pusher-http-go/v5"
 
 	sqlconstants "MessengerV2/api/SQLConstants"
 	"MessengerV2/api/cloudinary"
@@ -23,12 +22,10 @@ const MAX_SIZE int64 = 5 * 1024 * 1024 //Max number of bytes, which is 5mb or 5,
 const public string = "Public"
 
 type MessageController struct {
-	pusherClient pusher.Client
-	db           *sqlx.DB
+	db *sqlx.DB
 }
 
 func (m *MessageController) Init() {
-	m.pusherClient = pusherclient.GetPusherClient()
 	m.db = database.GetDB()
 }
 
@@ -150,7 +147,7 @@ func (m *MessageController) DeleteMessage(c *fiber.Ctx) error {
 		c.Status(http.StatusInternalServerError).JSON(err)
 	}
 
-	if err := m.pusherClient.Trigger(chatId, "delete_message", message.Message); err != nil {
+	if err := pusherclient.GetPusherClient().Trigger(chatId, "delete_message", message.Message); err != nil {
 		fmt.Println("err broadcasting messages:", err)
 	}
 
@@ -213,7 +210,7 @@ func (m *MessageController) addFieldsToMessage(c *fiber.Ctx, message models.Mess
 //Function will insert a message into the database, trigger the pusher event to the front end, and
 //return that message with its table id.
 func (m *MessageController) insertAndTriggerMessage(channelName string, message models.Message) (models.Message, error){
-	if err := m.pusherClient.Trigger(channelName, "message", message); err != nil {
+	if err := pusherclient.GetPusherClient().Trigger(channelName, "message", message); err != nil {
 		fmt.Println("err broadcasting messages for event message", ":",  err)
 	}
 
@@ -245,7 +242,7 @@ func (m *MessageController) handleUserLeavingAndUserTypingPushNotifications(c *f
 		channelName = chatId
 	}
 
-	if err := m.pusherClient.Trigger(channelName, pusherEventName, data.Username); err != nil {
+	if err := pusherclient.GetPusherClient().Trigger(channelName, pusherEventName, data.Username); err != nil {
 		fmt.Println("err broadcasting messages for event", pusherEventName, ":",  err)
 	}
 
