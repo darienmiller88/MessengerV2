@@ -18,7 +18,6 @@ type Message struct {
 	ID             int            `json:"id"              db:"id"`
 	CreatedAt      time.Time      `json:"created_at"      db:"created_at"`
 	UpdatedAt      time.Time      `json:"updated_at"      db:"updated_at"`
-	Receiver       sql.NullString `json:"receiver"        db:"receiver"`
 	ChatID         sql.NullInt64  `json:"-"               db:"chat_id"`
 	ImageURL       sql.NullString `json:"image_url"       db:"image_url"`
 	MessageContent string         `json:"message_content" db:"message_content"`

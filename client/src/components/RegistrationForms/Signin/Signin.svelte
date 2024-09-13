@@ -52,8 +52,6 @@
             const res = await userApi.post("/signin", userCredentials)
             let minifiedUser: MinifiedUser = (res.data as MinifiedUser)
 
-            console.log("user:", minifiedUser);
-
             isSigninError = false
 
             //The sign in controller on the back end returns the user's profile picture url. If blank, give them

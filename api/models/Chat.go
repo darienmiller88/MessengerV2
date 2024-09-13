@@ -9,11 +9,12 @@ import (
 )
 
 type Chat struct {
-	ID         int       `json:"id"         db:"id"`
-	CreatedAt  time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at" db:"updated_at"`
-	ChatName   string    `json:"chat_name"  db:"chat_name"`
+	ID         int       `json:"id"          db:"id"`
+	CreatedAt  time.Time `json:"created_at"  db:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"  db:"updated_at"`
+	ChatName   string    `json:"chat_name"   db:"chat_name"`
 	PictureUrl string    `json:"picture_url" db:"picture_url"`
+	IsDM       bool      `json:"is_dm"       db:"is_dm"`
 
 	//This model will keep a reference to the database to verify usernames.
 	DB *sqlx.DB `json:"-"`

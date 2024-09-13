@@ -1,6 +1,6 @@
 <script lang="ts">
     import { PersonAdd } from "svelte-bootstrap-icons";
-    import { isDarkModeStore, isAnonymousStore, isAnonymousStoreKey } from "../../stores";
+    import { isDarkModeStore, isAnonymousStore, selectedChatStore, selectedChatStoreKey } from "../../stores";
     import Modal from "../Modal/Modal.svelte";
     import AddNewChatForm from "../../components/AddNewChatForm/AddNewChatForm.svelte"
     import { onMount } from "svelte";

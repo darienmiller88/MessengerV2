@@ -219,6 +219,17 @@ func (u *UserController) GetUserByID(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(user)
 }
 
+func (u *UserController) GetUserProfilePicture(c *fiber.Ctx) error {
+	username := c.Params("username")
+	user := models.User{}
+
+	if err := u.db.Get(&user, sqlconstants.GET_USER_BY_USERNAME, username); err != nil {
+		return c.Status(http.StatusInternalServerError).SendString(fmt.Sprintf("No user with username %s found.", username))
+	}
+
+	return c.Status(http.StatusOK).SendString(user.ProfilePicture.String)
+}
+
 func (u *UserController) GetUserByUsername(c *fiber.Ctx) error {
 	username := c.Params("username")
 	user := models.User{}

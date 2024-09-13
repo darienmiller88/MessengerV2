@@ -18,11 +18,12 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS chats(
-    id         SERIAL NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL, 
-    chat_name  VARCHAR(50) NOT NULL,
+    id          SERIAL NOT NULL,
+    created_at  TIMESTAMP NOT NULL,
+    updated_at  TIMESTAMP NOT NULL, 
+    chat_name   VARCHAR(50) NOT NULL,
     picture_url TEXT NOT NULL,
+    is_dm       BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -30,7 +31,6 @@ CREATE TABLE IF NOT EXISTS messages (
     id              SERIAL NOT NULL,
     created_at      TIMESTAMP NOT NULL,
     updated_at      TIMESTAMP NOT NULL, 
-    receiver        VARCHAR(20),
     username        VARCHAR(20) NOT NULL,
     display_name    VARCHAR(20) NOT NULL,
     message_content TEXT,

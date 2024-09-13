@@ -34,12 +34,13 @@ func Auth(c *fiber.Ctx) error{
 			}
 		}
 
+		//Sign the user out by deleting the anonymous cookie.
 		c.Cookie(&fiber.Cookie{
 			Name: "anonymous",
 			Expires: time.Now(),
 			MaxAge: 0,
 		})
-		// c.ClearCookie()
+
 		return c.Status(http.StatusUnauthorized).SendString("A valid token is required for entry.")
 	}
 

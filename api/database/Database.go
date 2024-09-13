@@ -85,13 +85,10 @@ func InsertMessage(message models.Message) (models.Message, error){
 	var sqlQuery string
 
 	// If the message was sent to a particular chat, insert the message with that chat id.
-	// If the messgage was sent to a particular user, insert the message with the receiver's username
 	// Otherwise, insert the message into the public chat, with no chat id or receiver username.
 	if message.ChatID.Valid {
 		sqlQuery = sqlconstants.INSERT_GROUP_CHAT_MESSAGE
-	} else if message.Receiver.Valid {
-		sqlQuery = sqlconstants.INSERT_USER_TO_USER_MESSAGE
-	}else{
+	} else{
 		sqlQuery = sqlconstants.INSERT_PUBLIC_MESSAGE
 	}
 	

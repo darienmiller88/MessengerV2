@@ -22,6 +22,7 @@
     import { PublicChat } from "../constants/constant"
     
     export let onHide = () => {}
+    export let show: boolean
     let chatInfo: Chat
     let isLoading: boolean = false
 
@@ -107,9 +108,6 @@
         if (currentChat) {
             chatInfo = (JSON.parse(currentChat) as Chat)
         }
-
-        console.log("chats in delete group caht:", $chatsStore);
-
     })
 </script>
 

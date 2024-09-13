@@ -26,7 +26,8 @@ func (u *UserRoutes) Init() {
 		router.Get("/isAnonymous",        u.userController.GetUserAnonymousStatus)
 		// u.Router.Get("/:id",                u.userController.GetUserByID)
 		// u.Router.Delete("/:id",             u.userController.DeleteUser)
-		router.Get("/username/:username", middlewares.ProtectUser, u.userController.GetUserByUsername)
-		router.Put("/upload-profile-pic", u.userController.ChangeUserProfilePicture)
+		router.Get("/profile-picture/:username", u.userController.GetUserProfilePicture)
+		router.Get("/username/:username",        middlewares.ProtectUser, u.userController.GetUserByUsername)
+		router.Put("/upload-profile-pic",        u.userController.ChangeUserProfilePicture)
 	})
 }

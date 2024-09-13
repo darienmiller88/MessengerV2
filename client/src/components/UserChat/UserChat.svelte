@@ -52,8 +52,9 @@
     }
     
     const getUsersInChat = async () => {
-        //Only get the users in the group chat when clicking the chat once. Prevents unnecessary server calls.
-        if ($groupChatNameStore != chatInfo.chat_name) {
+        //Only get the users in the group chat when clicking the chat once, and only when it is a group chat
+        //and not a DM. This will prevent unnecessary server calls.
+        if ($groupChatNameStore != chatInfo.chat_name && !chatInfo.is_dm) {
             const usersInChatRes = await chatsApi.get(`/private-chats/users/${encodeURIComponent(chatInfo.chat_name)}`)
             const users: string[] = (usersInChatRes.data as string[])    
             

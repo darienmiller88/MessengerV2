@@ -4,4 +4,4 @@ client/src/components/ChatWindowHeader
     - Implement "leave chat" button in "ChatWindowHeader" component [x]
     - Implement "check current chat members" button in "ChatWindowHeader" component [x]
 client/src/components/AddNewChatForm 
-    - Implement "Message new user" feature [in progress]
+    - Implement "Message new user" feature [x]

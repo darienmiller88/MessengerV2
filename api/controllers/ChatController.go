@@ -174,22 +174,22 @@ func (c *ChatController) GetGroupChats(fc *fiber.Ctx) error{
 
 func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
 	chatWithUsers := struct{
-		ChatName   string `json:"chat_name"`
-		PictureUrl string `json:"picture_url"` 
-		Users    []string `json:"users"`
+		// ChatName   string `json:"chat_name"`
+		// PictureUrl string `json:"picture_url"` 
+		Chat       models.Chat `json:"chat"`
+		Users    []string      `json:"users"`
 	}{}
 		
 	if err := fc.BodyParser(&chatWithUsers); err != nil{
 		return fc.Status(http.StatusBadRequest).SendString(err.Error())
 	}
-		
-	chat := models.Chat{}
 
-	//Add the necessary data to the new chat the user will create.
-	chat.InitCreatedAt()
-	chat.ChatName   = chatWithUsers.ChatName
-	chat.PictureUrl = chatWithUsers.PictureUrl
-	chat, err      := database.CreateNewChat(chat)
+	if err := chatWithUsers.Chat.Validate(); err != nil {
+		return fc.Status(http.StatusBadRequest).SendString(err.Error())
+	}
+		
+	chatWithUsers.Chat.InitCreatedAt()
+	newChat, err := database.CreateNewChat(chatWithUsers.Chat)
 	
 	if err != nil {
 		return fc.Status(http.StatusInternalServerError).SendString(err.Error())
@@ -198,7 +198,7 @@ func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
 	//Since Users and Chats has a many to many relationship, inserting a new group is a two step process, by first
 	//retrieving the id of the newly created Chat, and creating new rows in the join table with the users.
 	userChat := models.UserChat{
-		ChatID: chat.ID,
+		ChatID: newChat.ID,
 	}
 
 	userChat.InitCreatedAt()
@@ -213,7 +213,7 @@ func (c *ChatController) AddNewChat(fc *fiber.Ctx) error{
 		}
 	}
 	
-	return fc.Status(http.StatusOK).JSON(chat)
+	return fc.Status(http.StatusOK).JSON(newChat)
 }
 
 func (c *ChatController) LeaveGroupChat(fc *fiber.Ctx) error{

@@ -5,12 +5,6 @@ const (
 	// CREATE
 	///////////////////////////////////////////
 
-	//Insert a message that is being sent from one user to another user.
-	INSERT_USER_TO_USER_MESSAGE string = "INSERT INTO messages " +
-	"(created_at, updated_at, receiver, message_content, message_date, username, image_url, display_name) " +
-	"VALUES (:created_at, :updated_at, :receiver, :message_content, :message_date, :username, :image_url, :display_name) " + 
-	"RETURNING id"
-
 	// Insert a message into "messages" with a particular chat_id.
 	INSERT_GROUP_CHAT_MESSAGE string = "INSERT INTO messages " +
 	"(message_content, message_date, created_at, updated_at, username, image_url, display_name, chat_id) " +
@@ -69,6 +63,9 @@ const (
 
 	//Get a user by their username.
 	GET_USER_BY_USERNAME string = "SELECT * FROM users WHERE username=$1"
+
+	//Get all DMs for a user by their username.
+	GET_ALL_DM_FOR_USER = "SELECT * FROM messages WHERE receiver IS NOT NULL AND username=$1"
 
 
 

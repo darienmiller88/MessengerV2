@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -115,6 +114,17 @@ func (m *MessageController) GetMessageHistory(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(messages)
 }
 
+func (m *MessageController) GetUserToUserMessages(c *fiber.Ctx) error {
+	messages := []models.Message{}
+	username := c.Params("username")
+
+	if err := m.db.Select(&messages, sqlconstants.GET_ALL_DM_FOR_USER, username); err != nil {
+		return c.Status(http.StatusNotFound).SendString(err.Error())
+	}
+
+	return c.Status(http.StatusOK).JSON(messages)
+}
+
 func (m *MessageController) GetGroupChatMessages(c *fiber.Ctx) error {
 	id := c.Params("id")
 	messages := []models.Message{}
@@ -172,33 +182,22 @@ func (m *MessageController) UserLeft(c *fiber.Ctx) error {
 func (m *MessageController) addFieldsToMessage(c *fiber.Ctx, message models.Message) (models.Message, error){
 	channelName      := ""
 	chatId           := c.Params("chatid", public)
-	receiverUsername := c.Params("receiverUsername")
 
 	message.InitCreatedAt()
 	message.MessageDate = time.Now().Format("2006-01-02 3:4:5 pm")
+	convChatId, err := strconv.Atoi(chatId)
 
-	//If the route "/receiver/:receiverUsername" is hit, fill out the "receiver" field in the message object.
-	//Otherwise, fill out the "chat_id" field for the "messages" table.
-	if strings.Contains(c.Path(), "/receiver"){
-		message.Receiver.String = receiverUsername
-		message.Receiver.Valid = true
-
-		channelName = message.Username + "-" + receiverUsername
-	}else{
-		convChatId, err := strconv.Atoi(chatId)
-	
-		//The "chatid" URL Param will either be a number, or default to "Public". If the URL param can be 
-		//converted to a number, assign it to the messages "ChatID" field.
-		if err == nil {
-			message.ChatID.Int64 = int64(convChatId)
-			message.ChatID.Valid = true
-		}
-
-		channelName = chatId
+	//The "chatid" URL Param will either be a number, or default to "Public". If the URL param can be 
+	//converted to a number, assign it to the messages "ChatID" field.
+	if err == nil {
+		message.ChatID.Int64 = int64(convChatId)
+		message.ChatID.Valid = true
 	}
 
+	channelName = chatId
+
 	//After adding the fields, insert the message into the database and trigger the message to the front end.
-	message, err :=  m.insertAndTriggerMessage(channelName, message)
+	message, err = m.insertAndTriggerMessage(channelName, message)
 
 	if err != nil {
 		return models.Message{}, err
@@ -226,7 +225,6 @@ func (m *MessageController) insertAndTriggerMessage(channelName string, message 
 //Function to combine the logic of notifying the user of other users typing and leaving group chats.
 func (m *MessageController) handleUserLeavingAndUserTypingPushNotifications(c *fiber.Ctx, pusherEventName string) error{
 	chatId := c.Params("chatid", public)
-	receiverUsername := c.Params("receiverUsername")
 	data := struct {
 		Username string `json:"username"`
 	}{}
@@ -235,14 +233,7 @@ func (m *MessageController) handleUserLeavingAndUserTypingPushNotifications(c *f
 		return c.Status(http.StatusBadRequest).JSON(err)
 	}
 
-	var channelName string
-	if strings.Contains(c.Path(), "/receiver") {
-		channelName = data.Username + "-" + receiverUsername
-	}else{
-		channelName = chatId
-	}
-
-	if err := pusherclient.GetPusherClient().Trigger(channelName, pusherEventName, data.Username); err != nil {
+	if err := pusherclient.GetPusherClient().Trigger(chatId, pusherEventName, data.Username); err != nil {
 		fmt.Println("err broadcasting messages for event", pusherEventName, ":",  err)
 	}
 

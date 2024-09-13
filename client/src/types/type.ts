@@ -1,5 +1,6 @@
 export interface Chat{
     id:             number
+    is_dm:          boolean
     time:           string
     chat_name:      string
     picture_url:    string 
@@ -26,10 +27,6 @@ export interface Message{
     display_name:    string
     isSender:        boolean
     isImage:         boolean
-    receier?: {
-        String: string,
-        valid: boolean
-    }
     profile_picture?: {
         String: string,
         valid: boolean

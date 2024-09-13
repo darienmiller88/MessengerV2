@@ -18,10 +18,12 @@
         groupChatNameStoreKey, 
         isChatWindowActiveStore, 
         isChatWindowActiveStoreKey,
+        selectedChatStore,
         selectedChatStoreKey,
         isDarkModeStore,
         persistStoreValue
     } from "../../stores";
+    import type { Chat } from "../../types/type";
 
     let showLeaveGroupChatModal: boolean = false
     let showGroupChatPictureModal: boolean = false
@@ -39,6 +41,11 @@
         let groupChatName:      string | null = window.localStorage.getItem(groupChatNameStoreKey)
         let chatPictureURL:     string | null = window.localStorage.getItem(chatPictureStoreKey)
         let isChatWindowActive: string | null = window.localStorage.getItem(isChatWindowActiveStoreKey)
+        let selectedChatUnparsed: string | null = window.localStorage.getItem(selectedChatStoreKey)
+
+        if (selectedChatUnparsed) {
+            $selectedChatStore = (JSON.parse(selectedChatUnparsed) as Chat)
+        }
 
         //Extract the value of the indicator indicating whether or not the message window is active or not.
         if (isChatWindowActive) {
@@ -80,12 +87,18 @@
             <button on:click={() => showDeleteModal = true} >
                 <Trash width={24} height={24} fill={$fillIconColorStore}/>
             </button>
-            <button on:click={() => showAddUserModal = true} >
-                <PersonAdd width={24} height={24} fill={$fillIconColorStore}/>
-            </button>
-            <button on:click={() => showChangeChatInfoModal = true} >
-                <PencilSquare width={24} height={24} fill={$fillIconColorStore}/>
-            </button>
+            
+            <!-- Only show the option to add new users and to edit the chat if the current chat is NOT a DM -->
+            {#if !$selectedChatStore.is_dm}
+                <button on:click={() => showAddUserModal = true} >
+                    <PersonAdd width={24} height={24} fill={$fillIconColorStore}/>
+                </button>
+
+                <button on:click={() => showChangeChatInfoModal = true} >
+                    <PencilSquare width={24} height={24} fill={$fillIconColorStore}/>
+                </button>
+            {/if}
+
             <button on:click={() => showCheckCurrentChatUsersModal = true} >
                 <QuestionCircle width={24} height={24} fill={$fillIconColorStore}/>
             </button>

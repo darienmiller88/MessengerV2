@@ -22,11 +22,11 @@
         })
         
         isLoading = true
+
         try {
             const url: string = `/${$selectedChatStore.chat_name == PublicChat ? PublicChat : $selectedChatStore.id}/${$chosenMessageStore.id}`            
             const response = await messageApi.delete(url, { data: { message: $chosenMessageStore}})
-            console.log("delete res:", response);
-
+ 
             onHide()
         } catch (error) {
             console.log("err:", error)

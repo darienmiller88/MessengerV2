@@ -19,9 +19,21 @@
         let tempChats: Chat[] = []
 
         chatsToAdd.forEach((chat: Chat) => {
+            let chatName: string = chat.chat_name
+
+            //If the specific chat is a dm to another user, change the username to reflect this. It will come
+            //in the form of "Sender-Receiver".
+            if (chat.is_dm) {
+                let sender: string = chat.chat_name.substring(0, chat.chat_name.indexOf("-"))
+                let receiver: string = chat.chat_name.substring(chat.chat_name.indexOf("-") + 1)
+
+                chatName = sender == $usernameStore ? receiver : sender
+            }
+
             let newChat: Chat = {
                 id: chat.id,
-                chat_name: chat.chat_name,
+                is_dm: chat.is_dm ,
+                chat_name: chatName,
                 time: "N/A",
                 picture_url: chat.picture_url,
                 currentMessage: "N/A",

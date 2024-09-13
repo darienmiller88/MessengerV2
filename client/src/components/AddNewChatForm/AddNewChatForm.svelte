@@ -1,19 +1,22 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { type FilteredUser, type Chat, type User } from "../../types/type"
+    import { type FilteredUser, type Chat, type User, type Message } from "../../types/type"
     import {
         usersStoreKey, 
         usersStore, 
         usernameStore, 
+        usernameStoreKey,
+        displayNameStore,
+        displayNameStoreKey,
+        userProfilePictureStore,
+        userProfilePictureStoreKey,
         chatsStore, 
         chatsStoreKey, 
-        selectedChatStore,
-        selectedChatStoreKey,
         persistStoreValue 
     } from "../../stores"
     import Select from 'svelte-select';
     import defaultPic from "../../assets/default.png"
-    import { chatsApi } from "../../api/api";
+    import { chatsApi, messageApi, userApi } from "../../api/api";
     import { Moon } from "svelte-loading-spinners";
 
     let groupChatName:       string
@@ -27,6 +30,7 @@
         currentMessage: "",
         time: "",
         picture_url: "",
+        is_dm: false,
         isChatActive: false
     }
     export let onHide = () => {}
@@ -42,22 +46,20 @@
         newChat.picture_url = defaultPic
         newChat.currentMessage = "N/A"
         newChat.time = "N/A"
+        newChat.is_dm = false
 
         //Create object to send to server with all of the info needed to create a new chat.
-        let chatInfo = {
+        let chatWithUsers = {
             users, 
-            chat_name: groupChatName,
-            picture_url: newChat.picture_url
+            chat: newChat
         }
 
         try {
             isLoading = true
-            const res = await chatsApi.post("/", chatInfo)
-            newChat.id = (res.data as Chat).id
-            
+            const newChatRes = await chatsApi.post<Chat>("/", chatWithUsers)
+            newChat.id = newChatRes.data.id
             $chatsStore = [...$chatsStore, newChat]
             persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
-            persistStoreValue(selectedChatStore, newChat, selectedChatStoreKey)
             
             onHide()
         } catch (error) {
@@ -70,28 +72,105 @@
         isLoading = false
     }
 
-    const messageNewUser = () => {
+    const messageNewUser = async () => {
         let user: FilteredUser = (value as FilteredUser)
+        let profilePictureUrl: string = defaultPic
 
-        newChat.chat_name = user.value
+        isLoading = true
+
+        //Try and receive the selected user's profile picture from from their username. If they have one,
+        //assign it to the above "profilePictureUrl" variable.
+        try {
+            const profilePictureRes = await userApi.get(`/profile-picture/${user.value}`)
+
+            if (profilePictureRes.data) {
+                profilePictureUrl = profilePictureRes.data
+            }
+        } catch (error) {
+            console.log(error);
+        }
+
+        //Assign the following fields to the new user chat, and append it to the their list of chats.
         newChat.currentMessage = message
         newChat.time = new Date().toLocaleTimeString()
-        newChat.picture_url = defaultPic
+        newChat.picture_url = profilePictureUrl
+        newChat.is_dm = true
 
-        $chatsStore = [...$chatsStore, newChat]
-        persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
+        //Create the initial message to be sent to the receiver of the DM.
+        let messageToReceiver: Message = {
+            message_content: message,
+            message_date: new Date().toLocaleString(),
+            username: $usernameStore,
+            display_name: $displayNameStore,
+            image_url: {
+                String: "",
+                Valid: false
+            },
+            profile_picture: {
+                String: $userProfilePictureStore,
+                valid: true
+            },
+            isImage: false,
+            isSender: true,
+            id: 0
+        }
 
-        console.log(message, user)
+        try {
+            //Create an object with the following fields to the specified route in the chatsapi. This is where
+            //the new group chat is added to Postgres. For the name of the DM, it will combine the sender 
+            //username and receiver username.
+            let chatWithUsers = {
+                users: [$usernameStore, user.value], 
+                chat: newChat,
+            }
+
+            //After creating both the new DM, and the new message, send them off to the server to be inserted 
+            //into the database.
+            const chatsRes = await chatsApi.post<Chat>(`/`, chatWithUsers)
+            const messageRes = await messageApi.post<Message>(`/${chatsRes.data.id}`, messageToReceiver)
+
+            //Assign the new chat its database id, and the chatname name of the user that received the message.
+            //On the backend, this chat will take the form of "SenderUsername-ReceiverUsername", but on the
+            //front end, it will appear to the DM sender as "ReceiverUsername", and the DM receiver as "SenderUsername".
+            newChat.id = chatsRes.data.id
+            newChat.chat_name = user.value
+
+            //Finally, append the new chat to the users lists of chats on the front end, and persist this as well.
+            $chatsStore = [...$chatsStore, newChat]
+            persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
+
+            console.log(chatsRes.data)
+            console.log(messageRes.data);
+        } catch (error) {
+            console.log(error);
+        }
+
+        isLoading = false
         message = ""
         value = null
         onHide()
     }
 
     onMount(() => {
-        let usersLocalStorage:    string | null = window.localStorage.getItem(usersStoreKey)
+        let usernameUnparsed:           string | null = window.localStorage.getItem(usernameStoreKey) 
+        let usersStoresUnparsed:        string | null = window.localStorage.getItem(usersStoreKey)
+        let displaynameUnparsed:        string | null = window.localStorage.getItem(displayNameStoreKey) 
+        let userProfilePictureUnparsed: string | null = window.localStorage.getItem(userProfilePictureStoreKey)
         
-        if (usersLocalStorage) {
-            $usersStore = (JSON.parse(usersLocalStorage) as string[])
+        if (usersStoresUnparsed) {
+            $usersStore = (JSON.parse(usersStoresUnparsed) as string[])
+        }
+
+        if (usernameUnparsed) {
+            $usernameStore = (JSON.parse(usernameUnparsed) as string)
+        }
+
+        if (displaynameUnparsed) {
+            $displayNameStore = (JSON.parse(displaynameUnparsed) as string)
+        }
+
+        if (userProfilePictureUnparsed) {
+            $userProfilePictureStore = (JSON.parse(userProfilePictureUnparsed) as string)
         }
     })
 </script>

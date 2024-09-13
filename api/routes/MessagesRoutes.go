@@ -17,10 +17,6 @@ func (m *MessagesRoutes) Init(){
 	m.messageController.Init()
 
 	m.Router.Use(middlewares.Auth).Route("/", func(router fiber.Router) {
-		router.Post("/receiver/:receiverUsername", m.messageController.PostMessage)
-		router.Post("/upload-image/receiver/:receiverUsername", m.messageController.UploadImageAsMessage)
-		router.Post("/userTyping/receiver/:receiverUsername", m.messageController.UserTyping)
-		router.Post("/userLeft/receiver/:receiverUsername", m.messageController.UserLeft)
 		router.Post("/public",               m.messageController.PostMessage)
 		router.Post("/:chatid",              middlewares.AuthCheckUser, m.messageController.PostMessage)
 		router.Post("/userTyping/public",    m.messageController.UserTyping)
@@ -29,6 +25,7 @@ func (m *MessagesRoutes) Init(){
 		router.Post("/userLeft/:chatid",     middlewares.AuthCheckUser, m.messageController.UserLeft)
 		router.Post("/upload-image/public",  m.messageController.UploadImageAsMessage)
 		router.Post("/upload-image/:chatid", middlewares.AuthCheckUser, m.messageController.UploadImageAsMessage)
+		router.Get("/user-to-user/:username", m.messageController.GetUserToUserMessages)
 		router.Get("/message-history",       m.messageController.GetMessageHistory)
 		router.Get("/chat-messages/:id",     m.messageController.GetGroupChatMessages)
 		router.Get("/:id",                   m.messageController.GetMessageByID)
