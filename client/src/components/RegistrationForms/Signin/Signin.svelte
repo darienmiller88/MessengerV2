@@ -24,6 +24,7 @@
     import { userApi } from "../../../api/api";
     import { type User } from "../../../types/type";
     import "../styles.scss"
+    import axios from "axios";
 
     let username:                string = ""
     let password:                string = ""
@@ -61,10 +62,19 @@
             storeAllValues($userProfilePictureStore)
             navigate("/home", {replace: true})
         } catch (error: any) {
-            if (error.response.status == 404) {
-                isSigninError = true
-                signinError = error.response.data
-                console.log("error:", error.response);                
+            if (axios.isAxiosError(error)) {
+                if (error.response?.status == 429) {
+                    isSigninError = true
+                    signinError = error.response.data
+                }
+
+                if (error.response?.status == 404) {
+                    isSigninError = true
+                    signinError = error.response.data
+                    console.log("error:", error.response);                
+                }
+            } else {
+                console.error('Unexpected error', error);
             }
         }
         
@@ -99,7 +109,7 @@
             console.log("res:", response.data);
             navigate("/home", {replace: true})
         } catch (error: any) {
-            console.log("err:", error.response.data);
+            console.log("error:", error.response);                
         }
 
         isSigninAnoymousLoading = false

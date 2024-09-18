@@ -15,35 +15,69 @@
         }
     }
 
-    const loadChats = (chatsToAdd: Chat[]) => {
+    // const retrieveUserProfilePicture = async (username: string): string => {
+
+    // }
+
+    const loadChats = async (chatsToAdd: Chat[]) => {
         let tempChats: Chat[] = []
-
-        chatsToAdd.forEach((chat: Chat) => {
-            let chatName: string = chat.chat_name
-
-            //If the specific chat is a dm to another user, change the username to reflect this. It will come
-            //in the form of "Sender-Receiver".
+      
+        chatsToAdd = chatsToAdd.map((chat: Chat) => {
             if (chat.is_dm) {
                 let sender: string = chat.chat_name.substring(0, chat.chat_name.indexOf("-"))
                 let receiver: string = chat.chat_name.substring(chat.chat_name.indexOf("-") + 1)
 
-                chatName = sender == $usernameStore ? receiver : sender
+                chat.chat_name = sender == $usernameStore ? receiver : sender
+
+                userApi.get<string>(`/profile-picture/${chat.chat_name}`)
+                    .then((profilePictureUrlRes) => {
+                        chat.picture_url = profilePictureUrlRes.data;
+                    })
+                    .catch((error) => {
+                        console.log("home error:", error);
+                    })
             }
 
-            let newChat: Chat = {
-                id: chat.id,
-                is_dm: chat.is_dm ,
-                chat_name: chatName,
-                time: "N/A",
-                picture_url: chat.picture_url,
-                currentMessage: "N/A",
-                isChatActive: false
-            }
-            
-            tempChats.push(newChat)
+            return chat
         })
+
+        // chatsToAdd.forEach((chat: Chat) => {
+        //     let chatName: string = chat.chat_name
+        //     let pictureUrl: string = chat.picture_url
+
+        //     console.log("chat name:", chatName);
+        //     //If the specific chat is a dm to another user, change the username to reflect this. It will come
+        //     //in the form of "Sender-Receiver".
+        //     if (chat.is_dm) {
+        //         let sender: string = chat.chat_name.substring(0, chat.chat_name.indexOf("-"))
+        //         let receiver: string = chat.chat_name.substring(chat.chat_name.indexOf("-") + 1)
+
+        //         chatName = sender == $usernameStore ? receiver : sender
                 
-        $chatsStore = [$chatsStore[0], ...tempChats.sort((a: Chat, b: Chat) => a.id - b.id)]        
+        //        userApi.get<string>(`/profile-picture/${chatName}`)
+        //             .then((profilePictureUrlRes) => {                        
+        //                 pictureUrl = profilePictureUrlRes.data;
+        //             })
+        //             .catch((error) => {
+        //                 console.log("home error:", error);
+        //             });
+        //     }
+
+        //     let newChat: Chat = {
+        //         id: chat.id,
+        //         is_dm: chat.is_dm ,
+        //         chat_name: chatName,
+        //         time: "N/A",
+        //         picture_url: pictureUrl,
+        //         currentMessage: "N/A",
+        //         isChatActive: false
+        //     }            
+            
+        //     tempChats.push(newChat)
+        // })
+                
+        $chatsStore = [$chatsStore[0], ...chatsToAdd.sort((a: Chat, b: Chat) => a.id - b.id)]      
+        console.log($chatsStore);
     }
 
     const applyLatestMessageToChat = async (messages: Message[]) => {
@@ -85,14 +119,17 @@
             const username = await userApi.get("/username")
             $usernameStore = (username.data as string)
 
-            const chatsResponse = await chatsApi.get(`/private-chats/chats/${$usernameStore}`)
-            const chats: Chat[] = (chatsResponse.data as Chat[])
+            const chatsResponse = await chatsApi.get<Chat[]>(`/private-chats/chats/${$usernameStore}`)
+            const chats: Chat[] = chatsResponse.data
             
+            console.log("chats:", chats);
+            
+
             //Request all of the users private chats, and store them into the chatsStore variable.
             loadChats(chats)
 
-            const publicMessagesRes = await messageApi.get("/")
-            const messages = (publicMessagesRes.data as Message[])            
+            const publicMessagesRes = await messageApi.get<Message[]>("/")
+            const messages = publicMessagesRes.data          
             
             //Afterwords, request the messages so we can put the most recent message on each chat.
             applyLatestMessageToChat(messages)

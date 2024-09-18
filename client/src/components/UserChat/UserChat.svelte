@@ -76,8 +76,20 @@
         }
     }
 
-    //Format the time from the format "11:25:26 PM" to "11:25 PM"
-    const formatTime = (time: string): string => {
+    //Format the time from the format "11:25:26 PM" to "11:25 PM". 
+    const formatTime = (time: string): string => {     
+        console.log(time);
+           
+        //For some reason, when chats are loaded in the Home component, the time variable here ends up being null
+        //before it actually converts to the proper time of the last message for the chat. I have no idea
+        //why this happens, as its linked to how I parse the chats from the server. When mapping over the chats
+        //and assigning it to the chats store, time is null. However, when I declare a tempChats array, and
+        //I .forEach() over the chats returned from the server to insert into temp, and I assign temp to the 
+        //chats store, time isn't null! 
+        if (!time) {
+            return time
+        }
+        
         let secondColonIndex: number = time.lastIndexOf(":")
 
         return time.substring(0, secondColonIndex) + time.substring(secondColonIndex + 3)
@@ -92,6 +104,9 @@
             chatInfo.isChatActive = true
             $groupChatNameStore = JSON.parse(chatName)
         }
+
+        console.log("chat:", chatInfo);
+        
     })
 </script>
 

@@ -114,17 +114,6 @@ func (m *MessageController) GetMessageHistory(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(messages)
 }
 
-func (m *MessageController) GetUserToUserMessages(c *fiber.Ctx) error {
-	messages := []models.Message{}
-	username := c.Params("username")
-
-	if err := m.db.Select(&messages, sqlconstants.GET_ALL_DM_FOR_USER, username); err != nil {
-		return c.Status(http.StatusNotFound).SendString(err.Error())
-	}
-
-	return c.Status(http.StatusOK).JSON(messages)
-}
-
 func (m *MessageController) GetGroupChatMessages(c *fiber.Ctx) error {
 	id := c.Params("id")
 	messages := []models.Message{}
