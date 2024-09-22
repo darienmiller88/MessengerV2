@@ -103,10 +103,7 @@
             deselectChats()
             chatInfo.isChatActive = true
             $groupChatNameStore = JSON.parse(chatName)
-        }
-
-        console.log("chat:", chatInfo);
-        
+        }        
     })
 </script>
 

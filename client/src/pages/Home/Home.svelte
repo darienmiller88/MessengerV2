@@ -15,15 +15,12 @@
         }
     }
 
-    // const retrieveUserProfilePicture = async (username: string): string => {
-
-    // }
-
     const loadChats = async (chatsToAdd: Chat[]) => {
         let tempChats: Chat[] = []
       
         chatsToAdd = chatsToAdd.map((chat: Chat) => {
             if (chat.is_dm) {
+                //DMs are saved as "Sender-Receiver", so extract both as we who is who.
                 let sender: string = chat.chat_name.substring(0, chat.chat_name.indexOf("-"))
                 let receiver: string = chat.chat_name.substring(chat.chat_name.indexOf("-") + 1)
 
@@ -121,10 +118,7 @@
 
             const chatsResponse = await chatsApi.get<Chat[]>(`/private-chats/chats/${$usernameStore}`)
             const chats: Chat[] = chatsResponse.data
-            
-            console.log("chats:", chats);
-            
-
+                        
             //Request all of the users private chats, and store them into the chatsStore variable.
             loadChats(chats)
 

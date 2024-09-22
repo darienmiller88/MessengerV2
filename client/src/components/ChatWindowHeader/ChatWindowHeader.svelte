@@ -81,9 +81,11 @@
     </div>
     {#if $groupChatNameStore != PublicChat}
         <div class="icons-wrapper">
-            <button on:click={() => showLeaveGroupChatModal = true}>
-                <ArrowLeftCircle width={24} height={24} fill={$fillIconColorStore}/>
-            </button>
+            {#if !$selectedChatStore.is_dm}
+                <button on:click={() => showLeaveGroupChatModal = true}>
+                    <ArrowLeftCircle width={24} height={24} fill={$fillIconColorStore}/>
+                </button>
+            {/if}
             <button on:click={() => showDeleteModal = true} >
                 <Trash width={24} height={24} fill={$fillIconColorStore}/>
             </button>
@@ -93,15 +95,13 @@
                 <button on:click={() => showAddUserModal = true} >
                     <PersonAdd width={24} height={24} fill={$fillIconColorStore}/>
                 </button>
-
                 <button on:click={() => showChangeChatInfoModal = true} >
                     <PencilSquare width={24} height={24} fill={$fillIconColorStore}/>
                 </button>
+                <button on:click={() => showCheckCurrentChatUsersModal = true} >
+                    <QuestionCircle width={24} height={24} fill={$fillIconColorStore}/>
+                </button>
             {/if}
-
-            <button on:click={() => showCheckCurrentChatUsersModal = true} >
-                <QuestionCircle width={24} height={24} fill={$fillIconColorStore}/>
-            </button>
         </div>
     {/if}
 

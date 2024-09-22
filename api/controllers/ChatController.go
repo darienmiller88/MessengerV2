@@ -224,6 +224,15 @@ func (c *ChatController) LeaveGroupChat(fc *fiber.Ctx) error{
 		return fc.Status(http.StatusUnprocessableEntity).SendString("Could not parse \"username\" field.")
 	}
 
+	chat := models.Chat{}
+	if err := c.db.Get(&chat, "SELECT * FROM chats WHERE id=$1", chatId); err != nil{
+		return fc.Status(http.StatusNotFound).SendString(fmt.Sprintf("Chat with id %s not found.", chatId))
+	}
+
+	if chat.IsDM {
+		return fc.Status(http.StatusBadRequest).SendString("Cannot leave group chat for a DM.")
+	}
+
 	if err := database.DeleteUserFromGroupChat(chatId, username); err != nil{
 		return fc.Status(http.StatusBadRequest).SendString(err.Error())
 	}

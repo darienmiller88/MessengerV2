@@ -81,7 +81,7 @@
         //Try and receive the selected user's profile picture from from their username. If they have one,
         //assign it to the above "profilePictureUrl" variable.
         try {
-            const profilePictureRes = await userApi.get(`/profile-picture/${user.value}`)
+            const profilePictureRes = await userApi.get<string>(`/profile-picture/${user.value}`)
 
             if (profilePictureRes.data) {
                 profilePictureUrl = profilePictureRes.data
