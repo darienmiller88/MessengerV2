@@ -30,8 +30,12 @@ type UserController struct {
 
 func (u *UserController) Init() {
 	u.db         = database.GetDB()
-	u.sessionLen = 500000 //in seconds, so about 138 hrs, or 5.75 days.
-	u.extendedSessionLen = 31536000//In seconds, exactly one year.
+	
+	//in seconds, so about 30 days.
+	u.sessionLen = 5260032 
+
+	//In seconds, exactly one year.
+	u.extendedSessionLen = 31536000
 }
 
 func (u *UserController) CheckAuth(c *fiber.Ctx) error {
@@ -162,7 +166,7 @@ func (u *UserController) Signup(c *fiber.Ctx) error {
 		u.setCookie(c, u.getJwtToken(u.extendedSessionLen, user), "anonymous", u.extendedSessionLen)
 	}
 
-	u.setCookie(c, u.getJwtToken(60, user), "user", 60)
+	u.setCookie(c, u.getJwtToken(u.sessionLen, user), "user", u.sessionLen)
 	return c.Status(http.StatusCreated).JSON(user)
 }
 

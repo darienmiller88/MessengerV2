@@ -59,13 +59,10 @@ const (
 	"WHERE chats.chat_name = $1"
 
 	//Get all users in the "users" table, only retrieving the username, profile_picture, and is_anonymous columns.
-	GET_ALL_USERS string = "SELECT username, profile_picture, is_anonymous FROM users"
+	GET_ALL_USERS string = "SELECT id, username, profile_picture, is_anonymous FROM users"
 
 	//Get a user by their username.
 	GET_USER_BY_USERNAME string = "SELECT * FROM users WHERE username=$1"
-
-	//Get all DMs for a user by their username.
-	GET_ALL_DM_FOR_USER = "SELECT * FROM messages WHERE receiver IS NOT NULL AND username=$1"
 
 
 
