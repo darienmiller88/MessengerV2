@@ -56,7 +56,7 @@
 
         try {
             isLoading = true
-            const newChatRes = await chatsApi.post<Chat>("/", chatWithUsers)
+            const newChatRes = await chatsApi.post<Chat>("/addNewChat", chatWithUsers)
             newChat.id = newChatRes.data.id
             $chatsStore = [...$chatsStore, newChat]
             persistStoreValue(chatsStore, $chatsStore, chatsStoreKey)
@@ -126,7 +126,7 @@
 
             //After creating both the new DM, and the new message, send them off to the server to be inserted 
             //into the database.
-            const chatsRes = await chatsApi.post<Chat>(`/`, chatWithUsers)
+            const chatsRes = await chatsApi.post<Chat>(`/addNewChat`, chatWithUsers)
             const messageRes = await messageApi.post<Message>(`/${chatsRes.data.id}`, messageToReceiver)
 
             //Assign the new chat its database id, and the chatname name of the user that received the message.

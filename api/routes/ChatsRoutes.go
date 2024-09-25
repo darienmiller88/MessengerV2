@@ -25,13 +25,13 @@ func (c *ChatsRoutes) Init(){
 		router.Get("/private-chats/users/:chatname", c.chatsController.GetUsersInGroupchats)
 
 		router.Use(limiter.New()).Route("/", func(router fiber.Router) {
-			router.Post("/",                             c.chatsController.AddNewChat)
-			router.Post("/add-new-users/:chatid",        middlewares.AuthCheckUser, c.chatsController.AddNewUsersToChat)
-			router.Post("/notify-user-left/:chatid",     middlewares.AuthCheckUser, c.chatsController.NotifyUserLeavingGroupChat)
-			router.Delete("/remove-users/:chatid",       middlewares.AuthCheckUser, c.chatsController.RemoveUsersFromChat)
-			router.Delete("/:chatid",                    middlewares.AuthCheckUser, c.chatsController.DeleteChat)
-			router.Delete("/leave-group-chat/:chatid",   middlewares.AuthCheckUser, c.chatsController.LeaveGroupChat)
-			router.Put("/modify-group-chat/:chatid",     middlewares.AuthCheckUser, c.chatsController.ChangeGroupChatSettings)	
+			router.Post("/addNewChat",                 c.chatsController.AddNewChat)
+			router.Post("/add-new-users/:chatid",      middlewares.AuthCheckUser, c.chatsController.AddNewUsersToChat)
+			router.Post("/notify-user-left/:chatid",   middlewares.AuthCheckUser, c.chatsController.NotifyUserLeavingGroupChat)
+			router.Delete("/remove-users/:chatid",     middlewares.AuthCheckUser, c.chatsController.RemoveUsersFromChat)
+			router.Delete("/:chatid",                  middlewares.AuthCheckUser, c.chatsController.DeleteChat)
+			router.Delete("/leave-group-chat/:chatid", middlewares.AuthCheckUser, c.chatsController.LeaveGroupChat)
+			router.Put("/modify-group-chat/:chatid",   middlewares.AuthCheckUser, c.chatsController.ChangeGroupChatSettings)	
 		})
 	})
 }

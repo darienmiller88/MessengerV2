@@ -28,7 +28,7 @@ func main(){
 	index.Init()
 	
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:5173, https://messengerv2.netlify.app",
+		AllowOrigins: "http://localhost:5173,https://messengerv2.netlify.app",
 		AllowCredentials: true,
 	}))
 	app.Use(logger.New())
