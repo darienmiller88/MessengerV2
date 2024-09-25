@@ -12,10 +12,9 @@
         persistStoreValue
     } from '../../stores';
     import Select from 'svelte-select';
-    import { chatsApi } from "../../api/api"
+    import { chatsApi, userApi } from "../../api/api"
     import { Moon } from "svelte-loading-spinners";
-    import { type FilteredUser, type Chat } from '../../types/type';
-    import { flip } from 'svelte/animate';
+    import { type FilteredUser, type Chat, type User } from '../../types/type';
 
     let value: any
     let isRemovingUser: boolean  = false
@@ -104,26 +103,34 @@
         })        
     }
 
-    //Retrieves all registered users who have an account with this app cached in local storage.
+    //Retrieves all registered users who have an account with this app.
     const getAllRegisteredUsers = (): string[] => {
-        let allRegisteredUsersUnparsed: string | null = window.localStorage.getItem(usersStoreKey)
-        let allRegisteredUsers:         string[]      = []
+        let allRegisteredUsers: string[] = []
         
-        if (allRegisteredUsersUnparsed) {
-            allRegisteredUsers = (JSON.parse(allRegisteredUsersUnparsed) as string[])            
-        }
+        //Get all users from server instead of local storage.
+        userApi.get<User[]>("/").then(usersResponse => {
+             usersResponse.data.forEach((user: User) => {
+                allRegisteredUsers.push(user.username)
+            })
+        }).catch(error => {
+            console.log(error);
+        })
 
         return allRegisteredUsers
     }
 
-    //Retrieves all users in the active group chat cached in local storage.
+    //Retrieves all users in the active group chat..
     const getAllUsersInCurrentGroupChat = (): string[] => {
-        let allUsersInGroupChatUnparsed: string | null = window.localStorage.getItem(usersInChatStoreKey)
-        let allUsersInGroupChat:         string[]     = []
+        let allUsersInGroupChat: string[] = []
 
-        if (allUsersInGroupChatUnparsed) {
-            allUsersInGroupChat = (JSON.parse(allUsersInGroupChatUnparsed) as string[])
-        }
+        //Get all users from server instead of local storage.
+        chatsApi.get<Chat[]>(`/private-chats/users/${$selectedChatStore.chat_name}`).then(chatsResponse => {
+             chatsResponse.data.forEach((chat: Chat) => {
+                allUsersInGroupChat.push(chat.chat_name)
+            })
+        }).catch(error => {
+            console.log(error);
+        })
 
         return allUsersInGroupChat
     }
